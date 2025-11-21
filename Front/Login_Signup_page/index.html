@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ایران‌گردی - ورود و ثبت‌نام</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrapper" id="wrapper">
+
+    <div class="background bg-login"></div>
+    <div class="background bg-signup"></div>
+
+    <div class="panel login-panel active" id="loginPanel">
+        <h2>ورود</h2>
+        <input type="email" placeholder="ایمیل" />
+        <input type="password" placeholder="رمز عبور" />
+        <button>ورود</button>
+        <p>حساب کاربری ندارید؟ <button id="signupTrigger">ثبت‌نام</button></p>
+    </div>
+
+    <div class="panel signup-panel" id="signupPanel">
+        <h2>ثبت‌نام</h2>
+        <input type="text" placeholder="نام" />
+        <input type="email" placeholder="ایمیل" />
+        <input type="password" placeholder="رمز عبور" />
+        <button>ثبت‌نام</button>
+        <p>قبلاً ثبت‌نام کرده‌اید؟ <button id="loginTrigger">ورود</button></p>
+    </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
