@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'Vazirmatn', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    direction: rtl;
+    background: #e9e9e9;
+    font-size: 15px;
+}
+
+.wrapper {
+    width: 850px;
+    height: 500px;
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.background {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: transform 1s ease-in-out;
+    z-index: 1;
+}
+
+.bg-login {
+    left: 0;
+    background-image: url('photo.png');
+}
+
+.bg-signup {
+    left: -100%;
+    background-image: url('photo2.png');
+}
+
+.show-signup .bg-login {
+    transform: translateX(100%) !important;
+}
+
+.show-signup .bg-signup {
+    transform: translateX(100%) !important;
+}
+
+.panel {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 300px;
+    padding: 2rem;
+    border-radius: 15px;
+    display: none;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 2;
+}
+
+.login-panel {
+    right: 30px;
+}
+
+.signup-panel {
+    left: 30px;
+}
+
+.active {
+    display: flex;
+    animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-60%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(-50%);
+    }
+}
+
+input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+}
+
+button {
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    box-shadow: 0 5px 20px rgba(245, 201, 176, 0.8);
+    background-color: rgba(245, 201, 176, 1);
+}
+
+p {
+    font-size: 16px;
+}
+
+p button {
+    background: none;
+    cursor: pointer;
+}
+
+.signup-panel button {
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#signupTrigger {
+    background: none;
+    border: 2px solid #cccccc;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.signup-panel button:hover {
+    background-color: rgba(166, 178, 139, 1);
+    box-shadow: 0 5px 20px rgba(166, 178, 139, 0.8);
+}
+
+#loginTrigger {
+    background: none;
+    border: 2px solid #cccccc;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+}
