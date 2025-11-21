@@ -1,93 +1,253 @@
-# Iran-Gard
+# Iran-Gard API
 
+A comprehensive FastAPI backend for collaborative trip planning in Iran. This system enables users to plan group trips, manage expenses, vote on places, and create daily itineraries.
 
+## Features
 
-## Getting started
+### Phase 1: User Management (Weeks 1-2)
+- ✅ User registration and authentication (JWT-based)
+- ✅ User profile management
+- ✅ Favorite categories selection
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+### Phase 2: Social & Trip Creation (Weeks 3-4)
+- ✅ Friend system (send/accept/reject requests)
+- ✅ Trip creation with multiple cities
+- ✅ Invite friends to trips
+- ✅ Place suggestions based on user preferences
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+### Phase 3: Voting & Planning (Weeks 5-6)
+- ✅ Add places to trips
+- ✅ Vote on trip places
+- ✅ Create daily packages (manual)
+- ⏳ Auto-generate trip packages (to be implemented)
+- ✅ Vote on packages
 
-## Add your files
+### Phase 4: Expenses & Reviews (Weeks 7-8)
+- ✅ Track trip expenses
+- ✅ Automatic expense splitting
+- ✅ Settlement calculation
+- ⏳ Trip completion and reviews (to be implemented)
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## Tech Stack
+
+- **Framework:** FastAPI 0.104+
+- **Database:** PostgreSQL with SQLAlchemy ORM
+- **Authentication:** JWT tokens with python-jose
+- **Password Hashing:** bcrypt via passlib
+- **Database Migrations:** Alembic
+- **Validation:** Pydantic v2
+
+## Project Structure
 
 ```
-cd existing_repo
-git remote add origin https://git.kntu.ac.ir/system-design-analysis/4041/team2/iran-gard.git
-git branch -M main
-git push -uf origin main
+iran-gard/
+├── app/
+│   ├── api/
+│   │   ├── deps.py              # Dependencies (auth, db session)
+│   │   └── v1/
+│   │       ├── api.py           # API router aggregator
+│   │       └── endpoints/       # API endpoints
+│   │           ├── auth.py      # Registration & login
+│   │           ├── users.py     # User management
+│   │           ├── friends.py   # Friend system
+│   │           ├── trips.py     # Trip management
+│   │           ├── places.py    # Places & comments
+│   │           ├── expenses.py  # Expense tracking
+│   │           └── categories.py
+│   ├── core/
+│   │   ├── config.py           # Settings management
+│   │   └── security.py         # Password & token utilities
+│   ├── crud/                   # Database operations
+│   │   ├── user.py
+│   │   ├── friend.py
+│   │   ├── trip.py
+│   │   ├── place.py
+│   │   └── expense.py
+│   ├── db/
+│   │   ├── base.py             # Import all models
+│   │   └── session.py          # Database session
+│   ├── models/                 # SQLAlchemy models
+│   │   ├── user.py
+│   │   ├── category.py
+│   │   ├── city.py
+│   │   ├── place.py
+│   │   ├── friend.py
+│   │   ├── trip.py
+│   │   ├── trip_package.py
+│   │   └── expense.py
+│   └── schemas/                # Pydantic schemas
+│       ├── user.py
+│       ├── category.py
+│       ├── city.py
+│       ├── place.py
+│       ├── friend.py
+│       ├── trip.py
+│       ├── trip_package.py
+│       └── expense.py
+├── Database/
+│   └── tables.sql              # Database schema
+├── main.py                     # Application entry point
+├── requirements.txt
+├── .env.example
+└── README.md
 ```
 
-## Integrate with your tools
+## Setup Instructions
 
-- [ ] [Set up project integrations](https://git.kntu.ac.ir/system-design-analysis/4041/team2/iran-gard/-/settings/integrations)
+### 1. Prerequisites
+- Python 3.10+
+- PostgreSQL 12+
+- Virtual environment tool
 
-## Collaborate with your team
+### 2. Installation
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+```powershell
+# Create virtual environment
+python -m venv .venv
 
-## Test and Deploy
+# Activate virtual environment
+.\.venv\Scripts\Activate.ps1
 
-Use the built-in continuous integration in GitLab.
+# Install dependencies
+pip install -r requirements.txt
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+### 3. Database Setup
 
-***
+```powershell
+# Create PostgreSQL database
+# Using psql or pgAdmin, create a database named 'iran_gard'
 
-# Editing this README
+# Run the schema file
+psql -U postgres -d iran_gard -f Database\tables.sql
+```
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+### 4. Environment Configuration
 
-## Suggestions for a good README
+```powershell
+# Copy example env file
+copy .env.example .env
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+# Edit .env and update:
+# - DATABASE_URL (your PostgreSQL connection string)
+# - SECRET_KEY (generate a secure random key)
+```
 
-## Name
-Choose a self-explaining name for your project.
+### 5. Run the Application
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+```powershell
+# Development mode with auto-reload
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+The API will be available at:
+- **API Base:** http://localhost:8000
+- **Interactive Docs:** http://localhost:8000/api/v1/docs
+- **ReDoc:** http://localhost:8000/api/v1/redoc
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## API Documentation
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+Once the server is running, visit http://localhost:8000/api/v1/docs for interactive API documentation with Swagger UI.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### Key Endpoints
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+#### Authentication
+- `POST /api/v1/auth/register` - Register new user
+- `POST /api/v1/auth/login` - Login and get JWT token
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+#### Users
+- `GET /api/v1/users/me` - Get current user info
+- `GET /api/v1/users/search?q={query}` - Search users
+- `POST /api/v1/users/me/favorite-categories` - Add favorite category
+
+#### Friends
+- `POST /api/v1/friends/requests` - Send friend request
+- `GET /api/v1/friends/requests/pending` - Get pending requests
+- `GET /api/v1/friends` - Get friends list
+
+#### Trips
+- `POST /api/v1/trips` - Create new trip
+- `GET /api/v1/trips/my-trips` - Get user's trips
+- `POST /api/v1/trips/{trip_id}/invitations` - Invite friend to trip
+- `POST /api/v1/trips/{trip_id}/places` - Add place to trip
+
+#### Places
+- `GET /api/v1/places?city_name={city}` - Get places by city
+- `GET /api/v1/places?user_preferences=true` - Get personalized places
+- `POST /api/v1/places/{place_id}/like` - Like a place
+- `POST /api/v1/places/{place_id}/comments` - Comment on place
+
+#### Expenses
+- `POST /api/v1/expenses/trips/{trip_id}/expenses` - Create expense
+- `GET /api/v1/expenses/trips/{trip_id}/summary` - Get expense summary & settlements
+
+## Development Workflow
+
+### Adding New Features
+
+1. **Create Model** in `app/models/`
+2. **Create Schema** in `app/schemas/`
+3. **Create CRUD operations** in `app/crud/`
+4. **Create API endpoint** in `app/api/v1/endpoints/`
+5. **Register router** in `app/api/v1/api.py`
+
+### Code Style
+
+- Follow PEP 8 guidelines
+- Use type hints consistently
+- Write clear docstrings
+- Keep functions focused and single-purpose
+
+## Database Schema Highlights
+
+- **Users & Authentication:** JWT-based auth with hashed passwords
+- **Friend System:** Mutual friend requests with auto-friendship trigger
+- **Trips:** Multi-city trips with member management
+- **Places:** JSONB location data, categories, photos, likes, comments
+- **Expenses:** Detailed tracking with automatic share calculation
+- **Voting:** React system for both places and packages
+
+## Next Steps (To Implement)
+
+1. **Auto-Plan Algorithm** (`app/services/auto_planner.py`)
+   - Implement trip package generation based on:
+     - Trip duration
+     - Member preferences
+     - Place proximity (JSONB location data)
+     - Daily time constraints
+
+2. **Settlement Optimization**
+   - Improve debt settlement algorithm to minimize transactions
+
+3. **File Upload**
+   - Implement photo upload for places
+   - Add cloud storage integration (S3/MinIO)
+
+4. **Trip Reviews**
+   - Add rating and review system after trip completion
+   - Store ratings in place_comments table
+
+5. **Database Migrations**
+   - Set up Alembic for schema versioning
+   - Create initial migration from tables.sql
+
+6. **Testing**
+   - Add pytest test suite
+   - Implement endpoint testing
+   - Add CRUD operation tests
 
 ## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+This is a university project. For questions or contributions, contact the team members.
 
 ## License
-For open source projects, say how it is licensed.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Educational project - No license specified
+
+## Team
+
+- Ali Abbasi (Team Lead)
+- Kimia Sadeghi
+- Yasmin Riahi
+- MohammadReza Abedin
+
