@@ -1,7 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 body {
     margin: 0;
+    padding: 0;
     font-family: 'Vazirmatn', sans-serif;
     display: flex;
     justify-content: center;
@@ -18,7 +25,7 @@ body {
     position: relative;
     border-radius: 15px;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.2);
+    background: #A6B28B;
     backdrop-filter: blur(10px);
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
 }
@@ -36,7 +43,7 @@ body {
 
 .bg-login {
     left: 0;
-    background-image: url('photo.png');
+    background-image: url('photo1.png');
 }
 
 .bg-signup {
@@ -57,12 +64,15 @@ body {
     top: 50%;
     transform: translateY(-50%);
     width: 300px;
-    padding: 2rem;
-    border-radius: 15px;
-    display: none;
-    flex-direction: column;
-    gap: 1rem;
+    padding: 60px 20px;
     z-index: 2;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.panel.active {
+    opacity: 1;
+    animation: panelSlide 0.8s ease forwards;
 }
 
 .login-panel {
@@ -73,15 +83,10 @@ body {
     left: 30px;
 }
 
-.active {
-    display: flex;
-    animation: fadeIn 1s ease;
-}
-
-@keyframes fadeIn {
+@keyframes panelSlide {
     from {
         opacity: 0;
-        transform: translateY(-60%);
+        transform: translateY(-50%) translateY(40px);
     }
     to {
         opacity: 1;
@@ -89,62 +94,74 @@ body {
     }
 }
 
+h2 {
+    text-align: center;
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 28px;
+    font-weight: 600;
+}
+
 input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 20px;
+    width: 100%;
+    padding: 15px 20px;
+    margin: 2px;
+    border: 2px solid #e2e2e2;
+    border-radius: 28px;
+    font-family: inherit;
+    font-size: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.35s ease;
 }
 
-button {
-    background-color: white;
-    color: black;
+input:focus {
+    outline: none;
+    border-color: #A6B28B;
+    background: white;
+    box-shadow: 0 0 0 5px rgba(166, 178, 139, 0.25);
+}
+
+.panel > button {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #A6B28B, #8f9a6f);
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
     border: none;
-    padding: 10px;
-    border-radius: 20px;
+    border-radius: 28px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    margin-top: 10px;
+    transition: all 0.4s ease;
+    box-shadow: 0 8px 28px rgba(166, 178, 139, 0.4);
 }
 
-button:hover {
-    box-shadow: 0 5px 20px rgba(245, 201, 176, 0.8);
-    background-color: rgba(245, 201, 176, 1);
+.panel > button:hover {
+    transform: translateY(-4px);
+    background: linear-gradient(135deg, #8f9a6f, #7a855c);
+    box-shadow: 0 15px 38px rgba(166, 178, 139, 0.5);
 }
 
 p {
-    font-size: 16px;
+    text-align: center;
+    margin-top: 22px;
+    color: #555;
+    font-size: 15px;
 }
 
 p button {
     background: none;
-    cursor: pointer;
-}
-
-.signup-panel button {
-    background-color: white;
-    color: black;
     border: none;
-    padding: 10px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-#signupTrigger {
-    background: none;
-    border: 2px solid #cccccc;
-    cursor: pointer;
-    font-size: 15px;
-}
-
-.signup-panel button:hover {
-    background-color: rgba(166, 178, 139, 1);
-    box-shadow: 0 5px 20px rgba(166, 178, 139, 0.8);
-}
-
-#loginTrigger {
-    background: none;
-    border: 2px solid #cccccc;
+    color: #A6B28B;
     font-weight: bold;
+    font-size: 16px;
     cursor: pointer;
-    font-size: 15px;
+    text-decoration: underline;
+    padding: 0;
+    margin-right: 6px;
+    transition: color 0.3s;
+}
+
+p button:hover {
+    color: #7a855c;
 }
