@@ -1,10 +1,16 @@
+
+
 CREATE TYPE trip_status AS ENUM ('planning','finished');
+CREATE TYPE gender_type AS ENUM ('Male','Female');
+
 
 CREATE TABLE users (
     user_id     BIGSERIAL PRIMARY KEY,
     username    VARCHAR(50)  UNIQUE NOT NULL,
     email       VARCHAR(100) UNIQUE NOT NULL,
-    user_password    VARCHAR(255) NOT NULL
+    user_password    VARCHAR(255) NOT NULL,
+    gender      gender_type DEFAULT 'Male',
+	profile_url      VARCHAR(500) NOT NULL
 );
 
 CREATE TABLE categories (
@@ -25,20 +31,26 @@ CREATE TABLE cities (
     city_name VARCHAR(100) PRIMARY KEY
 );
 
+CREATE TABLE provinces (
+    province_name VARCHAR(100) PRIMARY KEY
+);
+
 CREATE TABLE places (
     place_id    BIGSERIAL PRIMARY KEY,
     place_name  VARCHAR(100) NOT NULL,
     city_name VARCHAR(100) NOT NULL,
+	province_name VARCHAR(100) NOT NULL,
     place_location JSONB,
     description TEXT,
     category_id BIGINT NOT NULL,
     FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL,
-	FOREIGN KEY (city_name) REFERENCES cities(city_name) ON DELETE SET NULL
+	FOREIGN KEY (city_name) REFERENCES cities(city_name) ON DELETE SET NULL,
+	FOREIGN KEY (province_name) REFERENCES provinces(province_name) ON DELETE SET NULL
 	
 );
 CREATE INDEX idx_places_city ON places(city_name);
 
-CREATE TABLE photos (
+CREATE TABLE place_photos (
     photo_num BIGSERIAL,
     place_id BIGINT NOT NULL,
     url      VARCHAR(500) NOT NULL,
