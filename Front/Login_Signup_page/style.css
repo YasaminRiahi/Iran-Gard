@@ -1,167 +1,253 @@
 @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
 
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    margin: 0;
-    padding: 0;
     font-family: 'Vazirmatn', sans-serif;
+    background: #fff;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     direction: rtl;
-    background: #e9e9e9;
-    font-size: 15px;
 }
 
 .wrapper {
     width: 850px;
-    height: 500px;
+    height: 520px;
     position: relative;
-    border-radius: 15px;
+    border-radius: 20px;
     overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
     background: #A6B28B;
+}
+
+.wrapper.forgot-mode::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(245, 201, 176, 0.7);
+    z-index: 10;
+    border-radius: 20px;
     backdrop-filter: blur(10px);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
 }
 
 .background {
     position: absolute;
     top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     background-size: cover;
     background-position: center;
-    transition: transform 1s ease-in-out;
+    transition: transform 1.2s cubic-bezier(0.7, 0, 0.3, 1);
     z-index: 1;
 }
 
 .bg-login {
-    left: 0;
-    background-image: url('photo1.png');
+    background-image: url("photo1.png");
 }
 
 .bg-signup {
+    background-image: url("photo2.png");
     left: -100%;
-    background-image: url('photo2.png');
 }
 
-.show-signup .bg-login {
-    transform: translateX(100%) !important;
+.wrapper.show-signup .bg-login {
+    transform: translateX(100%);
 }
 
-.show-signup .bg-signup {
-    transform: translateX(100%) !important;
+.wrapper.show-signup .bg-signup {
+    transform: translateX(100%);
+}
+
+.wrapper.forgot-mode .background {
+    filter: blur(12px) brightness(0.9);
+    transition: filter 0.7s ease, transform 0.7s ease;
 }
 
 .panel {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 300px;
-    padding: 60px 20px;
+    width: 310px;
+    padding: 30px 10px;
     z-index: 2;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    visibility: hidden;
+    transition: all 0.5s ease;
 }
 
 .panel.active {
     opacity: 1;
-    animation: panelSlide 0.8s ease forwards;
+    visibility: visible;
 }
 
 .login-panel {
-    right: 30px;
+    right: 20px;
 }
 
 .signup-panel {
-    left: 30px;
+    left: 20px;
 }
 
-@keyframes panelSlide {
-    from {
-        opacity: 0;
-        transform: translateY(-50%) translateY(40px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(-50%);
-    }
+.forgot-panel {
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 370px !important;
+    max-width: 90vw;
+    padding: 45px 35px !important;
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 26px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+    z-index: 30 !important;
+    border: 1px solid rgba(143, 161, 121, 0.25);
+}
+
+.logo {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 38px;
+    font-weight: 700;
+    text-align: center;
+    color: #A6B28B;
+}
+
+.logo.small {
+    font-size: 28px;
+    margin-bottom: 8px;
 }
 
 h2 {
     text-align: center;
-    font-size: 28px;
-    color: #2c3e50;
-    margin-bottom: 28px;
-    font-weight: 600;
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 12px;
 }
 
-input {
+.subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 15px;
+    margin-bottom: 22px;
+}
+
+.subtitle.small {
+    font-size: 14px;
+}
+
+.input-group {
+    margin: 10px 0;
+}
+
+.input-group input {
     width: 100%;
     padding: 15px 20px;
-    margin: 2px;
-    border: 2px solid #e2e2e2;
-    border-radius: 28px;
-    font-family: inherit;
-    font-size: 15px;
-    background: rgba(255, 255, 255, 0.9);
-    transition: all 0.35s ease;
+    border-radius: 30px;
+    border: 2px solid #ddd;
+    background: rgba(255, 255, 255, 0.95);
+    font-size: 15.5px;
+    transition: all 0.3s;
 }
 
-input:focus {
-    outline: none;
+.input-group input:focus {
     border-color: #A6B28B;
-    background: white;
-    box-shadow: 0 0 0 5px rgba(166, 178, 139, 0.25);
+    box-shadow: 0 0 0 5px rgba(143, 161, 121, 0.22);
+    outline: none;
 }
 
-.panel > button {
+.main-btn {
     width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, #A6B28B, #8f9a6f);
-    color: white;
-    font-size: 17px;
-    font-weight: 600;
+    padding: 15px;
     border: none;
-    border-radius: 28px;
+    border-radius: 30px;
+    margin-top: 5px;
+    background: linear-gradient(135deg, #A6B28B, #768a5f);
+    color: white;
+    font-size: 16.5px;
+    font-weight: 600;
     cursor: pointer;
-    margin-top: 10px;
-    transition: all 0.4s ease;
-    box-shadow: 0 8px 28px rgba(166, 178, 139, 0.4);
+    position: relative;
+    box-shadow: 0 12px 35px rgba(143, 161, 121, 0.45);
+    transition: all 0.3s;
 }
 
-.panel > button:hover {
-    transform: translateY(-4px);
-    background: linear-gradient(135deg, #8f9a6f, #7a855c);
-    box-shadow: 0 15px 38px rgba(166, 178, 139, 0.5);
+.main-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 45px rgba(143, 161, 121, 0.6);
 }
 
-p {
+.main-btn.loading .btn-text {
+    background: #A6B28B;
+    opacity: 0;
+}
+
+.main-btn.loading .loader {
+    display: inline-block;
+}
+
+.loader {
+    width: 24px;
+    height: 24px;
+    border: 3px solid transparent;
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -12px 0 0 -12px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.error-text, .success-text {
+    min-height: 15px;
+    text-align: center;
+    font-size: 14px;
+    margin: 5px 0;
+    font-weight: 500;
+}
+
+.error-text {
+    color: #990000;
+}
+
+.success-text {
+    color: #336600 ;
+}
+
+.links, .bottom-link {
     text-align: center;
     margin-top: 22px;
-    color: #555;
+    color: #666;
     font-size: 15px;
 }
 
-p button {
+.links span {
+    margin: 0 10px;
+    color: #aaa;
+}
+
+.link-btn {
     background: none;
     border: none;
     color: #A6B28B;
-    font-weight: bold;
-    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    text-decoration: underline;
-    padding: 0;
-    margin-right: 6px;
-    transition: color 0.3s;
 }
 
-p button:hover {
-    color: #7a855c;
+.link-btn:hover {
+    text-decoration: underline;
 }
+
