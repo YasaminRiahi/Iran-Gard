@@ -1,15 +1,22 @@
-CREATE TYPE trip_status AS ENUM ('planning','finished');
+
+
+-- CREATE TYPE trip_status AS ENUM ('planning','finished');
+-- CREATE TYPE gender_type AS ENUM ('Male','Female');
+-- CREATE TYPE category_type as ENUM ('Historical','Religious','Entertainment','Nature');
+
 
 CREATE TABLE users (
     user_id     BIGSERIAL PRIMARY KEY,
     username    VARCHAR(50)  UNIQUE NOT NULL,
     email       VARCHAR(100) UNIQUE NOT NULL,
-    user_password    VARCHAR(255) NOT NULL
+    user_password    VARCHAR(255) NOT NULL,
+    gender      gender_type DEFAULT 'Male',
+	profile_url      VARCHAR(500) NOT NULL
 );
 
 CREATE TABLE categories (
     category_id BIGSERIAL PRIMARY KEY,
-    category_name VARCHAR(100) NOT NULL UNIQUE
+    category category_type NOT NULL UNIQUE
 );
 
 CREATE TABLE favorite_categories (
@@ -25,20 +32,26 @@ CREATE TABLE cities (
     city_name VARCHAR(100) PRIMARY KEY
 );
 
+CREATE TABLE provinces (
+    province_name VARCHAR(100) PRIMARY KEY
+);
+
 CREATE TABLE places (
     place_id    BIGSERIAL PRIMARY KEY,
     place_name  VARCHAR(100) NOT NULL,
     city_name VARCHAR(100) NOT NULL,
+	province_name VARCHAR(100) NOT NULL,
     place_location JSONB,
     description TEXT,
     category_id BIGINT NOT NULL,
     FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL,
-	FOREIGN KEY (city_name) REFERENCES cities(city_name) ON DELETE SET NULL
+	FOREIGN KEY (city_name) REFERENCES cities(city_name) ON DELETE SET NULL,
+	FOREIGN KEY (province_name) REFERENCES provinces(province_name) ON DELETE SET NULL
 	
 );
 CREATE INDEX idx_places_city ON places(city_name);
 
-CREATE TABLE photos (
+CREATE TABLE place_photos (
     photo_num BIGSERIAL,
     place_id BIGINT NOT NULL,
     url      VARCHAR(500) NOT NULL,
@@ -209,7 +222,7 @@ CREATE TABLE expenses (
     trip_id      BIGINT NOT NULL,
     payer_id     BIGINT NOT NULL,
     amount       NUMERIC(12,2) NOT NULL CHECK (amount >= 0),
-    category     VARCHAR(100),
+    category     category_type,
     expense_date DATE DEFAULT CURRENT_DATE,
     description  TEXT,
     created_at   TIMESTAMPTZ DEFAULT NOW(),
@@ -249,4 +262,17 @@ CREATE TABLE trip_place_react (
     FOREIGN KEY (place_id) REFERENCES places(place_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
+
+CREATE TABLE verification_codes (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(100) NOT NULL,
+    code VARCHAR(6) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    expires_at TIMESTAMP NOT NULL,
+    is_used BOOLEAN DEFAULT FALSE,
+	code_type VARCHAR(20) DEFAULT 'signup'
+);
+
+CREATE INDEX idx_email_code ON verification_codes(email, code);
+CREATE INDEX idx_expires ON verification_codes(expires_at);
 
