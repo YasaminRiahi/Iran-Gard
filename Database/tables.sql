@@ -262,3 +262,16 @@ CREATE TABLE trip_place_react (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
+CREATE TABLE verification_codes (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(100) NOT NULL,
+    code VARCHAR(6) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    expires_at TIMESTAMP NOT NULL,
+    is_used BOOLEAN DEFAULT FALSE,
+	code_type VARCHAR(20) DEFAULT 'signup'
+);
+
+CREATE INDEX idx_email_code ON verification_codes(email, code);
+CREATE INDEX idx_expires ON verification_codes(expires_at);
+
