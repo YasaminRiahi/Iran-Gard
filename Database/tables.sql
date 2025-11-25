@@ -1,7 +1,8 @@
 
 
-CREATE TYPE trip_status AS ENUM ('planning','finished');
-CREATE TYPE gender_type AS ENUM ('Male','Female');
+-- CREATE TYPE trip_status AS ENUM ('planning','finished');
+-- CREATE TYPE gender_type AS ENUM ('Male','Female');
+-- CREATE TYPE category_type as ENUM ('Historical','Religious','Entertainment','Nature');
 
 
 CREATE TABLE users (
@@ -15,7 +16,7 @@ CREATE TABLE users (
 
 CREATE TABLE categories (
     category_id BIGSERIAL PRIMARY KEY,
-    category_name VARCHAR(100) NOT NULL UNIQUE
+    category category_type NOT NULL UNIQUE
 );
 
 CREATE TABLE favorite_categories (
@@ -221,7 +222,7 @@ CREATE TABLE expenses (
     trip_id      BIGINT NOT NULL,
     payer_id     BIGINT NOT NULL,
     amount       NUMERIC(12,2) NOT NULL CHECK (amount >= 0),
-    category     VARCHAR(100),
+    category     category_type,
     expense_date DATE DEFAULT CURRENT_DATE,
     description  TEXT,
     created_at   TIMESTAMPTZ DEFAULT NOW(),
