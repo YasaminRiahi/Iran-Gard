@@ -474,11 +474,11 @@
 }
 
 .u-section-3 .u-text-2 {
-  --animation-custom_in-scale: 0.3;
+  font-size: 1.5rem;
+  font-family: Anjoman-Bold;
+  filter: none;
   --animation-custom_in-translate_x: 0px;
   --animation-custom_in-translate_y: 300px;
-  font-size: 1.5rem;
-  font-family: Anjoman-Regular;
   margin: 0;
 }
 
@@ -529,10 +529,10 @@
 
 .u-section-3 .u-text-4 {
   font-size: 1.5rem;
-  --animation-custom_in-scale: 0.3;
+  font-family: Anjoman-Bold;
+  filter: none;
   --animation-custom_in-translate_x: 0px;
   --animation-custom_in-translate_y: 300px;
-  font-family: Anjoman-Regular;
   margin: 0;
 }
 
@@ -583,11 +583,11 @@
 
 .u-section-3 .u-text-6 {
   font-size: 1.5rem;
-  --animation-custom_in-scale: 0.3;
+  font-family: Anjoman-Bold;
+  font-weight: 400;
+  filter: none;
   --animation-custom_in-translate_x: 0px;
   --animation-custom_in-translate_y: 300px;
-  font-weight: 700;
-  font-family: Anjoman-Regular;
   margin: 0;
 }
 
@@ -638,11 +638,11 @@
 
 .u-section-3 .u-text-8 {
   font-size: 1.5rem;
-  --animation-custom_in-scale: 0.3;
+  font-family: Anjoman-Bold;
+  font-weight: 400;
+  filter: none;
   --animation-custom_in-translate_x: 0px;
   --animation-custom_in-translate_y: 300px;
-  font-weight: 700;
-  font-family: Anjoman-Regular;
   margin: 0;
 }
 
@@ -693,11 +693,11 @@
 
 .u-section-3 .u-text-10 {
   font-size: 1.5rem;
-  --animation-custom_in-scale: 0.3;
+  font-family: Anjoman-Bold;
+  font-weight: 400;
+  filter: none;
   --animation-custom_in-translate_x: 0px;
   --animation-custom_in-translate_y: 300px;
-  font-weight: 700;
-  font-family: Anjoman-Regular;
   margin: 0;
 }
 
@@ -748,11 +748,11 @@
 
 .u-section-3 .u-text-12 {
   font-size: 1.5rem;
-  --animation-custom_in-scale: 0.3;
+  font-family: Anjoman-Bold;
+  font-weight: 400;
+  filter: none;
   --animation-custom_in-translate_x: 0px;
   --animation-custom_in-translate_y: 300px;
-  font-weight: 700;
-  font-family: Anjoman-Regular;
   margin: 0;
 }
 
@@ -791,6 +791,7 @@
   }
 
   .u-section-3 .u-text-2 {
+    --animation-custom_in-scale: 0.3;
     font-size: 1.25rem;
   }
 
@@ -800,6 +801,7 @@
 
   .u-section-3 .u-text-4 {
     font-size: 1.25rem;
+    --animation-custom_in-scale: 0.3;
   }
 
   .u-section-3 .u-group-3 {
@@ -808,6 +810,7 @@
 
   .u-section-3 .u-text-6 {
     font-size: 1.25rem;
+    --animation-custom_in-scale: 0.3;
   }
 
   .u-section-3 .u-group-4 {
@@ -816,6 +819,7 @@
 
   .u-section-3 .u-text-8 {
     font-size: 1.25rem;
+    --animation-custom_in-scale: 0.3;
   }
 
   .u-section-3 .u-group-5 {
@@ -824,6 +828,7 @@
 
   .u-section-3 .u-text-10 {
     font-size: 1.25rem;
+    --animation-custom_in-scale: 0.3;
   }
 
   .u-section-3 .u-group-6 {
@@ -832,6 +837,7 @@
 
   .u-section-3 .u-text-12 {
     font-size: 1.25rem;
+    --animation-custom_in-scale: 0.3;
   }
 }
 
@@ -863,7 +869,6 @@
   }
 
   .u-section-3 .u-text-2 {
-    width: auto;
     font-size: 1.5rem;
   }
 
