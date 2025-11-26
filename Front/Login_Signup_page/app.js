@@ -26,6 +26,7 @@ document.getElementById("signupTrigger").onclick = () => {
     wrapper.classList.add("show-signup");
     wrapper.classList.remove("forgot-mode");
     showPanel(panels.signup1);
+
 };
 
 document.getElementById("loginTrigger1").onclick = () => {
@@ -125,7 +126,7 @@ document.getElementById("completeSignupBtn").onclick = async () => {
     const err = document.getElementById("signupError");
 
     err.textContent = "";
-    if (!username) return err.textContent = "نام کاربری را وارد کتید!";
+    if (!username) return err.textContent = "نام کاربری را وارد کنید!";
     if (!password) return err.textContent = "رمز عبور را وارد کنید!";
     if (password !== password2) return err.textContent = "رمزها برابر نیستند";
     if (password.length < 6) return err.textContent = "رمز باید حداقل ۶ کاراکتر باشد!";
@@ -141,8 +142,6 @@ document.getElementById("completeSignupBtn").onclick = async () => {
 
         if (data.success) {
             alert("ثبت‌نام با موفقیت انجام شد!");
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("user", JSON.stringify(data.user));
             location.href = "/dashboard.html";
         } else {
             err.textContent = data.error || "خطا در ثبت‌نام!";
@@ -173,8 +172,6 @@ document.getElementById("loginBtn").onclick = async () => {
         const data = await res.json();
 
         if (data.success) {
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("user", JSON.stringify(data.user));
             location.href = "/dashboard.html";
         } else {
             err.textContent = data.error || "اطلاعات نادرست!";
@@ -245,4 +242,3 @@ document.getElementById("changePasswordBtn").onclick = async () => {
     }
     setLoading(btn, false);
 };
-
