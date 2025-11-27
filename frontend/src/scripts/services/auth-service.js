@@ -1,99 +1,131 @@
-// ==== CONFIG ====
-const API_BASE = "http://localhost:8000/api/auth";
+/**
+ * @fileoverview Authentication service
+ * Handles signup, login, and password reset flows
+ * Stores access token in localStorage after successful login
+ */
 
-// Helper to extract error message from response
-function extractErrorMessage(data) {
-  // If it's a validation error with array of errors
-  if (Array.isArray(data.detail)) {
-    return data.detail.map((err) => err.message || err.msg || err).join("\n");
-  }
+import { apiClient } from "./api-client.js";
 
-  // If it's a single error object with message
-  if (data.detail && typeof data.detail === "object" && data.detail.message) {
-    return data.detail.message;
-  }
+const AUTH_ENDPOINT = "/auth";
 
-  // If detail is a string
-  if (typeof data.detail === "string") {
-    return data.detail;
-  }
-
-  // Fallback to message or error
-  return data.message || data.error || "خطای نامشخص";
+/**
+ * Stores access token in localStorage
+ * Called after successful login or signup
+ * @param {string} token - JWT access token
+ */
+function storeAccessToken(token) {
+  localStorage.setItem("access_token", token);
 }
 
-// Universal POST helper with error handling
-async function apiPost(url, body) {
-  try {
-    const res = await fetch(`${API_BASE}${url}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+/**
+ * SIGNUP FLOW - 3-step process
+ */
 
-    const data = await res.json();
-
-    // If response is not OK (4xx, 5xx), throw error with detail message
-    if (!res.ok) {
-      throw {
-        status: res.status,
-        error: extractErrorMessage(data),
-        data: data,
-      };
-    }
-
-    return data;
-  } catch (err) {
-    // If it's our custom error, return it
-    if (err.error) {
-      return {
-        success: false,
-        error: err.error,
-        status: err.status,
-      };
-    }
-    // Network error or other issue
-    return {
-      success: false,
-      error: "خطا در ارتباط با سرور: " + err.message,
-    };
-  }
-}
-
-// ===========================
-//       SIGNUP API
-// ===========================
+/**
+ * Step 1: Send verification code to email
+ * @param {string} email - User email address
+ * @returns {Promise<Object>} Response with success status
+ */
 export function sendSignUpCode(email) {
-  return apiPost("/send-signup-code", { email });
+  return apiClient.post(
+    `${AUTH_ENDPOINT}/send-signup-code`,
+    { email },
+    { includeAuth: false }
+  );
 }
 
+/**
+ * Step 2: Verify code and get temporary signup token
+ * @param {string} email - User email address
+ * @param {string} code - 6-digit verification code from email
+ * @returns {Promise<Object>} Response with signup_token for step 3
+ */
 export function verifySignupCode(email, code) {
-  return apiPost("/verify-signup-code", { email, code });
+  return apiClient.post(
+    `${AUTH_ENDPOINT}/verify-signup-code`,
+    { email, code },
+    { includeAuth: false }
+  );
 }
 
-export function completeSignup(email, username, password, signupToken) {
-  return apiPost("/complete-signup", {
-    email,
-    username,
-    password,
-    signup_token: signupToken,
-  });
+/**
+ * Step 3: Complete signup by creating account
+ * Must be called after verifySignupCode with the signup_token
+ * @param {string} email - User email address
+ * @param {string} username - Desired username
+ * @param {string} password - Desired password
+ * @param {string} signupToken - Temporary token from step 2
+ * @returns {Promise<Object>} Response with access_token on success
+ */
+export async function completeSignup(email, username, password, signupToken) {
+  const response = await apiClient.post(
+    `${AUTH_ENDPOINT}/complete-signup`,
+    { email, username, password, signup_token: signupToken },
+    { includeAuth: false }
+  );
+
+  // Store token on successful signup
+  if (response.access_token) {
+    storeAccessToken(response.access_token);
+  }
+
+  return response;
 }
 
-// ===========================
-//         LOGIN API
-// ===========================
-export function login(username, password) {
-  return apiPost("/login", { username, password });
+/**
+ * LOGIN
+ */
+
+/**
+ * Login with username and password
+ * Stores access token in localStorage on successful login
+ * @param {string} username - Username
+ * @param {string} password - Password
+ * @returns {Promise<Object>} Response with access_token on success
+ */
+export async function login(username, password) {
+  const response = await apiClient.post(
+    `${AUTH_ENDPOINT}/login`,
+    { username, password },
+    { includeAuth: false }
+  );
+
+  // Store token on successful login
+  if (response.access_token) {
+    storeAccessToken(response.access_token);
+  }
+
+  return response;
 }
 
-// ===========================
-//     PASSWORD RESET API
-// ===========================
+/**
+ * PASSWORD RESET FLOW - 2-step process
+ */
+
+/**
+ * Step 1: Send password reset code to email
+ * @param {string} email - User email address
+ * @returns {Promise<Object>} Response with success status
+ */
 export function sendResetCode(email) {
-  return apiPost("/forgot-password", { email });
+  return apiClient.post(
+    `${AUTH_ENDPOINT}/forgot-password`,
+    { email },
+    { includeAuth: false }
+  );
 }
 
+/**
+ * Step 2: Reset password with verification code
+ * @param {string} email - User email address
+ * @param {string} code - 6-digit verification code from email
+ * @param {string} newPassword - New password
+ * @returns {Promise<Object>} Response with success status
+ */
 export function resetPassword(email, code, newPassword) {
-  return apiPost("/reset-password", { email, code, newPassword });
+  return apiClient.post(
+    `${AUTH_ENDPOINT}/reset-password`,
+    { email, code, new_password: newPassword },
+    { includeAuth: false }
+  );
 }
