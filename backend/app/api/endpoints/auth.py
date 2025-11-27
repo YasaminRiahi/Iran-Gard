@@ -127,10 +127,10 @@ def verify_signup_code(request: VerifyCodeRequest, db: Session = Depends(get_db)
             detail="کد تایید اشتباه یا منقضی است",
         )
 
-    # Generate temporary signup token (15 minutes validity)
+    # Generate temporary signup token
     signup_token = create_access_token(
         data={"email": email, "type": "signup_verification"},
-        expires_delta=timedelta(minutes=15),
+        expires_delta=timedelta(minutes=settings.SIGNUP_TOKEN_EXPIRE_MINUTES),
     )
 
     return {
