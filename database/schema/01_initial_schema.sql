@@ -1,8 +1,8 @@
 
 
--- CREATE TYPE trip_status AS ENUM ('planning','finished');
--- CREATE TYPE gender_type AS ENUM ('Male','Female');
--- CREATE TYPE category_type as ENUM ('Historical','Religious','Entertainment','Nature');
+CREATE TYPE trip_status AS ENUM ('planning','finished');
+CREATE TYPE gender_type AS ENUM ('Male','Female');
+CREATE TYPE category_type as ENUM ('Historical','Religious','Entertainment','Nature');
 
 
 CREATE TABLE users (

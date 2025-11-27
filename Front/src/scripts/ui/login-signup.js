@@ -138,7 +138,7 @@ document.getElementById("completeSignupBtn").onclick = async () => {
     localStorage.setItem("token_type", data.token_type || "bearer");
     // Redirect after short delay to ensure storage
     setTimeout(
-      () => (window.location.href = "./Main_Pages/Home-Page.html"),
+      () => (window.location.href = "./Main_Pages/home.html"),
       100
     );
   } else {
@@ -171,7 +171,7 @@ document.getElementById("loginBtn").onclick = async () => {
     localStorage.setItem("token_type", data.token_type || "bearer");
     // Redirect after short delay to ensure storage
     setTimeout(
-      () => (window.location.href = "./Main_Pages/Home-Page.html"),
+      () => (window.location.href = "./Main_Pages/home.html"),
       100
     );
   } else {

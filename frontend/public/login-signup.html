@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ایران‌گرد | ورود و ثبت‌نام</title>
+    <link rel="stylesheet" href="../src/styles/pages/login-signup.css">
+    <link rel="stylesheet" href="../src/styles/responsive/login-signup-responsive.css">
+</head>
+<body>
+
+<div class="wrapper" id="wrapper">
+
+    <div class="background bg-login"></div>
+    <div class="background bg-signup"></div>
+
+    <div class="panel login-panel active" id="loginPanel">
+        <div class="logo">ایران‌گرد</div>
+        <h2>خوش آمدی!</h2>
+
+        <div class="input-group">
+            <input type="text" id="loginUsername" placeholder="نام کاربری" autocomplete="username">
+        </div>
+        <div class="input-group">
+            <input type="password" id="loginPassword" placeholder="رمز عبور">
+        </div>
+
+        <div class="error-text" id="loginError"></div>
+
+        <button id="loginBtn" class="main-btn">
+            <span class="btn-text">ورود</span>
+            <div class="loader"></div>
+        </button>
+
+        <div class="links">
+            <button id="forgotTrigger" class="link-btn">فراموشی رمز؟</button>
+            <span> | </span>
+            <button id="signupTrigger" class="link-btn">ثبت‌نام</button>
+        </div>
+    </div>
+
+    <div class="panel signup-panel" id="signupStep1Panel">
+        <div class="logo">ایران‌گرد</div>
+        <h2>به جمع ما بپیوند</h2>
+        <p class="subtitle">ایمیلت رو وارد کن تا کد تأیید بفرستیم</p>
+
+        <div class="input-group">
+            <input type="email" id="signupEmail" placeholder="ایمیل معتبر">
+        </div>
+
+        <div class="error-text" id="emailError"></div>
+        <div class="success-text" id="emailSuccess"></div>
+
+        <button id="sendCodeBtn" class="main-btn">
+            <span class="btn-text">ارسال کد تأیید</span>
+            <div class="loader"></div>
+        </button>
+
+        <p class="bottom-link">قبلاً ثبت‌نام کردی؟
+            <button id="loginTrigger1" class="link-btn">ورود</button>
+        </p>
+    </div>
+
+    <div class="panel signup-panel" id="signupStep2Panel">
+        <div class="logo">ایران‌گرد</div>
+        <p class="subtitle">کد ۶ رقمی ارسال‌شده به ایمیلت رو وارد کن</p>
+
+        <div class="input-group">
+            <input type="text" id="verifyCode" placeholder="کد تأیید" maxlength="6" autocomplete="off">
+        </div>
+
+        <div class="error-text" id="verifyError"></div>
+        <div class="success-text" id="verifySuccess"></div>
+
+        <button id="verifyCodeBtn" class="main-btn">
+            <span class="btn-text">تأیید کد</span>
+            <div class="loader"></div>
+        </button>
+
+        <p class="bottom-link">
+            <button id="resendCode" class="link-btn">ارسال مجدد کد</button>
+        </p>
+    </div>
+
+    <div class="panel signup-panel" id="signupStep3Panel">
+        <div class="logo">ایران‌گرد</div>
+        <p class="subtitle">اطلاعات نهایی رو وارد کن</p>
+
+        <div class="input-group">
+            <input type="text" id="username" placeholder="نام کاربری (لاتین)">
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="رمز عبور (حداقل ۶ کاراکتر)">
+        </div>
+        <div class="input-group">
+            <input type="password" id="password2" placeholder="تکرار رمز عبور">
+        </div>
+
+        <div class="error-text" id="signupError"></div>
+
+        <button id="completeSignupBtn" class="main-btn">
+            <span class="btn-text">ثبت‌نام نهایی</span>
+            <div class="loader"></div>
+        </button>
+    </div>
+
+    <div class="panel forgot-panel" id="forgotPanel">
+        <div class="logo small">بازیابی رمز</div>
+        <p class="subtitle small">ایمیل ثبت‌شده را وارد کن</p>
+
+        <div class="input-group">
+            <input type="email" id="forgotEmail" placeholder="ایمیل">
+        </div>
+
+        <div class="error-text" id="forgotError"></div>
+        <div class="success-text" id="forgotSuccess"></div>
+
+        <button id="sendResetCodeBtn" class="main-btn">
+            <span class="btn-text">ارسال کد</span>
+            <div class="loader"></div>
+        </button>
+
+        <p class="bottom-link">
+            <button id="backToLogin" class="link-btn">بازگشت به ورود</button>
+        </p>
+    </div>
+
+    <div class="panel forgot-panel" id="resetPasswordPanel">
+        <div class="logo small">رمز جدید</div>
+        <p class="subtitle small">کد را وارد کن و رمز جدید بساز</p>
+
+        <div class="input-group">
+            <input type="text" id="resetCode" placeholder="کد" maxlength="6">
+        </div>
+        <div class="input-group">
+            <input type="password" id="newPassword" placeholder="رمز جدید">
+        </div>
+        <div class="input-group">
+            <input type="password" id="newPassword2" placeholder="تکرار رمز">
+        </div>
+
+        <div class="error-text" id="resetError"></div>
+
+        <button id="changePasswordBtn" class="main-btn">
+            <span class="btn-text">تغییر رمز</span>
+            <div class="loader"></div>
+        </button>
+    </div>
+
+</div>
+
+<script type="module" src="../src/scripts/ui/login-signup.js"></script>
+
+</body>
+</html>

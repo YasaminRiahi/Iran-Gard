@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
 from app.core.config import settings
+from app.core.exceptions import validation_exception_handler
 from app.api.api import api_router
 from app.utils.email_service import EmailService, set_email_service
 
@@ -8,6 +10,8 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     openapi_url=f"{settings.API_STR}/openapi.json",
+    docs_url=f"{settings.API_STR}/docs",
+    redoc_url=f"{settings.API_STR}/redoc",
 )
 
 # Set up CORS
@@ -18,6 +22,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Register custom exception handler for validation errors
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
 
 # Initialize Email Service if configured
 if settings.EMAIL_ADDRESS and settings.EMAIL_PASSWORD:
