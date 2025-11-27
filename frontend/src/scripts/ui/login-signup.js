@@ -20,6 +20,7 @@ const panels = {
 
 let tempEmail = "";
 let resetEmail = "";
+let signupToken = ""; // Store temporary signup token from Step 2
 
 function showPanel(panel) {
   Object.values(panels).forEach((p) => p.classList.remove("active"));
@@ -118,6 +119,8 @@ document.getElementById("verifyCodeBtn").onclick = async () => {
   setLoading(btn, false);
 
   if (data.success) {
+    // Store signup token from Step 2 to use in Step 3
+    signupToken = data.signup_token;
     showPanel(panels.signup3);
   } else {
     displayError(err, data.error);
@@ -144,7 +147,7 @@ document.getElementById("completeSignupBtn").onclick = async () => {
     return (err.textContent = "رمز عبور باید حداقل ۶ کاراکتر باشد.");
 
   setLoading(btn, true);
-  const data = await completeSignup(tempEmail, username, password);
+  const data = await completeSignup(tempEmail, username, password, signupToken);
   setLoading(btn, false);
 
   if (data.access_token) {

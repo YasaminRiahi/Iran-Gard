@@ -77,6 +77,9 @@ class CompleteSignupRequest(BaseModel):
     email: EmailStr
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=6, max_length=100)
+    signup_token: str = Field(
+        ..., description="Temporary token from verify-signup-code"
+    )
 
 
 class ForgotPasswordRequest(BaseModel):

@@ -6,7 +6,11 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.core.security import create_access_token, verify_password
+from app.core.security import (
+    create_access_token,
+    verify_password,
+    decode_access_token,
+)
 from app.core.config import settings
 from app.db.session import get_db
 from app.schemas.user import (
@@ -111,6 +115,7 @@ def verify_signup_code(request: VerifyCodeRequest, db: Session = Depends(get_db)
     Step 2: Verify the code sent to email.
 
     Check if code is valid and not expired.
+    Returns a temporary signup token valid for 15 minutes.
     """
     email = request.email.lower()
     code = request.code.strip()
@@ -122,7 +127,18 @@ def verify_signup_code(request: VerifyCodeRequest, db: Session = Depends(get_db)
             detail="کد تایید اشتباه یا منقضی است",
         )
 
-    return {"success": True, "message": "کد تایید شد", "email": email}
+    # Generate temporary signup token (15 minutes validity)
+    signup_token = create_access_token(
+        data={"email": email, "type": "signup_verification"},
+        expires_delta=timedelta(minutes=15),
+    )
+
+    return {
+        "success": True,
+        "message": "کد تایید شد",
+        "email": email,
+        "signup_token": signup_token,
+    }
 
 
 @router.post("/complete-signup", response_model=Token)
@@ -130,10 +146,22 @@ def complete_signup(request: CompleteSignupRequest, db: Session = Depends(get_db
     """
     Step 3: Complete signup by creating user account.
 
-    Must be done after code verification.
-    Note: In production, you might want to verify the code again here.
+    Must be done after code verification (Step 2).
+    Requires a valid signup_token from the verify-signup-code endpoint.
     """
     email = request.email.lower()
+
+    # ✅ SECURITY: Verify the signup token and check type
+    payload = decode_access_token(request.signup_token)
+    if (
+        not payload
+        or payload.get("type") != "signup_verification"
+        or payload.get("email") != email
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="توکن تایید نامعتبر یا منقضی است. لطفاً دوباره تایید کنید.",
+        )
 
     # Check if email already registered (double-check)
     if user_crud.get_user_by_email(db, email=email):

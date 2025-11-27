@@ -71,8 +71,13 @@ export function verifySignupCode(email, code) {
   return apiPost("/verify-signup-code", { email, code });
 }
 
-export function completeSignup(email, username, password) {
-  return apiPost("/complete-signup", { email, username, password });
+export function completeSignup(email, username, password, signupToken) {
+  return apiPost("/complete-signup", {
+    email,
+    username,
+    password,
+    signup_token: signupToken,
+  });
 }
 
 // ===========================
