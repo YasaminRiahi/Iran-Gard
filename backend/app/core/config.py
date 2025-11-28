@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "dev"  # dev, test, prod
 
     # Database
-    DATABASE_URL: str = "postgresql+psycopg2://postgres:1@localhost:5432/iran-gard"
+    DATABASE_URL: str = "postgresql://postgres:1@localhost:5432/iran-gard"
 
     # Security
     SECRET_KEY: str = "your-secret-key-here-change-in-production"
