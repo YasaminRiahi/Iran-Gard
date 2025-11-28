@@ -4,14 +4,17 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import field_validator
 
 
-# Determine which .env file to use
+# Determine which .env file to use (absolute path to backend folder)
+backend_dir = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
 env_file = os.getenv("ENVIRONMENT", "dev")
 if env_file == "prod":
-    env_file_path = ".env.prod"
+    env_file_path = os.path.join(backend_dir, ".env.prod")
 elif env_file == "test":
-    env_file_path = ".env.test"
+    env_file_path = os.path.join(backend_dir, ".env.test")
 else:
-    env_file_path = ".env.dev"
+    env_file_path = os.path.join(backend_dir, ".env.dev")
 
 
 class Settings(BaseSettings):
@@ -45,12 +48,13 @@ class Settings(BaseSettings):
     EMAIL_ADDRESS: str = ""
     EMAIL_PASSWORD: str = ""
 
-    @field_validator("BACKEND_CORS_ORIGINS", mode="before")
-    @classmethod
-    def assemble_cors_origins(cls, v):
-        if isinstance(v, str):
-            return [i.strip() for i in v.split(",")]
-        return v
+    def __init__(self, **data):
+        super().__init__(**data)
+        # Process CORS origins if it's a string
+        if isinstance(self.BACKEND_CORS_ORIGINS, str):
+            self.BACKEND_CORS_ORIGINS = [
+                i.strip() for i in self.BACKEND_CORS_ORIGINS.split(",")
+            ]
 
 
 settings = Settings()

@@ -16,7 +16,15 @@
  * const places = await apiClient.get('/places', { includeAuth: false });
  */
 
-const API_BASE = "http://localhost:8000/api";
+// Auto-detect API base from frontend's location
+const getAPIBase = () => {
+  const protocol = window.location.protocol;
+  const hostname = window.location.hostname;
+
+  return `${protocol}//${hostname}:8000/api`;
+};
+
+const API_BASE = getAPIBase();
 
 /**
  * Extracts user-friendly error message from API response

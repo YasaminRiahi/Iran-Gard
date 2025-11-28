@@ -1,5 +1,7 @@
 @echo off
-REM Simple HTTP server to serve the front-end
-REM Navigate to frontend directory from tools/scripts/
+REM Live Server for front-end development
+REM Serves with hot reload - changes instantly reflect in browser
+@REM npm install -g live-server --registry https://registry.npmmirror.com
 cd "%~dp0..\..\frontend"
-python -m http.server 3000
+live-server --port=3000
+pause
