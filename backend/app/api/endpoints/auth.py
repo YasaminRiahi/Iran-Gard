@@ -38,9 +38,16 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post("/login", response_model=Token)
 def login(user_login: UserLogin, db: Session = Depends(get_db)):
     """
-    Login with username and password.
+    Authenticate user and return access token.
 
-    Returns JWT access token if credentials are correct.
+    **Flow:**
+    1. Validates username and password against database
+    2. Returns JWT access token valid for 30 minutes (configurable)
+
+    **Errors:**
+    - 401: Username or password incorrect
+
+    **Response:** Token object with access_token and token_type
     """
     username = user_login.username.strip()
     user = user_crud.get_user_by_username(db, username=username)
@@ -71,9 +78,18 @@ def send_signup_code(
     request: SendVerificationCodeRequest, db: Session = Depends(get_db)
 ):
     """
-    Step 1: Send verification code to email for signup.
+    **Signup Step 1:** Send verification code to email.
 
-    Check if email already exists, generate code, and send via email.
+    **Flow:**
+    1. Check if email already registered
+    2. Generate 6-digit code
+    3. Save code (expires in 10 minutes)
+    4. Send code via email
+
+    **Errors:**
+    - 400: Email already registered
+
+    **Response:** Success confirmation with email
     """
     email = request.email.lower()
 
@@ -112,10 +128,18 @@ def send_signup_code(
 @router.post("/verify-signup-code")
 def verify_signup_code(request: VerifyCodeRequest, db: Session = Depends(get_db)):
     """
-    Step 2: Verify the code sent to email.
+    **Signup Step 2:** Verify code and get temporary signup token.
 
-    Check if code is valid and not expired.
-    Returns a temporary signup token valid for 15 minutes.
+    **Flow:**
+    1. Validate 6-digit code against email
+    2. Check code not expired (10 min expiry)
+    3. Mark code as verified
+    4. Generate temporary signup token (15 min valid, type: signup_verification)
+
+    **Errors:**
+    - 400: Code incorrect or expired
+
+    **Response:** Temporary signup_token for step 3
     """
     email = request.email.lower()
     code = request.code.strip()
@@ -144,10 +168,22 @@ def verify_signup_code(request: VerifyCodeRequest, db: Session = Depends(get_db)
 @router.post("/complete-signup", response_model=Token)
 def complete_signup(request: CompleteSignupRequest, db: Session = Depends(get_db)):
     """
-    Step 3: Complete signup by creating user account.
+    **Signup Step 3:** Create user account.
 
-    Must be done after code verification (Step 2).
-    Requires a valid signup_token from the verify-signup-code endpoint.
+    **Prerequisites:** Must complete steps 1 & 2 first
+
+    **Flow:**
+    1. Validate signup_token (must have type: signup_verification, email match)
+    2. Check email not already registered (double-check)
+    3. Check username not taken
+    4. Create user with hashed password (bcrypt)
+    5. Return access token (30 min valid)
+
+    **Errors:**
+    - 401: Invalid or expired signup_token
+    - 400: Email already registered or username taken
+
+    **Response:** Access token for authenticated requests
     """
     email = request.email.lower()
 
@@ -203,9 +239,18 @@ def complete_signup(request: CompleteSignupRequest, db: Session = Depends(get_db
 @router.post("/forgot-password")
 def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
     """
-    Step 1: Send password reset code to email.
+    **Password Reset Step 1:** Send reset code to email.
 
-    Check if email exists and send reset code.
+    **Flow:**
+    1. Check if email exists (silent fail for security)
+    2. Generate 6-digit code
+    3. Save code (expires in 10 minutes)
+    4. Send code via email
+
+    **Errors:**
+    - 404: Email not found (not revealed to user for security)
+
+    **Response:** Success confirmation
     """
     email = request.email.lower()
 
@@ -244,9 +289,19 @@ def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db
 @router.post("/reset-password")
 def reset_password(request: ResetPasswordRequest, db: Session = Depends(get_db)):
     """
-    Step 2: Reset password with code.
+    **Password Reset Step 2:** Update password.
 
-    Verify code and update password.
+    **Flow:**
+    1. Validate reset code (must be unused and not expired)
+    2. Mark code as used (prevent reuse)
+    3. Hash new password with bcrypt
+    4. Update user password in database
+
+    **Errors:**
+    - 400: Code incorrect or expired
+    - 404: Email not found
+
+    **Response:** Success confirmation
     """
     email = request.email.lower()
     code = request.code.strip()
