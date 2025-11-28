@@ -10,9 +10,12 @@ class Place(Base):
     place_id = Column(BigInteger, primary_key=True, index=True, autoincrement=True)
     place_name = Column(String(100), nullable=False)
     city_name = Column(String(100), ForeignKey("cities.city_name", ondelete="SET NULL"), nullable=False, index=True)
+    province_name = Column(String(100), ForeignKey("provinces.province_name", ondelete="SET NULL"), nullable=False)
     place_location = Column(JSONB)
     description = Column(Text)
     category_id = Column(BigInteger, ForeignKey("categories.category_id", ondelete="SET NULL"), nullable=False)
+
+
 
 
 class Photo(Base):
