@@ -59,7 +59,7 @@ done
 
 # Run migrations
 echo "Running database migrations..."
-if docker-compose exec -T backend alembic upgrade head; then
+if docker-compose exec -T backend python -m alembic upgrade head; then
     echo "✓ Migrations completed"
 else
     echo "⚠️  Migrations failed or skipped"
