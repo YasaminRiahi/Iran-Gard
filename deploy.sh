@@ -57,13 +57,9 @@ for i in {1..30}; do
     sleep 1
 done
 
-# Run migrations
-echo "Running database migrations..."
-if docker-compose exec -T backend python -m alembic upgrade head; then
-    echo "✓ Migrations completed"
-else
-    echo "⚠️  Migrations failed or skipped"
-fi
+# Wait for backend to be ready (migrations run in Dockerfile)
+echo "Waiting for backend..."
+sleep 3
 
 # Verify API is running
 echo "Verifying API..."

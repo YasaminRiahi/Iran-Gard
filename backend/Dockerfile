@@ -18,4 +18,4 @@ COPY . .
 EXPOSE 8000
 
 # Run migrations and start application
-CMD ["sh", "-c", "alembic upgrade head && gunicorn -w 4 -b 0.0.0.0:8000 --access-logfile - main:app"]
+CMD ["sh", "-c", "alembic upgrade head && if [ \"$ENVIRONMENT\" = \"dev\" ]; then uvicorn main:app --host 0.0.0.0 --port 8000 --reload; else gunicorn -w 4 -b 0.0.0.0:8000 --access-logfile - main:app; fi"]
