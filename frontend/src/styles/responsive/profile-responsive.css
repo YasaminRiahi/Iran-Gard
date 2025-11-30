@@ -1,0 +1,1229 @@
+/* ========================================
+   RESPONSIVE STYLES FOR PROFILE PAGE
+   ======================================== */
+
+/* ==========================================
+   MOBILE MENU STYLES
+   ========================================== */
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    left: auto;
+    width: 50vw;
+    height: 100vh;
+    background: linear-gradient(135deg, rgba(166, 178, 139, 0.98), rgba(130, 150, 105, 0.98));
+    backdrop-filter: blur(20px);
+    z-index: 1000;
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.3);
+    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 2rem 0;
+    overflow-y: auto;
+}
+
+.mobile-menu.active {
+    right: 0;
+}
+
+
+.mobile-menu-header {
+    padding: 0 2rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mobile-menu-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+.mobile-menu-nav {
+    padding: 2rem 0;
+}
+
+.mobile-menu-item {
+    display: block;
+    padding: 1rem 2rem;
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-right: 1px solid transparent;
+}
+
+.mobile-menu-item:hover,
+.mobile-menu-item.active {
+    background: rgba(255, 255, 255, 0.15);
+    border-right-color: white;
+}
+
+.mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+}
+
+.mobile-menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ==========================================
+   LARGE SCREENS (1024px - 1439px)
+   ========================================== */
+@media (max-width: 1439px) {
+    .organic-avatar-ring {
+        z-index: 30;
+    }
+
+    .organic-content-card {
+        position: relative;
+        z-index: 20;
+    }
+
+    .header-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .organic-content-card {
+        width: 800px;
+        height: 210px;
+    }
+
+    .organic-avatar-ring {
+        width: 240px;
+        height: 240px;
+    }
+
+    .organic-avatar-ring-border {
+        width: 190px;
+        height: 190px;
+    }
+
+    .organic-profile-avatar {
+        width: 160px;
+        height: 160px;
+    }
+}
+
+/* ==========================================
+   TABLETS & SMALL LAPTOPS (768px - 1023px)
+   ========================================== */
+@media (max-width: 1023px) {
+    .organic-avatar-ring {
+        z-index: 30;
+    }
+
+    .organic-content-card {
+        position: relative;
+        z-index: 20;
+    }
+
+    .main-header {
+        width: 100%;
+        left: 0;
+        right: 0;
+    }
+
+    .header-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0 3rem;
+        justify-content: space-between;
+    }
+
+    .header-nav {
+        display: flex !important;
+        flex-grow: 1;
+        justify-content: flex-start;
+        gap: 1.5rem;
+    }
+
+    .menu-toggle-btn {
+        display: none !important;
+    }
+
+    .organic-profile-cover-section {
+        width: 100%;
+        min-height: 400px;
+        margin-right: 0;
+        padding-top: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .organic-content-card {
+        width: 90%;
+        max-width: 700px;
+        height: auto;
+        min-height: 280px;
+        padding: 100px 30px 30px 30px;
+        flex-direction: column;
+        border-radius: 60px;
+        margin: 0 auto;
+    }
+
+    .organic-avatar-ring {
+        position: absolute;
+        top: 20px;
+        right: 0;
+        left: auto;
+        transform: translateX(50%);
+        margin-right: 0;
+        width: 180px;
+        height: 180px;
+    }
+
+    .organic-avatar-ring-border {
+        width: 150px;
+        height: 150px;
+    }
+
+    .organic-profile-avatar {
+        width: 130px;
+        height: 130px;
+        border: 4px solid var(--color-primary);
+    }
+
+    .profile-info-text {
+        width: 100%;
+        margin-right: 0;
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .profile-name {
+        font-size: 2rem;
+    }
+
+    .profile-bio {
+        font-size: 1rem;
+        max-width: 100%;
+        text-align: center;
+    }
+
+    .stats-group {
+        justify-content: center;
+        gap: 3rem;
+        margin-top: 1.5rem;
+    }
+
+    .stat-number {
+        font-size: 1.8rem;
+    }
+
+    .stat-label {
+        font-size: 0.95rem;
+    }
+
+    .organic-shape-1 {
+        width: 400px;
+        height: 400px;
+        left: -100px;
+        bottom: 50px;
+    }
+
+    .organic-shape-2 {
+        width: 150px;
+        height: 150px;
+        left: auto;
+        right: -50px;
+        top: 50px;
+    }
+
+    .tab-buttons-group {
+        gap: 2rem;
+        padding: 1.5rem 0;
+        font-size: 1rem;
+    }
+
+    .tab-button {
+        font-size: 0.95rem;
+    }
+
+    .profile-form-wrapper {
+        padding: 3.5rem 2.5rem;
+        border-radius: 2rem;
+    }
+
+    .form-title {
+        font-size: 1.75rem;
+        margin-bottom: 3rem;
+    }
+
+    .profile-form {
+        gap: 2.3rem;
+    }
+
+    .form-input, .form-textarea {
+        padding: 1.4rem 1.4rem 1.4rem 4.5rem;
+        font-size: 1rem;
+        border-radius: 1.3rem;
+    }
+
+    .form-textarea {
+        min-height: 11rem;
+        padding-right: 4.5rem;
+    }
+
+    .input-icon, .input-icon-textarea {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+
+    .btn-primary {
+        padding: 1.5rem 4rem;
+        font-size: 1.2rem;
+    }
+
+    .friends-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+
+    .friend-card {
+        border-radius: 1.5rem;
+    }
+
+    .friend-image {
+        height: 16rem;
+    }
+
+    .main-footer {
+        min-height: 400px;
+        padding: 2rem 1rem;
+    }
+
+    .cta-text {
+        font-size: 1.3rem;
+    }
+
+    .u-icon {
+        width: 70px;
+        height: 70px;
+    }
+}
+
+/* ==========================================
+   MOBILE DEVICES (481px - 767px)
+   ========================================== */
+@media (max-width: 767px) {
+    .organic-avatar-ring {
+        z-index: 30;
+    }
+
+    .organic-content-card {
+        position: relative;
+        z-index: 20;
+    }
+
+    .main-header {
+        height: 70px;
+        width: 100%;
+        left: 0;
+        right: 0;
+    }
+
+    .header-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0 1.5rem;
+        justify-content: flex-start !important;
+    }
+
+    .logo-icon-wrapper {
+        display: none;
+    }
+
+    .header-nav {
+        display: none !important;
+    }
+
+    .menu-toggle-btn {
+        display: flex !important;
+        width: 45px;
+        height: 45px;
+        font-size: 1.5rem;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .organic-profile-cover-section {
+        width: 100%;
+        min-height: 450px;
+        padding: 200px 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+    }
+
+    .organic-content-card {
+        width: 95%;
+        max-width: 95%;
+        padding: 90px 20px 25px 20px;
+        border-radius: 40px;
+        min-height: 250px;
+        margin: 0 auto;
+    }
+
+    .organic-avatar-ring {
+        position: absolute;
+        top: 20px;
+        right: 0;
+        width: 160px;
+        height: 160px;
+        left: auto;
+        transform: translateX(50%);
+    }
+
+    .organic-avatar-ring-border {
+        width: 130px;
+        height: 130px;
+    }
+
+    .organic-profile-avatar {
+        width: 110px;
+        height: 110px;
+        border: 3px solid var(--color-primary);
+    }
+
+    .camera-icon-label {
+        width: 35px;
+        height: 35px;
+        padding: 0.5rem;
+        bottom: 0.3rem;
+        left: 0.3rem;
+    }
+
+    .camera-icon {
+        font-size: 1rem;
+    }
+
+    .profile-info-text {
+        width: 100%;
+        padding: 0 10px;
+        margin: 0;
+        text-align: center;
+    }
+
+    .profile-name {
+        font-size: 1.6rem;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+
+    .profile-bio {
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        min-height: 1.5em;
+        text-align: center;
+        max-width: 100%;
+    }
+
+    .stats-group {
+        gap: 2rem;
+        margin-top: 1rem;
+        justify-content: center;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+    }
+
+    .organic-shape-1 {
+        width: 300px;
+        height: 300px;
+        left: -120px;
+        bottom: 20px;
+    }
+
+    .organic-shape-2 {
+        width: 120px;
+        height: 120px;
+        right: -60px;
+        top: 30px;
+        left: auto;
+    }
+
+    .tabs-sticky-bar {
+        position: relative;
+    }
+
+    .tabs-container {
+        padding: 0 1rem;
+    }
+
+    .tab-buttons-group {
+        gap: 1.5rem;
+        padding: 1.2rem 0;
+        font-size: 0.9rem;
+        justify-content: center;
+    }
+
+    .tab-button {
+        font-size: 0.85rem;
+        gap: 0.3rem;
+    }
+
+    .tab-button i {
+        font-size: 0.9rem;
+    }
+
+    .main-content-area {
+        padding: 2.5rem 1rem;
+    }
+
+    .profile-form-wrapper {
+        padding: 2.5rem 1.5rem;
+        border-radius: 1.5rem;
+    }
+
+    .form-bg-gradient {
+        width: 350px;
+        height: 350px;
+        top: -20%;
+        right: -20%;
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .form-title::after {
+        width: 80px;
+        height: 4px;
+        bottom: -15px;
+    }
+
+    .profile-form {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .form-input, .form-textarea {
+        padding: 1.2rem 1.2rem 1.2rem 4rem;
+        font-size: 0.95rem;
+        border-radius: 1.2rem;
+    }
+
+    .form-textarea {
+        min-height: 10rem;
+        padding-right: 4rem;
+    }
+
+    .input-icon, .input-icon-textarea {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+        border-radius: 12px;
+        left: 1rem;
+    }
+
+    .input-icon-textarea {
+        right: 1rem;
+        top: 1rem;
+    }
+
+    .form-label-category {
+        font-size: 1rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .form-label-category i {
+        font-size: 1.1rem;
+        margin-left: 0.5rem;
+    }
+
+    .category-checkbox-group {
+        padding-right: 1rem;
+        gap: 1rem;
+        flex-direction: column;
+    }
+
+    .category-checkbox-label {
+        font-size: 0.95rem;
+    }
+
+    .checkbox-custom {
+        height: 20px;
+        width: 20px;
+        margin-left: 0.8rem;
+    }
+
+    .category-checkbox-label input[type="checkbox"]:checked ~ .checkbox-custom:after {
+        left: 6px;
+        top: 2px;
+        width: 5px;
+        height: 11px;
+    }
+
+    .gender-options {
+        gap: 0.8rem;
+        flex-wrap: wrap;
+    }
+
+    .gender-box {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.95rem;
+        border-radius: 1.5rem;
+        min-width: 100px;
+    }
+
+    .gender-box i {
+        font-size: 1.2rem;
+    }
+
+    .btn-primary {
+        padding: 1.3rem 3rem;
+        font-size: 1.1rem;
+        border-radius: 1.3rem;
+    }
+
+    .friends-header {
+        margin-bottom: 2.5rem;
+    }
+
+    .friends-title {
+        font-size: 1.8rem;
+    }
+
+    .friends-subtitle {
+        font-size: 1rem;
+    }
+
+    .friends-divider {
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .divider-line {
+        width: 4rem;
+        height: 0.2rem;
+    }
+
+    .heart-icon {
+        font-size: 1.2rem;
+    }
+
+    .friends-grid {
+        grid-template-columns: 1fr;
+        gap: 1.8rem;
+    }
+
+    .friend-card {
+        border-radius: 1.3rem;
+        box-shadow: 0 4px 15px rgba(245, 201, 176, 0.3);
+    }
+
+    .friend-image {
+        height: 14rem;
+    }
+
+    .friend-details {
+        padding: 1.5rem;
+    }
+
+    .friend-icon-wrapper {
+        width: 3.5rem;
+        height: 3.5rem;
+    }
+
+    .friend-icon {
+        font-size: 1.3rem;
+    }
+
+    .friend-name {
+        font-size: 1.3rem;
+        margin-top: 1.2rem;
+    }
+
+    .friend-stats {
+        font-size: 0.9rem;
+        margin-top: 0.3rem;
+    }
+
+    .friend-popup {
+        padding: 1.5rem 1rem;
+        border-radius: 1.3rem;
+    }
+
+    .popup-avatar {
+        width: 5rem;
+        height: 5rem;
+        border: 3px solid var(--color-white);
+    }
+
+    .popup-name {
+        font-size: 1.1rem;
+        margin-top: 1rem;
+    }
+
+    .popup-bio {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .popup-actions {
+        gap: 0.8rem;
+        margin-top: 1.5rem;
+    }
+
+    .popup-btn-delete {
+        padding: 0.75rem 0.8rem;
+        border-radius: 0.8rem;
+        font-size: 0.9rem;
+        gap: 0.4rem;
+    }
+
+    .add-friend-center-wrapper {
+        padding: 2.5rem 1rem 1rem;
+        margin-top: 1rem;
+    }
+
+    .add-friend-center-btn {
+        padding: 1.2rem 3rem;
+        font-size: 1.1rem;
+        border-radius: 2.5rem;
+        min-width: 250px;
+        gap: 0.8rem;
+    }
+
+    .friends-tabs-nav {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.6rem;
+    }
+
+    .friends-tab-btn {
+        flex: 1 1 calc(50% - 0.5rem);
+        padding: 0.9rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .friends-tab-btn span {
+        display: none;
+    }
+
+    .friends-tab-btn i {
+        font-size: 1.4rem;
+    }
+
+    .main-footer {
+        min-height: 350px;
+        padding: 2rem 1rem;
+    }
+
+    .footer-content-wrapper {
+        gap: 1.5rem;
+        max-width: 100%;
+    }
+
+    .cta-text {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        max-width: 100%;
+    }
+
+    .u-social-icons {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 0;
+    }
+
+    .u-icon {
+        width: 60px;
+        height: 60px;
+        margin: 0;
+    }
+
+    .u-icon svg,
+    .u-icon img {
+        width: 55%;
+        height: 55%;
+    }
+}
+
+/* ==========================================
+   SMALL MOBILE DEVICES (320px - 480px)
+   ========================================== */
+@media (max-width: 480px) {
+    .organic-avatar-ring {
+        z-index: 30;
+    }
+
+    .organic-content-card {
+        position: relative;
+        z-index: 20;
+    }
+
+    .main-header {
+        height: 65px;
+        top: 0.8rem;
+    }
+
+    .header-container {
+        padding: 0 1rem;
+    }
+
+    .logo-icon-wrapper img {
+        width: 120px !important;
+        height: 80px !important;
+    }
+
+    .menu-toggle-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.3rem;
+    }
+
+    .organic-profile-cover-section {
+        min-height: 420px;
+        padding: 160px 0.5rem;
+    }
+
+    .organic-content-card {
+        width: 96%;
+        padding: 85px 15px 20px 15px;
+        border-radius: 35px;
+        min-height: 240px;
+    }
+
+    .organic-avatar-ring {
+        position: absolute;
+        top: 20px;
+        right: 0;
+        width: 150px;
+        height: 150px;
+    }
+
+    .organic-avatar-ring-border {
+        width: 120px;
+        height: 120px;
+    }
+
+    .organic-profile-avatar {
+        width: 100px;
+        height: 100px;
+    }
+
+    .camera-icon-label {
+        width: 32px;
+        height: 32px;
+        padding: 0.45rem;
+    }
+
+    .camera-icon {
+        font-size: 0.95rem;
+    }
+
+    .profile-info-text {
+        padding: 0 8px;
+    }
+
+    .profile-name {
+        font-size: 1.5rem;
+    }
+
+    .profile-bio {
+        font-size: 0.87rem;
+    }
+
+    .stats-group {
+        gap: 1.8rem;
+        flex-direction: row;
+    }
+
+    .stat-number {
+        font-size: 1.4rem;
+    }
+
+    .stat-label {
+        font-size: 0.82rem;
+    }
+
+    .organic-shape-1 {
+        width: 280px;
+        height: 280px;
+        left: -130px;
+    }
+
+    .organic-shape-2 {
+        width: 110px;
+        height: 110px;
+        right: -65px;
+    }
+
+    .tab-buttons-group {
+        gap: 1.2rem;
+        padding: 1rem 0;
+        font-size: 0.85rem;
+    }
+
+    .tab-button {
+        font-size: 0.82rem;
+    }
+
+    .tab-button i {
+        font-size: 0.87rem;
+    }
+
+    .main-content-area {
+        padding: 2rem 0.8rem;
+    }
+
+    .profile-form-wrapper {
+        padding: 2rem 1.2rem;
+        border-radius: 1.3rem;
+    }
+
+    .form-title {
+        font-size: 1.35rem;
+        margin-bottom: 2rem;
+    }
+
+    .profile-form {
+        gap: 1.8rem;
+    }
+
+    .form-input, .form-textarea {
+        padding: 1.1rem 1.1rem 1.1rem 3.8rem;
+        font-size: 0.9rem;
+        border-radius: 1.1rem;
+    }
+
+    .form-textarea {
+        min-height: 9rem;
+        padding-right: 3.8rem;
+    }
+
+    .input-icon, .input-icon-textarea {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+        left: 0.9rem;
+    }
+
+    .input-icon-textarea {
+        right: 0.9rem;
+        top: 0.9rem;
+    }
+
+    .form-label-category {
+        font-size: 0.95rem;
+    }
+
+    .category-checkbox-label {
+        font-size: 0.9rem;
+    }
+
+    .gender-box {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.9rem;
+        min-width: 90px;
+    }
+
+    .btn-primary {
+        padding: 1.2rem 2.5rem;
+        font-size: 1rem;
+    }
+
+    .friends-title {
+        font-size: 1.6rem;
+    }
+
+    .friends-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .friend-image {
+        height: 13rem;
+    }
+
+    .friend-name {
+        font-size: 1.2rem;
+    }
+
+    .btn-icon {
+        width: 35px;
+        height: 35px;
+    }
+
+
+    .search-result-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid var(--color-primary);
+    }
+
+    .search-result-name {
+        font-size: 0.9rem;
+        font-weight: 700;
+        margin-bottom: 0.1rem;
+    }
+
+    .search-result-bio {
+        font-size: 0.6rem;
+    }
+
+    .main-footer {
+        min-height: 320px;
+        padding: 1.8rem 0.8rem;
+    }
+
+    .cta-text {
+        font-size: 1rem;
+    }
+
+    .u-icon {
+        width: 52px;
+        height: 52px;
+    }
+}
+
+/* ==========================================
+   EXTRA SMALL DEVICES (below 375px)
+   ========================================== */
+@media (max-width: 374px) {
+    .organic-avatar-ring {
+        z-index: 30;
+    }
+
+    .organic-content-card {
+        position: relative;
+        z-index: 20;
+    }
+
+    .logo-icon-wrapper img {
+        width: 100px !important;
+        height: 70px !important;
+    }
+
+    .menu-toggle-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 1.2rem;
+    }
+
+    .organic-profile-cover-section {
+        padding-top: 200px !important;
+    }
+
+    .organic-content-card {
+        width: 98%;
+        padding: 80px 12px 18px 12px;
+    }
+
+    .organic-avatar-ring {
+        position: absolute;
+        top: 20px;
+        right: 0;
+        width: 135px;
+        height: 135px;
+    }
+
+    .organic-avatar-ring-border {
+        width: 110px;
+        height: 110px;
+    }
+
+    .organic-profile-avatar {
+        width: 90px;
+        height: 90px;
+    }
+
+    .profile-name {
+        font-size: 1.3rem;
+    }
+
+    .profile-bio {
+        font-size: 0.82rem;
+    }
+
+    .stats-group {
+        gap: 1.5rem;
+    }
+
+    .stat-number {
+        font-size: 1.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.78rem;
+    }
+
+    .tab-button {
+        font-size: 0.78rem;
+    }
+
+    .form-title {
+        font-size: 1.25rem;
+    }
+
+    .form-input, .form-textarea {
+        font-size: 0.87rem;
+        padding: 1rem 3.6rem 1rem 3.6rem;
+    }
+
+    .btn-primary {
+        padding: 1.1rem 2rem;
+        font-size: 0.95rem;
+    }
+
+    .add-friend-center-btn {
+        min-width: 200px;
+        font-size: 0.95rem;
+    }
+
+    .cta-text {
+        font-size: 0.95rem;
+    }
+
+    .u-icon {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+/* ==========================================
+   LANDSCAPE MODE FIXES
+   ========================================== */
+@media (max-height: 600px) and (orientation: landscape) {
+    .organic-avatar-ring {
+        z-index: 30;
+    }
+
+    .organic-content-card {
+        position: relative;
+        z-index: 20;
+    }
+
+    .organic-profile-cover-section {
+        padding-top: 200px !important;
+        min-height: 380px;
+    }
+
+    .organic-content-card {
+        min-height: 250px;
+        padding: 75px 20px 20px 20px;
+    }
+
+    .organic-avatar-ring {
+        width: 150px;
+        height: 150px;
+        top: 40px;
+        right: 0;
+    }
+
+    .organic-avatar-ring-border {
+        width: 130px;
+        height: 130px;
+    }
+
+    .organic-profile-avatar {
+        width: 110px;
+        height: 110px;
+    }
+
+    .camera-icon-label {
+        width: 30px;
+        height: 30px;
+        padding: 0.5rem;
+        bottom: 0.3rem;
+        left: 0.3rem;
+    }
+
+    .camera-icon {
+        font-size: 1rem;
+    }
+
+    .main-footer {
+        min-height: 250px;
+    }
+}
+
+/* ==========================================
+   UTILITY CLASSES FOR RESPONSIVE
+   ========================================== */
+.mobile-only {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .organic-avatar-ring {
+        z-index: 30;
+    }
+
+    .organic-content-card {
+        position: relative;
+        z-index: 20;
+    }
+
+    .mobile-only {
+        display: block;
+    }
+
+    .desktop-only {
+        display: none;
+    }
+}
+
+/* Prevent horizontal scroll on all devices */
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .tab-button,
+    .gender-box,
+    .category-checkbox-label,
+    .popup-btn-delete,
+    .add-friend-center-btn,
+    .menu-toggle-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
