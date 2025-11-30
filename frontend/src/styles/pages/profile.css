@@ -1,3 +1,37 @@
+/* ================================================================
+   Table of Contents:
+   1. Font Declarations
+   2. CSS Variables & Root Configuration
+   3. Global Resets & Base Styles
+   4. Scrollbar Styling
+   5. Header & Navigation
+   6. Profile Cover Section
+   7. Profile Avatar & Info
+   8. Tabs Navigation System
+   9. Main Content Area
+   10. Profile Form Styling
+   11. Form Input Groups & Icons
+   12. Gender Selection Radio Buttons
+   13. Category Checkboxes
+   14. Friends Section Header
+   15. Friends Grid & Cards
+   16. Friend Card Hover Effects & Popup
+   17. Friends Tab Navigation System
+   18. Search Section & Results
+   19. Empty State Styling
+   21. Organic Profile Header Design
+   22. Organic Shapes & Animations
+   23. Footer Section
+   24. Social Media Icons
+   25. Scroll Animations & Data Attributes
+   26. Utility Classes
+   ================================================================ */
+
+
+/* ================================================================
+   1. FONT DECLARATIONS
+   ================================================================ */
+
 @font-face {
     font-family: 'Anjoman';
     src: url('../../assets/fonts/Anjoman-Regular.woff2') format('woff2');
@@ -13,16 +47,34 @@
     font-style: normal;
     font-display: swap;
 }
+
+
+/* ================================================================
+   2. CSS VARIABLES & ROOT CONFIGURATION
+   ================================================================ */
+
 :root {
+    /* Color Palette */
     --color-primary: #A6B28B;
     --color-primary-dark: #8f9b6a;
     --color-accent: #F5C9B0;
+
+    /* Text Colors */
     --color-text-dark: #1f2937;
     --color-text-medium: #4b5563;
+
+    /* Background Colors */
     --color-bg-light: #FAFAFA;
     --color-white: #ffffff;
+
+    /* Border Colors */
     --color-border: #e2e8f0;
 }
+
+
+/* ================================================================
+   3. GLOBAL RESETS & BASE STYLES
+   ================================================================ */
 
 * {
     box-sizing: border-box;
@@ -38,7 +90,6 @@ html.loaded {
     scroll-behavior: smooth;
 }
 
-
 body {
     font-family: 'Anjoman', sans-serif;
     background: var(--color-bg-light);
@@ -48,16 +99,34 @@ body {
     overflow-x: hidden;
 }
 
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: #f1f1f1; }
+
+/* ================================================================
+   4. SCROLLBAR STYLING
+   ================================================================ */
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
 ::-webkit-scrollbar-thumb {
     background: var(--color-primary);
     border-radius: 5px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
     background: var(--color-primary-dark);
 }
 
+
+/* ================================================================
+   5. HEADER & NAVIGATION
+   ================================================================ */
+
+/* Main Header Container */
 .main-header {
     width: 100%;
     height: 90px;
@@ -72,31 +141,35 @@ body {
     -webkit-backdrop-filter: blur(20px);
 }
 
-.logo-icon-wrapper {
-    margin-top: 1vh;
-}
-
 .main-header.hide {
     opacity: 0;
     pointer-events: none;
 }
 
+/* Header Inner Container */
 .header-container {
     height: 100%;
     margin: 0 23vh;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap:2rem;
+    gap: 2rem;
 }
 
+/* Logo Wrapper */
+.logo-icon-wrapper {
+    margin-top: 1vh;
+}
+
+/* Navigation Links */
 .header-nav {
     margin-top: -0.5vh;
     display: flex;
     gap: 2.4rem;
 }
 
-.nav-item, .nav-item-active {
+.nav-item,
+.nav-item-active {
     color: white;
     font-weight: 500;
     font-size: 1.15rem;
@@ -106,16 +179,17 @@ body {
 }
 
 .nav-item:hover {
-    color: rgba(194,203,173,1);
+    color: rgba(194, 203, 173, 1);
 }
 
 .nav-item-active:hover {
     color: white;
 }
 
+/* Mobile Menu Toggle Button */
 .menu-toggle-btn {
     display: none !important;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     color: white;
     border: none;
     font-size: 1.8rem;
@@ -125,21 +199,21 @@ body {
     cursor: pointer;
 }
 
-@media (max-width: 1024px) {
-    .header-nav { display: none !important; }
-    .menu-toggle-btn { display: block !important; }
-}
 
+
+/* ================================================================
+   6. PROFILE COVER SECTION
+   ================================================================ */
+
+/* Cover Section Container */
 .profile-cover-section {
     position: relative;
     height: 45rem;
     overflow: hidden;
 }
 
-@media (max-width: 768px) {
-    .profile-cover-section { height: 35rem; }
-}
 
+/* Background Cover Image */
 .cover-image {
     position: absolute;
     inset: 0;
@@ -148,12 +222,19 @@ body {
     object-fit: cover;
 }
 
+/* Dark Overlay on Cover Image */
 .cover-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.2));
+    background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.8),
+            rgba(0, 0, 0, 0.5),
+            rgba(0, 0, 0, 0.2)
+    );
 }
 
+/* Glowing Background Effect */
 .cover-glow {
     position: absolute;
     inset: 0;
@@ -173,10 +254,17 @@ body {
 }
 
 @keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 0.2; }
-    50% { transform: scale(1.1); opacity: 0.3; }
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.2;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.3;
+    }
 }
 
+/* Cover Content Wrapper */
 .cover-content {
     position: absolute;
     bottom: 0;
@@ -196,11 +284,12 @@ body {
     gap: 2.5rem;
 }
 
-@media (min-width: 1024px) {
-    .cover-details-wrapper {
-        flex-direction: row;
-    }
-}
+
+/* ================================================================
+   7. PROFILE AVATAR & INFO
+   ================================================================ */
+
+/* Avatar Wrapper with Animation */
 .profile-avatar-wrapper {
     position: relative;
     opacity: 0;
@@ -214,6 +303,7 @@ body {
     transform: translateY(0) scale(1);
 }
 
+/* Avatar Image */
 .profile-avatar {
     width: 13rem;
     height: 13rem;
@@ -223,6 +313,7 @@ body {
     object-fit: cover;
 }
 
+/* Camera Icon for Avatar Upload */
 .camera-icon-label {
     position: absolute;
     bottom: 0.5rem;
@@ -236,7 +327,6 @@ body {
     opacity: 0;
     transform: scale(0);
     animation: camera-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 1.5s forwards;
-
 }
 
 @keyframes camera-pop {
@@ -255,22 +345,28 @@ body {
     color: var(--color-white);
 }
 
+/* Profile Information Text */
 .profile-info-text {
+    width: 100vh;
+    text-align: center;
+    gap: 10px;
+    margin-right: 20%;
+    opacity: 1;
     color: var(--color-white);
 }
 
+/* Profile Name Styling */
 .profile-name {
-    font-size: 2.25rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
+    font-size: 2.7rem;
+    font-weight: 800;
+    background: var(--color-text-medium);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
 }
 
-@media (min-width: 768px) {
-    .profile-name { font-size: 3rem; }
-}
-
-
-
+/* Profile Bio with Typing Effect */
 .profile-bio {
     max-width: 48rem;
     min-height: 2em;
@@ -291,45 +387,8 @@ body {
     50% { opacity: 0; }
 }
 
-@media (min-width: 768px) {
-    .profile-bio { font-size: 1.25rem; }
-}
 
-.profile-info-text {
-    width: 100vh;
-    text-align: center;
-    gap: 10px;
-    margin-right: 20%;
-    opacity: 1;
-}
-
-
-@keyframes text-slide-in {
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.profile-name {
-    font-size: 2.7rem;
-    font-weight: 800;
-    background: var(--color-text-medium);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 0.5rem;
-}
-
-.profile-bio {
-    max-width: 48rem;
-    min-height: 2em;
-    position: relative;
-    color: var(--color-text-medium);
-    margin-top: 0.8rem;
-    font-size: 1.2rem;
-}
-
+/* Stats Group (Trips & Friends Count) */
 .stats-group {
     display: flex;
     gap: 2rem;
@@ -361,7 +420,11 @@ body {
 .stat-number {
     font-size: 2rem;
     font-weight: 900;
-    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary) 100%);
+    background: linear-gradient(
+            135deg,
+            var(--color-accent) 0%,
+            var(--color-primary) 100%
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -373,6 +436,12 @@ body {
     color: var(--color-text-medium);
 }
 
+
+/* ================================================================
+   8. TABS NAVIGATION SYSTEM
+   ================================================================ */
+
+/* Sticky Tabs Bar */
 .tabs-sticky-bar {
     position: sticky;
     top: 0;
@@ -383,12 +452,14 @@ body {
     transition: all 0.3s ease;
 }
 
+/* Tabs Container */
 .tabs-container {
     max-width: 72rem;
     margin: 0 auto;
     padding: 0 1.5rem;
 }
 
+/* Tab Buttons Group */
 .tab-buttons-group {
     display: flex;
     gap: 3rem;
@@ -398,6 +469,7 @@ body {
     position: relative;
 }
 
+/* Individual Tab Button */
 .tab-button {
     background: none;
     border: none;
@@ -419,6 +491,7 @@ body {
     color: var(--color-primary);
 }
 
+/* Active Tab Indicator Line */
 .tab-indicator {
     position: absolute;
     bottom: -1px;
@@ -428,12 +501,19 @@ body {
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+
+/* ================================================================
+   9. MAIN CONTENT AREA
+   ================================================================ */
+
+/* Main Content Container */
 .main-content-area {
     max-width: 72rem;
     margin: 0 auto;
     padding: 4rem 1.5rem;
 }
 
+/* Tab Content Sections */
 .tab-content {
     display: none;
 }
@@ -441,6 +521,13 @@ body {
 .tab-content:not(.hidden) {
     display: block;
 }
+
+
+/* ================================================================
+   10. PROFILE FORM STYLING
+   ================================================================ */
+
+/* Form Wrapper with Gradient Background */
 .profile-form-wrapper {
     background: linear-gradient(135deg, #ffffff 0%, #f8faf9 100%);
     border-radius: 2.5rem;
@@ -450,7 +537,6 @@ body {
             0 0 0 1px rgba(166, 178, 139, 0.12),
             0 0 80px rgba(166, 178, 139, 0.18),
             inset 0 2px 8px rgba(245, 201, 176, 0.15);
-
     transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     transform: translateY(0);
     padding: 4.5rem 3.5rem;
@@ -458,33 +544,43 @@ body {
     overflow: hidden;
 }
 
+/* Animated Background Gradient */
 .form-bg-gradient {
     position: absolute;
     top: -30%;
     right: -15%;
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, rgba(166, 178, 139, 0.2), transparent 70%);
+    background: radial-gradient(
+            circle,
+            rgba(166, 178, 139, 0.2),
+            transparent 70%
+    );
     border-radius: 50%;
     animation: float-gradient 15s ease-in-out infinite;
 }
 
 @keyframes float-gradient {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(-40px, 50px) scale(1.15); }
-    66% { transform: translate(40px, -50px) scale(0.9); }
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    33% {
+        transform: translate(-40px, 50px) scale(1.15);
+    }
+    66% {
+        transform: translate(40px, -50px) scale(0.9);
+    }
 }
 
-@keyframes rotate-slow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
+/* Form Title with Gradient Text */
 .form-title {
     font-size: 2rem;
     font-weight: 700;
-    background: #F5C9B0;
-    background: linear-gradient(90deg, rgba(245, 201, 176, 1) 49%, rgba(166, 178, 139, 1) 100%);
+    background: linear-gradient(
+            90deg,
+            rgba(245, 201, 176, 1) 49%,
+            rgba(166, 178, 139, 1) 100%
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -501,10 +597,16 @@ body {
     transform: translateX(-50%);
     width: 100px;
     height: 5px;
-    background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+    background: linear-gradient(
+            90deg,
+            transparent,
+            var(--color-primary),
+            transparent
+    );
     border-radius: 3px;
 }
 
+/* Profile Form Grid Layout */
 .profile-form {
     display: grid;
     grid-template-columns: 1fr;
@@ -515,10 +617,12 @@ body {
     z-index: 10;
 }
 
-@media (min-width: 768px) {
-    .profile-form { grid-template-columns: 1fr 1fr; }
-}
 
+/* ================================================================
+   11. FORM INPUT GROUPS & ICONS
+   ================================================================ */
+
+/* Form Input Group Container */
 .form-input-group {
     position: relative;
 }
@@ -528,7 +632,9 @@ body {
     align-items: center;
 }
 
-.form-input, .form-textarea {
+/* Input and Textarea Base Styles */
+.form-input,
+.form-textarea {
     width: 100%;
     padding: 1.6rem 1.6rem 1.6rem 5rem;
     border-radius: 1.5rem;
@@ -540,7 +646,8 @@ body {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
 }
 
-.form-input:focus, .form-textarea:focus {
+.form-input:focus,
+.form-textarea:focus {
     border-color: var(--color-primary);
     outline: none;
     box-shadow:
@@ -549,6 +656,7 @@ body {
     transform: translateY(-3px);
 }
 
+/* Textarea Specific Styles */
 .form-textarea {
     min-height: 13rem;
     resize: none;
@@ -556,7 +664,7 @@ body {
     padding-right: 5rem;
 }
 
-
+/* Input Icon (Left Side) */
 .input-icon {
     position: absolute;
     left: 1.3rem;
@@ -575,6 +683,7 @@ body {
     transition: all 0.4s ease;
 }
 
+/* Textarea Icon (Right Side) */
 .input-icon-textarea {
     position: absolute;
     right: 1.3rem;
@@ -592,8 +701,8 @@ body {
     transition: all 0.4s ease;
 }
 
-.form-input:focus + .input-icon,
-.form-textarea:focus + .input-icon-textarea {
+/* Icon Animation on Input Focus */
+.form-input:focus + .input-icon {
     transform: translateY(-50%) scale(1.12) rotate(8deg);
     box-shadow: 0 8px 25px rgba(166, 178, 139, 0.6);
 }
@@ -602,12 +711,14 @@ body {
     transform: scale(1.12) rotate(8deg);
 }
 
+/* Form Submit Button Wrapper */
 .form-submit-wrapper {
     grid-column: 1 / -1;
     text-align: center;
     margin-top: 2.5rem;
 }
 
+/* Primary Submit Button */
 .btn-primary {
     background: linear-gradient(135deg, #A6B28B 0%, #8f9b6a 100%);
     position: relative;
@@ -628,6 +739,52 @@ body {
     gap: 0.8rem;
 }
 
+.btn-primary:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow:
+            0 25px 60px rgba(166, 178, 139, 0.6),
+            0 0 0 0 rgba(166, 178, 139, 0);
+}
+
+/* Button Shine Effect */
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.35),
+            transparent
+    );
+    transition: left 0.6s;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+/* Success State for Button */
+.btn-primary.success-state {
+    background: linear-gradient(135deg, #A6B28B, #8f9b6a) !important;
+    animation: successPulse 0.6s ease-out;
+}
+
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+
+
+/* ================================================================
+   12. GENDER SELECTION RADIO BUTTONS
+   ================================================================ */
+
+/* Form Label for Category Sections */
 .form-label-category {
     font-size: 1.15rem;
     font-weight: 700;
@@ -644,6 +801,98 @@ body {
     margin-left: 0.75rem;
 }
 
+/* Gender Selection Wrapper */
+.gender-select-wrapper {
+    margin-top: 1rem;
+}
+
+/* Gender Options Container */
+.gender-options {
+    display: flex;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+/* Gender Option Label */
+.gender-option {
+    cursor: pointer;
+    position: relative;
+}
+
+.gender-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Gender Selection Box */
+.gender-box {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.8rem;
+    background: white;
+    border: 2px solid #e8ecef;
+    border-radius: 1.8rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--color-text-medium);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    min-width: 120px;
+    justify-content: center;
+}
+
+.gender-box i {
+    font-size: 1.4rem;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+/* Gender Icon Colors */
+.male-icon {
+    color: var(--color-primary);
+}
+
+.female-icon {
+    color: var(--color-accent);
+}
+
+.other-icon {
+    color: #a78bfa;
+}
+
+/* Selected Gender State */
+.gender-option input[type="radio"]:checked + .gender-box {
+    background: linear-gradient(
+            135deg,
+            var(--color-primary),
+            var(--color-primary-dark)
+    );
+    color: white;
+    border-color: transparent;
+    transform: translateY(-6px) scale(1.05);
+    box-shadow: 0 15px 35px rgba(166, 178, 139, 0.4);
+}
+
+.gender-option input[type="radio"]:checked + .gender-box i {
+    opacity: 1;
+    transform: scale(1.3);
+}
+
+/* Gender Box Hover Effect */
+.gender-option:hover .gender-box {
+    border-color: var(--color-primary);
+    transform: scale(1.1);
+}
+
+
+/* ================================================================
+   13. CATEGORY CHECKBOXES
+   ================================================================ */
+
+/* Category Checkbox Group Container */
 .category-checkbox-group {
     padding-right: 2rem;
     display: flex;
@@ -651,6 +900,7 @@ body {
     gap: 1.5rem;
 }
 
+/* Category Checkbox Label */
 .category-checkbox-label {
     display: flex;
     align-items: center;
@@ -673,6 +923,7 @@ body {
     width: 0;
 }
 
+/* Custom Checkbox Styling */
 .checkbox-custom {
     height: 22px;
     width: 22px;
@@ -685,12 +936,14 @@ body {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+/* Checked Checkbox State */
 .category-checkbox-label input[type="checkbox"]:checked ~ .checkbox-custom {
     background-color: var(--color-primary);
     border-color: var(--color-primary);
     transform: scale(1.05);
 }
 
+/* Checkbox Checkmark */
 .checkbox-custom:after {
     content: "";
     position: absolute;
@@ -708,57 +961,23 @@ body {
     transform: rotate(45deg);
 }
 
+/* Checkbox Hover Effect */
 .category-checkbox-label:hover input ~ .checkbox-custom {
     border-color: var(--color-primary-dark);
 }
 
-@media (max-width: 768px) {
-    .category-checkbox-group {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-}
 
-@keyframes pulse-shadow {
-    0%, 100% {
-        box-shadow:
-                0 12px 35px rgba(166, 178, 139, 0.4),
-                0 0 0 0 rgba(166, 178, 139, 0.5);
-    }
-    50% {
-        box-shadow:
-                0 12px 35px rgba(166, 178, 139, 0.4),
-                0 0 0 15px rgba(166, 178, 139, 0);
-    }
-}
+/* ================================================================
+   14. FRIENDS SECTION HEADER
+   ================================================================ */
 
-.btn-primary:hover {
-    transform: translateY(-5px) scale(1.03);
-    box-shadow:
-            0 25px 60px rgba(166, 178, 139, 0.6),
-            0 0 0 0 rgba(166, 178, 139, 0);
-}
-
-.btn-primary::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
-    transition: left 0.6s;
-}
-
-.btn-primary:hover::before {
-    left: 100%;
-}
-
+/* Friends Section Header Container */
 .friends-header {
     text-align: center;
     margin-bottom: 4rem;
 }
 
+/* Friends Section Title */
 .friends-title {
     font-size: 2.25rem;
     font-weight: 700;
@@ -766,11 +985,13 @@ body {
     margin-bottom: 1rem;
 }
 
+/* Friends Section Subtitle */
 .friends-subtitle {
     font-size: 1.25rem;
     color: var(--color-text-medium);
 }
 
+/* Decorative Divider with Heart Icon */
 .friends-divider {
     display: flex;
     justify-content: center;
@@ -790,6 +1011,7 @@ body {
     background: linear-gradient(to left, transparent, var(--color-primary));
 }
 
+/* Animated Heart Icon */
 .heart-icon {
     color: var(--color-accent);
     font-size: 1.5rem;
@@ -797,26 +1019,39 @@ body {
 }
 
 @keyframes heartbeat {
-    0%, 100% { transform: scale(1); }
-    25% { transform: scale(1.2); }
-    50% { transform: scale(1); }
-    75% { transform: scale(1.3); }
+    0%, 100% {
+        transform: scale(1);
+    }
+    25% {
+        transform: scale(1.2);
+    }
+    50% {
+        transform: scale(1);
+    }
+    75% {
+        transform: scale(1.3);
+    }
 }
 
+
+/* ================================================================
+   15. FRIENDS GRID & CARDS
+   ================================================================ */
+
+/* Friends Grid Layout */
 .friends-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 2.5rem;
 }
 
-@media (min-width: 768px) {
-    .friends-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
 @media (min-width: 1024px) {
-    .friends-grid { grid-template-columns: repeat(3, 1fr); }
+    .friends-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
+/* Individual Friend Card */
 .friend-card {
     overflow: hidden;
     border-radius: 1.75rem;
@@ -827,6 +1062,7 @@ body {
     cursor: pointer;
 }
 
+/* Shine Effect on Card Hover */
 .friend-card::before {
     content: '';
     position: absolute;
@@ -834,7 +1070,12 @@ body {
     left: -100%;
     width: 200%;
     height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    background: linear-gradient(
+            45deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+    );
     transform: rotate(30deg);
     transition: all 0.5s;
     opacity: 0;
@@ -846,27 +1087,35 @@ body {
 }
 
 @keyframes shine {
-    0% { transform: translateX(-100%) translateY(-100%) rotate(30deg); }
-    100% { transform: translateX(100%) translateY(100%) rotate(30deg); }
+    0% {
+        transform: translateX(-100%) translateY(-100%) rotate(30deg);
+    }
+    100% {
+        transform: translateX(100%) translateY(100%) rotate(30deg);
+    }
 }
 
+/* Card Hover Lift Effect */
 .friend-card:hover {
     transform: translateY(-12px) scale(1.02);
     box-shadow: 0 30px 60px rgba(166, 178, 139, 0.25);
 }
 
+/* Friend Profile Image */
 .friend-image {
     width: 100%;
     height: 18rem;
     object-fit: cover;
 }
 
+/* Friend Details Section */
 .friend-details {
     padding: 2rem;
     text-align: center;
     position: relative;
 }
 
+/* Friend Icon Wrapper */
 .friend-icon-wrapper {
     position: absolute;
     top: 0;
@@ -887,6 +1136,7 @@ body {
     color: var(--color-white);
 }
 
+/* Friend Name */
 .friend-name {
     font-size: 1.5rem;
     font-weight: 700;
@@ -894,15 +1144,26 @@ body {
     margin-top: 1.5rem;
 }
 
+/* Friend Stats (Mutual Trips) */
 .friend-stats {
     color: var(--color-text-medium);
     margin-top: 0.5rem;
 }
 
+
+/* ================================================================
+   16. FRIEND CARD HOVER EFFECTS & POPUP
+   ================================================================ */
+
+/* Friend Card Popup Overlay */
 .friend-popup {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(166, 178, 139, 0.98), rgba(130, 150, 105, 0.96));
+    background: linear-gradient(
+            135deg,
+            rgba(166, 178, 139, 0.98),
+            rgba(130, 150, 105, 0.96)
+    );
     color: var(--color-white);
     padding: 2rem 1.5rem;
     display: flex;
@@ -920,6 +1181,7 @@ body {
     transform: translateY(0) scale(1);
 }
 
+/* Popup Avatar */
 .popup-avatar {
     width: 6rem;
     height: 6rem;
@@ -929,18 +1191,20 @@ body {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
+/* Popup Name */
 .popup-name {
     font-size: 1.25rem;
     font-weight: 700;
     margin-top: 1.25rem;
 }
 
-
+/* Popup Bio */
 .popup-bio {
     margin-top: 1.5rem;
     text-align: center;
 }
 
+/* Popup Action Buttons */
 .popup-actions {
     display: flex;
     gap: 1rem;
@@ -948,6 +1212,7 @@ body {
     width: 100%;
 }
 
+/* Delete Friend Button */
 .popup-btn-delete {
     flex: 1;
     padding: 0.875rem 1rem;
@@ -970,6 +1235,728 @@ body {
     transform: scale(1.05);
 }
 
+
+/* ================================================================
+   17. FRIENDS TAB NAVIGATION SYSTEM
+   ================================================================ */
+
+/* Friends Tabs Navigation Container */
+.friends-tabs-nav {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 3rem;
+    background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+    padding: 0.75rem;
+    border-radius: 2rem;
+    box-shadow:
+            0 10px 40px rgba(166, 178, 139, 0.15),
+            0 0 0 1px rgba(166, 178, 139, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    max-width: 850px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.friends-tabs-nav::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+            circle at center,
+            rgba(166, 178, 139, 0.03) 0%,
+            transparent 70%
+    );
+    animation: pulse-background 6s ease-in-out infinite;
+}
+
+@keyframes pulse-background {
+    0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.5; }
+    50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+}
+
+/* Friends Tab Button */
+.friends-tab-btn {
+    flex: 1;
+    padding: 1.2rem 1.2rem;
+    border: none;
+    background: transparent;
+    color: var(--color-text-medium);
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: 1.4rem;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+}
+
+/* Hover effect shimmer */
+.friends-tab-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+    );
+    transition: left 0.5s;
+}
+
+.friends-tab-btn:hover::before {
+    left: 100%;
+}
+
+.friends-tab-btn:hover {
+    background: rgba(166, 178, 139, 0.12);
+    color: var(--color-primary);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(166, 178, 139, 0.15);
+}
+
+.friends-tab-btn i {
+    font-size: 1.2rem;
+    transition: all 0.4s ease;
+}
+
+.friends-tab-btn:hover i {
+    transform: scale(1.2) rotate(10deg);
+}
+
+/* Active Tab State */
+.friends-tab-btn.active {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: white;
+    box-shadow:
+            0 8px 25px rgba(166, 178, 139, 0.4),
+            0 0 0 3px rgba(166, 178, 139, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transform: translateY(-4px) scale(1.05);
+}
+
+.friends-tab-btn.active i {
+    animation: icon-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes icon-bounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3) rotate(15deg); }
+    100% { transform: scale(1); }
+}
+
+/* Notification Badge */
+.friends-tab-btn .badge {
+    position: absolute;
+    top: 0.4rem;
+    left: 0.4rem;
+    background: var(--color-accent);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 0.25rem 0.55rem;
+    border-radius: 12px;
+    min-width: 22px;
+    text-align: center;
+    box-shadow:
+            0 4px 12px rgba(239, 68, 68, 0.4),
+            0 0 0 2px white;
+    animation: badge-pulse 2s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.friends-tab-btn.active .badge {
+    background: linear-gradient(135deg, white, #f0f0f0);
+    color: var(--color-primary);
+    box-shadow:
+            0 4px 12px rgba(166, 178, 139, 0.3),
+            0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Tab Content with smooth transitions */
+.friends-tab-content {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.friends-tab-content.active {
+    display: block;
+    animation: fadeInUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Add stagger animation to search results */
+.search-result-card {
+    animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+.search-result-card:nth-child(1) { animation-delay: 0.1s; }
+.search-result-card:nth-child(2) { animation-delay: 0.2s; }
+.search-result-card:nth-child(3) { animation-delay: 0.3s; }
+.search-result-card:nth-child(4) { animation-delay: 0.4s; }
+.search-result-card:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ================================================================
+   18. SEARCH SECTION & RESULTS
+   ================================================================ */
+
+/* Search Section Container */
+.search-section {
+    max-width: 600px;
+    margin: 0 auto 3rem;
+}
+
+/* Search Box Container */
+.search-box {
+    position: relative;
+}
+
+/* Search Input Field */
+.search-input {
+    width: 100%;
+    padding: 1.2rem 3.5rem 1.2rem 1.5rem;
+    border: 2px solid var(--color-border);
+    border-radius: 1.5rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(166, 178, 139, 0.1);
+}
+
+/* Search Icon */
+.search-icon {
+    position: absolute;
+    left: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-medium);
+    font-size: 1.2rem;
+}
+
+/* Search Result Card */
+.search-result-card {
+    background: white;
+    border-radius: 1.2rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.search-result-card:hover {
+    box-shadow: 0 4px 16px rgba(166, 178, 139, 0.2);
+    transform: translateX(5px);
+}
+
+/* Search Result Avatar */
+.search-result-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-primary);
+}
+
+/* Search Result Info Section */
+.search-result-info {
+    flex: 1;
+}
+
+/* Search Result Name */
+.search-result-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    margin-bottom: 0.3rem;
+}
+
+/* Search Result Bio */
+.search-result-bio {
+    font-size: 0.9rem;
+    color: var(--color-text-medium);
+}
+
+/* Search Result Action Buttons */
+.search-result-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Icon Button Base Styles */
+.btn-icon {
+    width: 45px;
+    height: 45px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+/* Add Friend Icon Button */
+.btn-icon.btn-add {
+    background: var(--color-primary);
+    color: white;
+}
+
+.btn-icon.btn-add:hover {
+    background: var(--color-primary-dark);
+    transform: scale(1.1);
+}
+
+/* View Profile Icon Button */
+.btn-icon.btn-view {
+    background: var(--color-accent);
+    color: var(--color-text-medium);
+}
+
+.btn-icon.btn-view:hover {
+    background: #e5e7eb;
+}
+
+.request-badge {
+    background: var(--color-accent);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 0.3rem;
+}
+
+
+/* ================================================================
+   19. EMPTY STATE STYLING
+   ================================================================ */
+
+/* Empty State Container */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--color-text-medium);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: var(--color-primary);
+    opacity: 0.3;
+    margin-bottom: 1.5rem;
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-dark);
+}
+
+.empty-state p {
+    font-size: 1rem;
+}
+
+
+/* ================================================================
+   20. ADD FRIEND FLOATING BUTTON
+   ================================================================ */
+
+/* Centered Add Friend Button Wrapper */
+.add-friend-center-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 1.5rem 2rem;
+    margin-top: 2rem;
+}
+
+/* Add Friend Center Button */
+.add-friend-center-btn {
+    background: linear-gradient(135deg, #A6B28B 0%, #8f9b6a 100%);
+    color: white;
+    border: none;
+    padding: 1.4rem 4.5rem;
+    border-radius: 3rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: 'Anjoman', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    min-width: 280px;
+    justify-content: center;
+}
+
+.add-friend-center-btn i {
+    font-size: 1.6rem;
+    transition: transform 0.4s ease;
+}
+
+/* Button Shine Effect */
+.add-friend-center-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent
+    );
+    transition: left 0.7s;
+}
+
+.add-friend-center-btn:hover::before {
+    left: 100%;
+}
+
+.add-friend-center-btn:hover {
+    transform: translateY(-8px) scale(1.05);
+    background: linear-gradient(135deg, #8f9b6a, #A6B28B);
+}
+
+.add-friend-center-btn:hover i {
+    transform: scale(1.3) rotate(20deg);
+}
+
+.add-friend-center-btn:active {
+    transform: translateY(-4px) scale(1.02);
+}
+
+/* Floating Animation Keyframes */
+@keyframes float-center {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+
+/* ================================================================
+   21. ORGANIC PROFILE HEADER DESIGN
+   ================================================================ */
+
+/* Organic Profile Header Container */
+.profile-header-organic-design {
+    position: relative;
+    width: 100%;
+    min-height: 450px;
+    background: var(--color-bg-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 3rem 0;
+    z-index: 1;
+}
+
+/* Profile Avatar Container with Organic Design */
+.profile-avatar-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+}
+
+/* Organic Profile Avatar */
+.organic-profile-avatar {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid var(--color-white);
+}
+
+/* Organic Cover Section */
+.organic-profile-cover-section {
+    position: relative;
+    width: 130%;
+    min-height: 600px;
+    background: var(--color-accent);
+    display: flex;
+    margin-right: -15%;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 3rem 0;
+    z-index: 1;
+}
+
+/* Organic Content Card */
+.organic-content-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    direction: rtl;
+    padding: 30px 40px;
+    width: 850px;
+    height: 220px;
+    background: linear-gradient(135deg, #ffffff 0%, #fffbf9 100%);
+    border-radius: 100px;
+    box-shadow:
+            0 30px 80px rgba(245, 201, 176, 0.35),
+            0 0 0 3px rgba(245, 201, 176, 0.15),
+            inset 0 2px 10px rgba(245, 201, 176, 0.1);
+    z-index: 10;
+    opacity: 0;
+    transform: translateY(100px) scale(0.9);
+    animation: card-entrance 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
+}
+
+@keyframes card-entrance {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Organic Avatar Ring */
+.organic-avatar-ring {
+    margin-right: -10vh;
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    width: 260px;
+    height: 260px;
+    background: var(--color-primary);
+    border-radius: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 12;
+    opacity: 0;
+    transform: translateY(-50%) scale(0.5);
+    animation: ring-entrance 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s forwards;
+}
+
+@keyframes ring-entrance {
+    to {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
+}
+
+/* Glowing Ring Effect */
+.organic-avatar-ring::before {
+    content: '';
+    position: absolute;
+    inset: -15px;
+    border-radius: 50%;
+    background: linear-gradient(
+            135deg,
+            transparent,
+            rgba(245, 201, 176, 0.3),
+            transparent
+    );
+    animation: ring-glow 3s ease-in-out infinite;
+}
+
+@keyframes ring-glow {
+    0%, 100% {
+        opacity: 0.5;
+        transform: rotate(0deg);
+    }
+    50% {
+        opacity: 1;
+        transform: rotate(180deg);
+    }
+}
+
+/* Avatar Ring Border */
+.organic-avatar-ring-border {
+    width: 210px;
+    height: 210px;
+    background: var(--color-white);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.organic-avatar-ring:hover .organic-profile-avatar {
+    transform: scale(1.05);
+}
+
+
+/* ================================================================
+   22. ORGANIC SHAPES & ANIMATIONS
+   ================================================================ */
+
+/* Organic Shape 1 - Large Background Shape */
+.organic-shape-1 {
+    position: absolute;
+    bottom: 2px;
+    left: 20%;
+    width: 500px;
+    height: 450px;
+    background: var(--color-primary-dark);
+    border-radius: 40% 60% 70% 30% / 50% 50% 50% 50%;
+    opacity: 0.1;
+    transform: translate(-300px, 200px) rotate(-90deg) scale(0.3);
+    filter: blur(1px);
+    z-index: 2;
+    animation:
+            shape1-dramatic-entrance 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s forwards,
+            float-blob 20s ease-in-out 2.3s infinite;
+}
+
+/* Organic Shape 2 - Accent Shape */
+.organic-shape-2 {
+    position: absolute;
+    top: 100px;
+    left: 22%;
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(
+            135deg,
+            var(--color-primary) 0%,
+            var(--color-accent) 100%
+    );
+    border-radius: 30% 70% 60% 40% / 70% 30% 70% 30%;
+    opacity: 1;
+    transform: translate(400px, -300px) rotate(180deg) scale(0.2);
+    z-index: 100;
+    box-shadow: 0 15px 40px rgba(245, 201, 176, 0.4);
+    animation:
+            shape1-dramatic-entrance 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.5s forwards,
+            float-blob 20s ease-in-out 2.1s infinite;
+}
+
+/* Shape 1 Dramatic Entrance Animation */
+@keyframes shape1-dramatic-entrance {
+    0% {
+        opacity: 0;
+        transform: translate(-300px, 200px) rotate(-90deg) scale(0.3);
+    }
+    60% {
+        opacity: 0.7;
+        transform: translate(0, 0) rotate(30deg) scale(1.1);
+    }
+    100% {
+        opacity: 0.9;
+        transform: translate(0, 0) rotate(25deg) scale(1);
+    }
+}
+
+/* Shape 2 Throw Entrance Animation */
+@keyframes shape2-throw-entrance {
+    0% {
+        opacity: 0;
+        transform: translate(400px, -300px) rotate(180deg) scale(0.2);
+    }
+    50% {
+        opacity: 0.9;
+        transform: translate(-30px, 50px) rotate(90deg) scale(1.15);
+    }
+    70% {
+        transform: translate(10px, -10px) rotate(-20deg) scale(0.95);
+    }
+    100% {
+        opacity: 0.8;
+        transform: translate(0, 0) rotate(-10deg) scale(1);
+    }
+}
+
+/* Floating Blob Animation */
+@keyframes float-blob {
+    0%, 100% {
+        transform: rotate(25deg) translateY(0) scale(1);
+    }
+    50% {
+        transform: rotate(30deg) translateY(-30px) scale(1.05);
+    }
+}
+
+/* Small Shape Float Animation */
+@keyframes float-small {
+    0% {
+        transform: rotate(-10deg) translateY(0);
+    }
+    100% {
+        transform: rotate(5deg) translateY(-25px);
+    }
+}
+
+
+/* ================================================================
+   23. FOOTER SECTION
+   ================================================================ */
+
+/* Main Footer Container */
 .main-footer {
     position: relative;
     min-height: 480px;
@@ -983,11 +1970,9 @@ body {
     background-image: url('../../assets/images/footer1.jpg');
     background-size: cover;
     background-position: center;
-
 }
 
-
-
+/* Footer Content Wrapper */
 .footer-content-wrapper {
     position: relative;
     z-index: 2;
@@ -1001,6 +1986,7 @@ body {
     margin: 0 auto;
 }
 
+/* Call-to-Action Text in Footer */
 .cta-text {
     margin: 0;
     color: var(--color-white);
@@ -1010,15 +1996,22 @@ body {
     max-width: 800px;
 }
 
+
+/* ================================================================
+   24. SOCIAL MEDIA ICONS
+   ================================================================ */
+
+/* Social Icons Container */
 .u-social-icons {
     display: flex;
     flex-direction: row-reverse;
-    margin-left:0 ;
+    margin-left: 0;
     padding: 0;
     justify-content: center;
     align-items: center;
 }
 
+/* Individual Social Icon */
 .u-icon {
     display: flex;
     justify-content: center;
@@ -1029,6 +2022,7 @@ body {
     overflow: hidden;
     margin: 0 -0.5rem;
 }
+
 .u-icon svg {
     width: 50%;
     height: 50%;
@@ -1036,7 +2030,6 @@ body {
     color: var(--color-white);
     transition: all 0.3s ease;
 }
-
 
 .u-icon img {
     width: 60%;
@@ -1047,22 +2040,11 @@ body {
 
 
 
-@media (max-width: 600px) {
-    .u-social-icons {
-        gap: 1.5rem;
-    }
-    .u-icon {
-        width: 50px;
-        height: 50px;
-    }
-    .u-icon svg, .u-icon img {
-        width: 55%;
-        height: 55%;
-    }
-}
+/* ================================================================
+   25. SCROLL ANIMATIONS & DATA ATTRIBUTES
+   ================================================================ */
 
-
-
+/* Base Animation State */
 [data-animate] {
     opacity: 0;
     transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1073,28 +2055,41 @@ body {
     transform: none !important;
 }
 
+/* Fade Down Animation */
 [data-animate="fade-down"] {
     transform: translateY(-50px);
 }
 
+/* Zoom In Animation */
 [data-animate="zoom-in"] {
     transform: scale(0.7);
 }
 
+/* Fade Left Animation */
 [data-animate="fade-left"] {
     transform: translateX(50px);
 }
 
+/* Fade Up Animation */
 [data-animate="fade-up"] {
     transform: translateY(50px);
 }
 
+/* Rotate In Animation */
 [data-animate="rotate-in"] {
     transform: rotate3d(1, 1, 1, -120deg) scale(0.5);
     opacity: 0;
-    transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 1.2s;
+    transition:
+            transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+            opacity 1.2s;
 }
 
+/* Slide From Left RTL Animation */
+[data-animate="slide-from-left-rtl"] {
+    transform: translateX(-150px);
+}
+
+/* Animation Delay Classes */
 [data-animate][style*="animation-delay: 0.1s"] {
     transition-delay: 0.1s;
 }
@@ -1123,404 +2118,54 @@ body {
     transition-delay: 0.7s;
 }
 
+
+/* ================================================================
+   26. UTILITY CLASSES
+   ================================================================ */
+
+/* Text Alignment */
 .text-left {
     text-align: left;
 }
 
+/* Hidden Element */
 .hidden {
     display: none;
 }
 
-.gender-select-wrapper {
-    margin-top: 1rem;
-}
 
-.gender-options {
-    display: flex;
-    gap: 1.2rem;
-    flex-wrap: wrap;
-}
+/* ================================================================
+   27. ADDITIONAL KEYFRAME ANIMATIONS
+   ================================================================ */
 
-.gender-option {
-    cursor: pointer;
-    position: relative;
-}
-
-.gender-option input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.gender-box {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 1rem 1.8rem;
-    background: white;
-    border: 2px solid #e8ecef;
-    border-radius: 1.8rem;
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: var(--color-text-medium);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    min-width: 120px;
-    justify-content: center;
-}
-
-.gender-box i {
-    font-size: 1.4rem;
-    opacity: 0.7;
-    transition: all 0.3s ease;
-}
-
-.male-icon { color: var(--color-primary); }
-.female-icon { color: var(--color-accent); }
-.other-icon { color: #a78bfa; }
-
-.gender-option input[type="radio"]:checked + .gender-box {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-    color: white;
-    border-color: transparent;
-    transform: translateY(-6px) scale(1.05);
-    box-shadow: 0 15px 35px rgba(166, 178, 139, 0.4);
-}
-
-.gender-option input[type="radio"]:checked + .gender-box i {
-    opacity: 1;
-    transform: scale(1.3);
-}
-
-.gender-option:hover .gender-box {
-    border-color: var(--color-primary);
-    transform: scale(1.1);
-}
-.btn-primary.success-state {
-    background: linear-gradient(135deg, #A6B28B, #8f9b6a) !important;
-    animation: successPulse 0.6s ease-out;
-}
-
-@keyframes successPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-    100% { transform: scale(1); }
-}
-
-.add-friend-center-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 4rem 1.5rem 2rem;
-    margin-top: 2rem;
-}
-
-.add-friend-center-btn {
-    background: linear-gradient(135deg, #A6B28B 0%, #8f9b6a 100%);
-    color: white;
-    border: none;
-    padding: 1.4rem 4.5rem;
-    border-radius: 3rem;
-    font-size: 1.25rem;
-    font-weight: 700;
-    font-family: 'Anjoman', sans-serif;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-    min-width: 280px;
-    justify-content: center;
-}
-
-.add-friend-center-btn i {
-    font-size: 1.6rem;
-    transition: transform 0.4s ease;
-}
-
-.add-friend-center-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.7s;
-}
-
-.add-friend-center-btn:hover::before {
-    left: 100%;
-}
-
-.add-friend-center-btn:hover {
-    transform: translateY(-8px) scale(1.05);
-    background: linear-gradient(135deg, #8f9b6a, #A6B28B);
-}
-
-.add-friend-center-btn:hover i {
-    transform: scale(1.3) rotate(20deg);
-}
-
-.add-friend-center-btn:active {
-    transform: translateY(-4px) scale(1.02);
-}
-
-@keyframes float-center {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-}
-
-@media (max-width: 768px) {
-    .add-friend-btn {
-        width: 58px;
-        height: 58px;
-        bottom: 1.8rem;
-        left: 1.8rem;
-        font-size: 1.7rem;
-    }
-}
-
-[data-animate="slide-from-left-rtl"] {
-    transform: translateX(-150px);
-}
-
-
-
-.profile-header-organic-design {
-    position: relative;
-    width: 100%;
-    min-height: 450px;
-    background: var(--color-bg-light);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    padding: 3rem 0;
-    z-index: 1;
-}
-
-.profile-avatar-container {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    background: var(--color-primary);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-    z-index: 10;
-}
-
-.organic-profile-avatar {
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 5px solid var(--color-white);
-}
-
-.organic-profile-cover-section {
-    position: relative;
-    width: 130%;
-    min-height: 600px;
-    background: var(--color-accent);
-    display: flex;
-    margin-right: -15%;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    padding: 3rem 0;
-    z-index: 1;
-}
-
-
-.organic-shape-1 {
-    position: absolute;
-    bottom: 2px;
-    left: 20%;
-    width: 500px;
-    height: 450px;
-    background: var(--color-primary-dark);
-    border-radius: 40% 60% 70% 30% / 50% 50% 50% 50%;
-    opacity: 0.1;
-    transform: translate(-300px, 200px) rotate(-90deg) scale(0.3);
-    filter: blur(1px);
-    z-index: 2;
-    animation: shape1-dramatic-entrance 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s forwards,
-    float-blob 20s ease-in-out 2.3s infinite;
-}
-
-.organic-shape-2 {
-    position: absolute;
-    top: 100px;
-    left: 22%;
-    width: 200px;
-    height: 200px;
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
-    border-radius: 30% 70% 60% 40% / 70% 30% 70% 30%;
-    opacity: 1;
-    transform: translate(400px, -300px) rotate(180deg) scale(0.2);
-    z-index: 100;
-    box-shadow: 0 15px 40px rgba(245, 201, 176, 0.4);
-    animation: shape1-dramatic-entrance 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.5s forwards,
-    float-blob 20s ease-in-out 2.1s infinite
-}
-
-
-@keyframes shape1-dramatic-entrance {
-    0% {
-        opacity: 0;
-        transform: translate(-300px, 200px) rotate(-90deg) scale(0.3);
-    }
-    60% {
-        opacity: 0.7;
-        transform: translate(0, 0) rotate(30deg) scale(1.1);
-    }
-    100% {
-        opacity: 0.9;
-        transform: translate(0, 0) rotate(25deg) scale(1);
-    }
-}
-
-@keyframes shape2-throw-entrance {
-    0% {
-        opacity: 0;
-        transform: translate(400px, -300px) rotate(180deg) scale(0.2);
-    }
-    50% {
-        opacity: 0.9;
-        transform: translate(-30px, 50px) rotate(90deg) scale(1.15);
-    }
-    70% {
-        transform: translate(10px, -10px) rotate(-20deg) scale(0.95);
-    }
-    100% {
-        opacity: 0.8;
-        transform: translate(0, 0) rotate(-10deg) scale(1);
-    }
-}
-
-@keyframes float-blob {
-    0%, 100% {
-        transform: rotate(25deg) translateY(0) scale(1);
-    }
-    50% {
-        transform: rotate(30deg) translateY(-30px) scale(1.05);
-    }
-}
-
-@keyframes float-small {
-    0% {
-        transform: rotate(-10deg) translateY(0);
-    }
-    100% {
-        transform: rotate(5deg) translateY(-25px);
-    }
-}
-
-.organic-content-card {
-    position: relative;
-    display: flex;
-    align-items: center;
-    direction: rtl;
-    padding: 30px 40px;
-    width: 850px;
-    height: 220px;
-    background: linear-gradient(135deg, #ffffff 0%, #fffbf9 100%);
-    border-radius: 100px;
-    box-shadow:
-            0 30px 80px rgba(245, 201, 176, 0.35),
-            0 0 0 3px rgba(245, 201, 176, 0.15),
-            inset 0 2px 10px rgba(245, 201, 176, 0.1);
-    z-index: 10;
-    opacity: 0;
-    transform: translateY(100px) scale(0.9);
-    animation: card-entrance 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
-}
-
-@keyframes card-entrance {
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-.organic-avatar-ring {
-    margin-right: -10vh;
-    position: absolute;
-    right: 40px;
-    top: 50%;
-    width: 260px;
-    height: 260px;
-    background: var(--color-primary);
-    border-radius: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 12;
-    opacity: 0;
-    transform: translateY(-50%) scale(0.5);
-    animation: ring-entrance 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s forwards;
-}
-
-@keyframes ring-entrance {
-    to {
-        opacity: 1;
-        transform: translateY(-50%) scale(1);
-    }
-}
-
-.organic-avatar-ring::before {
-    content: '';
-    position: absolute;
-    inset: -15px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, transparent, rgba(245, 201, 176, 0.3), transparent);
-    animation: ring-glow 3s ease-in-out infinite;
-}
-
-@keyframes ring-glow {
-    0%, 100% {
-        opacity: 0.5;
+/* Rotate Slow Animation (Unused but defined) */
+@keyframes rotate-slow {
+    from {
         transform: rotate(0deg);
     }
-    50% {
-        opacity: 1;
-        transform: rotate(180deg);
+    to {
+        transform: rotate(360deg);
     }
 }
 
-.organic-avatar-ring-border {
-    width: 210px;
-    height: 210px;
-    background: var(--color-white);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    z-index: 2;
+/* Pulse Shadow Animation */
+@keyframes pulse-shadow {
+    0%, 100% {
+        box-shadow:
+                0 12px 35px rgba(166, 178, 139, 0.4),
+                0 0 0 0 rgba(166, 178, 139, 0.5);
+    }
+    50% {
+        box-shadow:
+                0 12px 35px rgba(166, 178, 139, 0.4),
+                0 0 0 15px rgba(166, 178, 139, 0);
+    }
 }
 
-.organic-profile-avatar {
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 6px solid var(--color-primary);
-    transition: transform 0.4s ease;
-}
-
-.organic-avatar-ring:hover .organic-profile-avatar {
-    transform: scale(1.05);
+/* Text Slide In Animation (Defined but not directly used) */
+@keyframes text-slide-in {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
