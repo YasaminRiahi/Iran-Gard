@@ -1,0 +1,405 @@
+ .u-overlap:not(.u-sticky-scroll) .u-header {
+   background-color: var(--color-var) !important;
+   --color-var: #999999b3 !important
+ }
+
+ .u-section-1 {
+   margin-top: 20px;
+   min-height: 872px;
+ }
+
+ .u-section-1 .u-shape-1 {
+   height: 423px;
+   margin-top: 0;
+   margin-bottom: 0;
+ }
+
+ .u-section-1 .u-group-1 {
+   width: 612px;
+   min-height: 305px;
+   background-image: none;
+   height: auto;
+   --animation-custom_in-translate_x: -300px;
+   --animation-custom_in-translate_y: 0px;
+   --animation-custom_in-opacity: 0;
+   --animation-custom_in-rotate: 0deg;
+   --animation-custom_in-scale: 1;
+   margin: -117px calc(((100% - 1140px) / 2) + 25px) 0 auto;
+ }
+
+ .u-section-1 .u-container-layout-1 {
+   padding: 30px 50px;
+ }
+
+ .u-section-1 .u-text-1 {
+   font-size: 4.5rem;
+   line-height: 1;
+   font-weight: 700;
+   font-family: Anjoman-Bold;
+   margin: 16px 7px 0 43px;
+ }
+
+ .u-section-1 .u-btn-1 {
+   background-image: none;
+   text-transform: uppercase;
+   border-style: none;
+   --radius: 90px;
+   font-size: 1.5rem;
+   font-weight: 700;
+   font-family: Anjoman-Regular;
+   margin: 43px 0 0 auto;
+   padding: 23px 30px;
+ }
+
+ .u-section-1 .u-image-1 {
+   width: 500px;
+   height: 500px;
+   background-image: url("images/ba54624371f465570c223355c5f6bdf76a453111fab45dd95f5ed2593983d44435bc8b7666799d1f1eada63d16e75a3b61f99b0cbd9ff359c85464_1280.jpg");
+   background-position: 50% 50%;
+   --animation-custom_in-translate_x: 0px;
+   --animation-custom_in-translate_y: 0px;
+   --animation-custom_in-opacity: 0;
+   --animation-custom_in-rotate: 0deg;
+   --animation-custom_in-scale: 0.3;
+   margin: -365px auto 60px calc(((100% - 1140px) / 2) + 100px);
+ }
+
+ .u-section-2 .u-sheet-1 {
+   min-height: 689px;
+ }
+
+ .u-section-2 .u-layout-wrap-1 {
+   margin-top: 60px;
+   margin-bottom: 60px;
+ }
+
+ .u-section-2 .u-layout-cell-1 {
+   min-height: 569px;
+ }
+
+ .u-section-2 .u-container-layout-1 {
+   padding: 30px 0;
+ }
+
+ .u-section-2 .u-layout-cell-2 {
+   background-image: none;
+   min-height: 569px;
+ }
+
+ .u-section-2 .u-container-layout-2 {
+   padding: 40px 30px;
+ }
+
+ .u-section-2 .u-text-1 {
+   font-family: Anjoman-Bold;
+   margin: 0 0 0 auto;
+ }
+
+ .u-section-2 .u-text-2 {
+   font-family: Anjoman-Regular;
+   margin-left: 0;
+   margin-right: 0;
+   margin-bottom: 0;
+   font-size: 1.25rem;
+ }
+
+ .u-section-3 {
+   background-image: none;
+   margin-top: 20px;
+ }
+
+ .u-section-3 .u-sheet-1 {
+   min-height: 716px;
+ }
+
+ .u-section-3 .u-text-1 {
+   --animation-custom_in-translate_x: 0px;
+   --animation-custom_in-translate_y: -300px;
+   --animation-custom_in-opacity: 0;
+   --animation-custom_in-rotate: 0deg;
+   --animation-custom_in-scale: 1;
+   width: 589px;
+   font-family: Anjoman-Bold;
+   font-size: 4.6rem;
+   margin: 58px auto 0;
+ }
+
+ .u-section-3 .u-layout-wrap-1 {
+   margin-top: 58px;
+   margin-bottom: 60px;
+ }
+
+ .u-section-3 .u-layout-cell-1 {
+   min-height: 449px;
+ }
+
+ .u-section-3 .u-container-layout-1 {
+   padding: 30px;
+ }
+
+ .u-section-3 .u-group-1 {
+   --radius: 100px;
+   min-height: 337px;
+   height: auto;
+   width: 327px;
+   --animation-custom_in-translate_x: 0px;
+   --animation-custom_in-translate_y: 0px;
+   --animation-custom_in-opacity: 0;
+   --animation-custom_in-rotate: 0deg;
+   --animation-custom_in-scale: 1;
+   margin: 0 auto 0 50px;
+ }
+
+ .u-section-3 .u-container-layout-2 {
+   padding: 30px;
+ }
+
+ .u-section-3 .u-icon-1 {
+   width: 64px;
+   height: 64px;
+   margin: 0 auto;
+ }
+
+ .u-section-3 .u-text-2 {
+   font-size: 6rem;
+   font-weight: 700;
+   line-height: 0.8;
+   width: 138px;
+   margin: 23px auto 0;
+ }
+
+ .u-section-3 .u-text-3 {
+   font-family: Anjoman-Bold;
+   margin: 23px 0 0;
+ }
+
+ .u-section-3 .u-layout-cell-2 {
+   min-height: 510px;
+ }
+
+ .u-section-3 .u-container-layout-3 {
+   padding: 30px;
+ }
+
+ .u-section-3 .u-text-4 {
+   font-family: Anjoman-Regular;
+   --animation-custom_in-translate_x: -200px;
+   --animation-custom_in-translate_y: 0px;
+   --animation-custom_in-opacity: 0;
+   --animation-custom_in-rotate: 0deg;
+   --animation-custom_in-scale: 1;
+   margin: 0 0 0 auto;
+ }
+
+ .u-section-3 .u-text-5 {
+   font-family: Anjoman-Regular;
+   font-size: 1.25rem;
+   --animation-custom_in-translate_x: 0px;
+   --animation-custom_in-translate_y: 0px;
+   --animation-custom_in-opacity: 0;
+   --animation-custom_in-rotate: 0deg;
+   --animation-custom_in-scale: 1;
+   margin: 19px 0 0 23px;
+ }
+
+ .u-section-3 .u-btn-1 {
+   background-image: none;
+   font-size: 1.5rem;
+   font-family: Anjoman-Regular;
+   --radius: 50px;
+   --animation-custom_in-translate_x: 0px;
+   --animation-custom_in-translate_y: 0px;
+   --animation-custom_in-opacity: 0;
+   --animation-custom_in-rotate: 0deg;
+   --animation-custom_in-scale: 1;
+   margin: 30px 0 0 auto;
+   padding: 14px 30px;
+ }
+
+ .u-section-3 .u-btn-2 {
+   background-image: none;
+   text-transform: uppercase;
+   border-style: none;
+   --radius: 90px;
+   font-size: 1.5rem;
+   font-weight: 700;
+   font-family: Anjoman-Regular;
+   --animation-custom_in-translate_x: 0px;
+   --animation-custom_in-translate_y: 0px;
+   --animation-custom_in-opacity: 0;
+   --animation-custom_in-rotate: 0deg;
+   --animation-custom_in-scale: 1;
+   margin: -62px auto 0 99px;
+   padding: 14px 30px 15px;
+ }
+
+ .u-section-4 {
+   background-image: none;
+   margin-top: 20px;
+   margin-bottom: 0;
+ }
+
+ .u-section-4 .u-sheet-1 {
+   min-height: 50vw;
+ }
+
+ .u-section-4 .u-gallery-1 {
+   width: 782px;
+   height: 545px;
+   grid-gap: 10px;
+   margin: 131px auto 60px;
+ }
+
+ .u-section-4 .u-gallery-inner-1 {
+   --gap: 0px;
+ }
+
+ .u-section-4 .u-carousel-item-1 {
+   margin-right: 0;
+ }
+
+ .u-section-4 .u-over-slide-1 {
+   min-height: 100px;
+   padding: 10px;
+ }
+
+ .u-section-4 .u-carousel-item-2 {
+   margin-right: 0;
+ }
+
+ .u-section-4 .u-over-slide-2 {
+   min-height: 100px;
+   padding: 10px;
+ }
+
+ .u-section-4 .u-carousel-item-3 {
+   margin-right: 0;
+ }
+
+ .u-section-4 .u-over-slide-3 {
+   min-height: 100px;
+   padding: 10px;
+ }
+
+ .u-section-4 .u-carousel-item-4 {
+   margin-right: 0;
+ }
+
+ .u-section-4 .u-over-slide-4 {
+   min-height: 100px;
+   padding: 10px;
+ }
+
+ .u-section-4 .u-carousel-thumbnails-1 {
+   padding-top: 10px;
+ }
+
+ .u-section-4 .u-carousel-thumbnail-1 {
+   width: 100px;
+   height: 100px;
+ }
+
+ .u-section-4 .u-carousel-thumbnail-2 {
+   width: 100px;
+   height: 100px;
+ }
+
+ .u-section-4 .u-carousel-thumbnail-3 {
+   width: 100px;
+   height: 100px;
+ }
+
+ .u-section-4 .u-carousel-thumbnail-1 {
+   width: 100px;
+   height: 100px;
+ }
+
+ .u-section-4 .u-carousel-control-1 {
+   position: absolute;
+   left: 10px;
+   width: 40px;
+   height: 40px;
+   top: 196px;
+   right: auto;
+ }
+
+ .u-section-4 .u-carousel-control-2 {
+   position: absolute;
+   width: 40px;
+   height: 40px;
+   left: auto;
+   top: 196px;
+   right: 10px;
+ }
+
+ .u-section-5 {
+   background-image: url("images/footer1.jpg");
+   background-position: 50% 50%;
+   background-size: cover;
+ }
+
+ .u-section-5 .u-sheet-1 {
+   min-height: 480px;
+ }
+
+ .u-section-5 .u-text-1 {
+   --animation-custom_in-translate_x: -200px;
+   --animation-custom_in-translate_y: 0px;
+   --animation-custom_in-opacity: 0;
+   --animation-custom_in-rotate: 0deg;
+   --animation-custom_in-scale: 1;
+   font-family: Anjoman-Regular;
+   width: 772px;
+   font-size: 1.5rem;
+   margin: 46px auto 0;
+ }
+
+ .u-section-5 .u-social-icons-1 {
+   height: 46px;
+   width: 285px;
+   min-width: 115px;
+   --animation-custom_in-translate_x: -200px;
+   --animation-custom_in-translate_y: 0px;
+   --animation-custom_in-opacity: 0;
+   --animation-custom_in-rotate: 0deg;
+   --animation-custom_in-scale: 1;
+   margin: 31px auto 60px;
+ }
+
+ .u-section-5 .u-icon-1 {
+   height: 46px;
+ }
+
+ .u-section-5 .u-icon-2 {
+   height: 46px;
+ }
+
+ .u-section-5 .u-icon-3 {
+   height: 46px;
+ }
+
+ .u-section-5 .u-icon-4 {
+   height: 0;
+   color: rgb(255, 255, 255) !important;
+ }
+
+ @font-face {
+   font-family: 'Anjoman-Regular';
+   font-style: normal;
+   font-weight: 400;
+   src: url(fonts/Anjoman-Regular.woff2);
+ }
+
+ @font-face {
+   font-family: 'Anjoman-Bold';
+   font-style: normal;
+   font-weight: 400;
+   src: url(fonts/Anjoman-Bold.woff2);
+ }
+
+ @font-face {
+   font-family: 'Anjoman-Regular';
+   font-style: normal;
+   font-weight: 400;
+   src: url(fonts/Anjoman-Regular.woff2);
+ }

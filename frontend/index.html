@@ -5,43 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
   <title>Home Page</title>
-  <link rel="stylesheet" href="src/styles/style.css" media="screen">
-  <link rel="stylesheet" href="src/styles/pages/index.css" media="screen">
-  <script class="u-script" type="text/javascript" src="src/scripts/vendor/jquery.js" defer=""></script>
-  <script class="u-script" type="text/javascript" src="src/scripts/app.js" defer=""></script>
-
-
-
-
-
-
-
-
-  <link id="u-page-google-font" rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?display=swap&amp;family=Roboto:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800">
-  <script type="application/ld+json">{
-		"@context": "http://schema.org",
-		"@type": "Organization",
-		"name": "",
-		"logo": "images/ChatGPTImageNov20202506_51_17PM.png"
-}</script>
-  <meta name="theme-color" content="#478ac9">
-  <meta property="og:title" content="Home Page">
-  <meta property="og:type" content="website">
-  <meta data-intl-tel-input-cdn-path="intlTelInput/">
+  <link rel="stylesheet" href="style.css" media="screen">
+  <link rel="stylesheet" href="index.css" media="screen">
+  <link rel="stylesheet" href="index-responsive.css" media="screen">
+  <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+  <script class="u-script" type="text/javascript" src="app.js" defer=""></script>
 </head>
 
-<body class="u-body u-clearfix u-overlap u-overlap-contrast u-overlap-transparent u-xl-mode">
+<body data-home-page="Home-Page.html" data-home-page-title="Home Page" data-path-to-root="./"
+  data-include-products="false" class="u-body u-clearfix u-overlap u-overlap-contrast u-overlap-transparent u-xl-mode"
+  data-lang="en">
   <header class="u-clearfix u-header u-shading u-header" id="header" data-animation-name="" data-animation-duration="0"
     data-animation-delay="0" data-animation-direction="">
     <div class="u-clearfix u-sheet u-sheet-1">
-      <p class="u-image u-logo u-image-1" data-image-width="150" data-image-height="100">
-        <img src="src/assets/images/ChatGPTImageNov20202506_51_17PM.png" class="u-logo-image u-logo-image-1">
-      </p>
-      <nav class="u-menu u-menu-one-level u-offcanvas u-menu-1" role="navigation" aria-label="Menu navigation">
+      <a href="#" class="u-hidden-md u-hidden-sm u-hidden-xs u-image u-logo u-image-1" data-image-width="150"
+        data-image-height="100">
+        <img src="images/ChatGPTImageNov20202506_51_17PM.png" class="u-logo-image u-logo-image-1">
+      </a>
+      <nav class="u-menu u-menu-one-level u-menu-open-right u-offcanvas u-menu-1" role="navigation"
+        aria-label="Menu navigation">
         <div class="menu-collapse u-custom-font"
           style="font-size: 1.125rem; letter-spacing: 0px; font-family: Anjoman-Regular; font-weight: 600;">
-          <a class="u-button-style u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-text-active-color u-custom-text-color u-custom-text-hover-color u-custom-top-bottom-menu-spacing u-hamburger-link u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base"
+          <a class="u-button-style u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-text-active-color u-custom-text-color u-custom-text-hover-color u-custom-top-bottom-menu-spacing u-hamburger-link u-nav-link u-text-active-custom-color-4 u-text-hover-custom-color-4"
             href="#" tabindex="-1" aria-label="Open menu" aria-controls="1858">
             <svg class="u-svg-link" viewBox="0 0 24 24">
               <use xlink:href="#menu-hamburger"></use>
@@ -58,66 +43,68 @@
         </div>
         <div class="u-custom-menu u-nav-container">
           <ul class="u-custom-font u-nav u-unstyled u-nav-1" role="menubar">
-            <li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem"
-                class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white" href="#"
-                aria-haspopup="true" style="padding: 10px 20px;">بوک مارک ها</a>
+            <li role="none" class="u-nav-item"><a role="menuitem"
+                class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white"
+                href="Bookmarks.html" style="padding: 10px 20px;">بوک مارک ها</a>
             </li>
-            <li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem"
-                class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white" href="#"
-                style="padding: 10px 20px;">سفرهای من</a>
+            <li role="none" class="u-nav-item"><a role="menuitem"
+                class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white"
+                href="My-Trips.html" style="padding: 10px 20px;">سفرهای من</a>
             </li>
             <li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem"
                 class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white" href="./profile.html"
                 style="padding: 10px 20px;">پروفایل من</a>
             </li>
             <li role="none" class="u-nav-item"><a role="menuitem"
-                class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white"
-                href="./index.html" style="padding: 10px 20px;">خانه</a>
+                class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white" href="./"
+                style="padding: 10px 20px;">خانه</a>
             </li>
           </ul>
         </div>
         <div class="u-custom-menu u-nav-container-collapse" id="1858" role="region" aria-label="Menu panel">
-          <div class="u-black u-container-style u-inner-container-layout u-opacity u-opacity-95 u-sidenav">
+          <div class="u-container-style u-custom-color-4 u-inner-container-layout u-opacity u-opacity-95 u-sidenav">
             <div class="u-inner-container-layout u-sidenav-overflow">
               <div class="u-menu-close" tabindex="-1" aria-label="Close menu"></div>
-              <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2" role="menubar">
-                <li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem" class="u-button-style u-nav-link"
-                    href="#" aria-haspopup="true">بوک مارک ها</a>
+              <ul class="u-align-center u-custom-font u-nav u-popupmenu-items u-spacing-20 u-unstyled u-nav-2"
+                role="menubar">
+                <li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link"
+                    href="Bookmarks.html">بوک مارک ها</a>
                 </li>
-                <li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem" class="u-button-style u-nav-link"
-                    href="#">سفرهای من</a>
+                <li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link"
+                    href="My-Trips.html">سفرهای من</a>
                 </li>
                 <li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem" class="u-button-style u-nav-link"
                     href="#">پروفایل من</a>
                 </li>
                 <li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link"
-                    href="./index.html">خانه</a>
+                    href="./">خانه</a>
                 </li>
               </ul>
             </div>
           </div>
-          <div class="u-black u-menu-overlay u-opacity u-opacity-70"></div>
+          <div class="u-grey-60 u-menu-overlay u-opacity u-opacity-var" style="--opacity: 0.7;"></div>
         </div>
       </nav>
       <div
-        class="custom-expanded data-layout-selected u-align-left u-clearfix u-layout-custom-sm u-layout-custom-xs u-layout-wrap u-layout-wrap-1">
+        class="custom-expanded data-layout-selected u-align-left-lg u-align-left-md u-align-left-sm u-align-left-xl u-clearfix u-layout-custom-sm u-layout-custom-xs u-layout-wrap u-layout-wrap-1">
         <div class="u-layout">
           <div class="u-layout-row">
             <div
-              class="u-align-right u-container-align-right u-container-style u-layout-cell u-left-cell u-size-30 u-layout-cell-1"
+              class="u-align-right u-container-align-right u-container-align-right-lg u-container-align-right-md u-container-align-right-sm u-container-align-right-xl u-container-style u-layout-cell u-left-cell u-size-30 u-layout-cell-1"
               data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="250">
-              <div class="u-container-layout u-valign-top u-container-layout-1">
-                <a href="login-signup.html"
+              <div
+                class="u-container-layout u-valign-top-lg u-valign-top-md u-valign-top-sm u-valign-top-xl u-container-layout-1">
+                <a href="login-signup.html?mode=signup"
                   class="u-border-2 u-border-color-var u-btn u-btn-round u-button-style u-color-var u-custom-font u-radius-50 u-text-white u-btn-1">ثبت‌نام
                 </a>
               </div>
             </div>
             <div
-              class="u-align-left u-container-align-left u-container-style u-layout-cell u-right-cell u-size-30 u-layout-cell-2"
+              class="u-align-left u-container-align-left u-container-align-left-lg u-container-align-left-xl u-container-style u-layout-cell u-right-cell u-size-30 u-layout-cell-2"
               data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="250">
-              <div class="u-container-layout u-valign-top u-container-layout-2">
-                <a href="login-signup.html"
-                  class="u-active-white u-border-2 u-border-active-white u-border-hover-white u-border-white u-btn u-btn-round u-button-style u-custom-font u-hover-white u-none u-radius-50 u-text-active-black u-text-hover-black u-btn-2">ورود
+              <div class="u-container-layout u-valign-top-lg u-valign-top-xl u-container-layout-2">
+                <a href="login-signup.html?mode=login"
+                  class="u-active-white u-align-center-xs u-border-2 u-border-active-white u-border-hover-white u-border-white u-btn u-btn-round u-button-style u-custom-font u-hover-white u-none u-radius-50 u-text-active-black u-text-hover-black u-btn-2">ورود
                 </a>
               </div>
             </div>
@@ -134,8 +121,7 @@
     </div>
   </section>
   <section class="u-clearfix u-section-2" id="carousel_eee5">
-    <div
-      class="u-clearfix u-sheet u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-sheet-1">
+    <div class="u-clearfix u-sheet u-valign-middle-lg u-valign-middle-md u-valign-middle-xs u-sheet-1">
       <div class="u-expanded-width u-list u-list-1">
         <div class="u-repeater u-repeater-1">
           <div
@@ -143,8 +129,8 @@
             data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-delay="0"
             data-href="places/religious.html" data-page-id="212014895" title="Religious Places">
             <div class="u-container-layout u-similar-container u-valign-middle u-container-layout-1"><span
-                class="u-align-center u-file-icon u-icon u-text-white u-icon-1"><img
-                    src="src/assets/images/19004259-2d2ef6d2.png" alt=""></span>
+                class="u-align-center u-file-icon u-icon u-text-white u-icon-1"><img src="images/19004259-2d2ef6d2.png"
+                  alt=""></span>
               <h4 class="u-align-center u-custom-font u-text u-text-white u-text-1">مکان‌های مذهبی</h4>
             </div>
           </div>
@@ -153,8 +139,8 @@
             data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-delay="0"
             data-href="places/entertainment.html" data-page-id="666422469" title="Entertainment Places">
             <div class="u-container-layout u-similar-container u-valign-middle u-container-layout-2"><span
-                class="u-align-center u-file-icon u-icon u-text-white u-icon-2"><img
-                    src="src/assets/images/4578915-b3706098.png" alt=""></span>
+                class="u-align-center u-file-icon u-icon u-text-white u-icon-2"><img src="images/4578915-b3706098.png"
+                  alt=""></span>
               <h4 class="u-align-center u-custom-font u-text u-text-white u-text-2">مکان‌های تجاری و تفریحی </h4>
             </div>
           </div>
@@ -163,8 +149,8 @@
             data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-delay="0"
             data-href="places/historical.html" data-page-id="45119448" title="Historical Places">
             <div class="u-container-layout u-similar-container u-valign-middle u-container-layout-3"><span
-                class="u-align-center u-file-icon u-icon u-text-white u-icon-3"><img
-                    src="src/assets/images/1871573-975f60af.png" alt=""></span>
+                class="u-align-center u-file-icon u-icon u-text-white u-icon-3"><img src="images/1871573-975f60af.png"
+                  alt=""></span>
               <h4 class="u-align-center u-custom-font u-text u-text-white u-text-3">بناهای تاریخی</h4>
             </div>
           </div>
@@ -173,8 +159,8 @@
             data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-delay="0"
             data-href="places/natural.html" data-page-id="24449494" title="Natural Places">
             <div class="u-container-layout u-similar-container u-valign-middle u-container-layout-4"><span
-                class="u-align-center u-file-icon u-icon u-text-white u-icon-4"><img
-                    src="src/assets/images/46296-64c3a47f.png" alt=""></span>
+                class="u-align-center u-file-icon u-icon u-text-white u-icon-4"><img src="images/46296-64c3a47f.png"
+                  alt=""></span>
               <h4 class="u-align-center u-custom-font u-text u-text-white u-text-4">طبیعت​‌گر​​دی </h4>
             </div>
           </div>
@@ -184,15 +170,15 @@
         <div class="u-layout">
           <div class="u-layout-row">
             <div
-              class="u-align-center u-container-align-center u-container-style u-layout-cell u-left-cell u-size-23 u-layout-cell-1">
-              <div class="u-container-layout u-valign-middle u-container-layout-5">
+              class="u-align-center u-container-align-center u-container-align-center-lg u-container-align-center-xl u-container-style u-layout-cell u-left-cell u-size-23 u-layout-cell-1">
+              <div class="u-container-layout u-valign-middle-lg u-valign-middle-xl u-container-layout-5">
                 <div alt="" class="u-border-10 u-border-color-var u-image u-image-circle u-image-contain u-image-1"
                   src="" data-image-width="1024" data-image-height="1024" data-animation-name="customAnimationIn"
                   data-animation-duration="1500" data-animation-delay="0"></div>
               </div>
             </div>
             <div
-              class="u-align-right u-container-align-right u-container-style u-layout-cell u-right-cell u-size-37 u-layout-cell-2"
+              class="u-align-right u-container-align-right u-container-align-right-lg u-container-align-right-xl u-container-style u-layout-cell u-right-cell u-size-37 u-layout-cell-2"
               data-animation-name="customAnimationIn" data-animation-duration="1500">
               <div class="u-container-layout u-container-layout-6">
                 <h2 class="u-custom-font u-text u-text-5" data-animation-name="customAnimationIn"
@@ -201,9 +187,8 @@
                 </h2>
                 <p class="u-custom-font u-text u-text-6" data-animation-name="fadeIn" data-animation-duration="1000"
                   data-animation-delay="200" dir="rtl"> با ایران‌گرد، برنامه‌ریزی سفرهای گروهی ساده‌تر از
-                  همیشه‌ست!<br>شهر مقصدت
-                  رو انتخاب کن، دوستانت رو دعوت کن و با رأی‌گیری مکان‌های دیدنی رو مشخص کن.<br>ایران‌گرد بهت کمک می‌کنه
-                  برنامه‌ی روزانه بسازی و هزینه‌ها رو بین اعضای گروه تقسیم کنی.
+                  همیشه‌ست!<br>شهر مقصدت رو انتخاب کن، دوستانت رو دعوت کن و با رأی‌گیری مکان‌های دیدنی رو مشخص
+                  کن.<br>ایران‌گرد بهت کمک می‌کنه برنامه‌ی روزانه بسازی و هزینه‌ها رو بین اعضای گروه تقسیم کنی.
                 </p>
               </div>
             </div>
@@ -218,30 +203,12 @@
   </section>
   <section class="u-align-center u-clearfix u-container-align-center u-custom-color-5 u-section-3" id="sec-3d1c">
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <div
-      class="u-clearfix u-sheet u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-sheet-1">
+    <div class="u-clearfix u-sheet u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-sheet-1">
       <h2 class="u-align-center u-custom-font u-text u-text-default u-text-1" data-animation-name="customAnimationIn"
         data-animation-duration="1500" data-animation-delay="0">مکان‌های محبوب ایران‌گرد</h2>
       <div class="u-expanded-width u-list u-list-1">
         <div class="u-repeater u-repeater-1">
-          <div
+          <a href="Each-Place.html"
             class="u-align-center u-container-align-center u-container-style u-image u-image-round u-list-item u-radius u-repeater-item u-shading u-shape-rectangle u-image-1"
             data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500"
             data-image-width="1280" data-image-height="853">
@@ -258,8 +225,8 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div
+          </a>
+          <a href="Each-Place.html"
             class="u-align-center u-container-align-center u-container-style u-image u-image-round u-list-item u-radius u-repeater-item u-shading u-shape-rectangle u-image-2"
             data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500"
             data-image-width="1280" data-image-height="1280">
@@ -276,8 +243,8 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div
+          </a>
+          <a href="Each-Place.html"
             class="u-align-center u-container-align-center u-container-style u-image u-image-round u-list-item u-radius u-repeater-item u-shading u-shape-rectangle u-image-3"
             data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500"
             data-image-width="1180" data-image-height="825">
@@ -287,7 +254,7 @@
                 data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-direction=""
                 data-animation-delay="0">
                 <div class="u-container-layout u-valign-middle u-container-layout-6">
-                  <h4 class="u-align-center u-custom-font u-text u-text-4" data-animation-name="customAnimationIn"
+                  <h4 class="u-align-center u-custom-font u-text u-text-2" data-animation-name="customAnimationIn"
                     data-animation-duration="1250" data-animation-delay="0">مکان یک</h4>
                   <p class="u-align-center u-custom-font u-text u-text-7" data-animation-name="customAnimationIn"
                     data-animation-duration="1250" data-animation-delay="500">&nbsp;توضیح توضیح تو<span
@@ -296,8 +263,8 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div
+          </a>
+          <a href="Each-Place.html"
             class="u-align-center u-container-align-center u-container-style u-image u-image-round u-list-item u-radius u-repeater-item u-shading u-shape-rectangle u-image-4"
             data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500"
             data-image-width="1024" data-image-height="1280">
@@ -314,8 +281,8 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div
+          </a>
+          <a href="Each-Place.html"
             class="u-align-center u-container-align-center u-container-style u-image u-image-round u-list-item u-radius u-repeater-item u-shading u-shape-rectangle u-image-5"
             data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500"
             data-image-width="910" data-image-height="1280">
@@ -332,8 +299,8 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div
+          </a>
+          <a href="Each-Place.html"
             class="u-align-center u-container-align-center u-container-style u-image u-image-round u-list-item u-radius u-repeater-item u-shading u-shape-rectangle u-image-6"
             data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500"
             data-image-width="1024" data-image-height="1280">
@@ -350,7 +317,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </a>
         </div>
       </div>
     </div>
@@ -456,18 +423,17 @@
       </div>
     </div>
   </section>
-  <section class="u-align-center u-clearfix u-container-align-center u-image u-section-5" data-image-width="1920"
-    data-image-height="760" id="block-1">
-    <div
-      class="u-clearfix u-sheet u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-sheet-1">
+  <section class="u-align-center u-clearfix u-container-align-center u-container-align-center-xl u-image u-section-5"
+    data-image-width="1920" data-image-height="760" id="block-1">
+    <div class="u-clearfix u-sheet u-sheet-1">
       <p class="u-align-center u-custom-font u-large-text u-text u-text-variant u-text-white u-text-1"
         data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-delay="0">ایران‌گرد رو در
-        شبکه‌های اجتماعی دنبال کن و اولین کسی باش که از پیشنهادهای جدید باخبر می‌شه</p>
+        شبکه‌های اجتماعی دنبال کن و اولی​ن کسی باش که از پیشنهادهای جدید باخبر می‌شه</p>
       <div class="u-social-icons u-social-icons-1" data-animation-name="customAnimationIn"
         data-animation-duration="1000" data-animation-delay="0">
         <a class="u-social-url" title="facebook" target="_blank" href="https://facebook.com/name"><span
-            class="u-icon u-social-facebook u-social-icon u-text-white u-icon-1"><svg class="u-svg-link"
-              preserveAspectRatio="xMidYMin slice" viewBox="0 0 23.101 23.101" style="">
+            class="u-icon u-icon-rectangle u-social-facebook u-social-icon u-text-white u-icon-1"><svg
+              class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 23.101 23.101" style="">
               <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-fef9"></use>
             </svg><svg class="u-svg-content" viewBox="0 0 23.101 23.101" id="svg-fef9">
               <g>
@@ -479,7 +445,7 @@
             </svg></span>
         </a>
         <a class="u-social-url" title="twitter" target="_blank" href="https://twitter.com/name"><span
-            class="u-icon u-social-icon u-social-twitter u-text-white u-icon-2"><svg class="u-svg-link"
+            class="u-icon u-icon-rectangle u-social-icon u-social-twitter u-text-white u-icon-2"><svg class="u-svg-link"
               preserveAspectRatio="xMidYMin slice" viewBox="0 0 1200 1200" style="">
               <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-4da9"></use>
             </svg><svg class="u-svg-content" viewBox="0 0 1200 1200" x="0px" y="0px" id="svg-4da9"
@@ -491,8 +457,8 @@
             </svg></span>
         </a>
         <a class="u-social-url" title="instagram" target="_blank" href="https://instagram.com/name"><span
-            class="u-icon u-social-icon u-social-instagram u-text-white u-icon-3"><svg class="u-svg-link"
-              preserveAspectRatio="xMidYMin slice" viewBox="0 0 256 256" style="">
+            class="u-icon u-icon-rectangle u-social-icon u-social-instagram u-text-white u-icon-3"><svg
+              class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 256 256" style="">
               <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-d9a6"></use>
             </svg><svg class="u-svg-content" viewBox="0 0 256 256" id="svg-d9a6">
               <g>
@@ -503,18 +469,12 @@
             </svg></span>
         </a>
         <a class="u-social-url" target="_blank" data-type="Custom" title="Custom" href=""><span
-            class="u-file-icon u-icon u-social-custom u-social-icon u-text-white u-icon-4"><img
-                src="src/assets/images/646094-251de927.png" alt=""></span>
+            class="u-file-icon u-icon u-icon-rectangle u-social-custom u-social-icon u-icon-4"><img
+              src="images/646094-251de927.png" alt=""></span>
         </a>
       </div>
     </div>
   </section>
-  <style class="u-overlap-style">
-    .u-overlap:not(.u-sticky-scroll) .u-header {
-      background-color: var(--color-var) !important;
-      --color-var: #999999b3 !important
-    }
-  </style>
 
 </body>
 
