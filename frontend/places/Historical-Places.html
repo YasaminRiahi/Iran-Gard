@@ -4,29 +4,12 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
-  <title>Religious Places</title>
-  <link rel="stylesheet" href="../src/styles/style.css" media="screen">
-  <link rel="stylesheet" href="../src/styles/pages/places/religious.css" media="screen">
-  <script class="u-script" type="text/javascript" src="../src/scripts/vendor/jquery.js" defer=""></script>
-  <script class="u-script" type="text/javascript" src="../src/scripts/app.js" defer=""></script>
-
-
-
-
-
-
-  <link id="u-page-google-font" rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?display=swap&amp;family=Roboto:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800">
-  <script type="application/ld+json">{
-		"@context": "http://schema.org",
-		"@type": "Organization",
-		"name": "",
-		"logo": "images/ChatGPTImageNov20202506_51_17PM.png"
-}</script>
-  <meta name="theme-color" content="#478ac9">
-  <meta property="og:title" content="Religious Places">
-  <meta property="og:type" content="website">
-  <meta data-intl-tel-input-cdn-path="intlTelInput/">
+  <title>Historical Places</title>
+  <link rel="stylesheet" href="style.css" media="screen">
+  <link rel="stylesheet" href="Historical-Places.css" media="screen">
+  <link rel="stylesheet" href="Historical-Places-responsive.css" media="screen">
+  <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+  <script class="u-script" type="text/javascript" src="app.js" defer=""></script>
 </head>
 
 <body data-path-to-root="./" data-include-products="false"
@@ -34,13 +17,15 @@
   <header class="u-clearfix u-header u-shading u-header" id="header" data-animation-name="" data-animation-duration="0"
     data-animation-delay="0" data-animation-direction="">
     <div class="u-clearfix u-sheet u-sheet-1">
-      <a href="#" class="u-image u-logo u-image-1" data-image-width="150" data-image-height="100">
-        <img src="../src/assets/images/ChatGPTImageNov20202506_51_17PM.png" class="u-logo-image u-logo-image-1">
+      <a href="#" class="u-hidden-md u-hidden-sm u-hidden-xs u-image u-logo u-image-1" data-image-width="150"
+        data-image-height="100">
+        <img src="images/ChatGPTImageNov20202506_51_17PM.png" class="u-logo-image u-logo-image-1">
       </a>
-      <nav class="u-menu u-menu-one-level u-offcanvas u-menu-1" role="navigation" aria-label="Menu navigation">
+      <nav class="u-menu u-menu-one-level u-menu-open-right u-offcanvas u-menu-1" role="navigation"
+        aria-label="Menu navigation">
         <div class="menu-collapse u-custom-font"
           style="font-size: 1.125rem; letter-spacing: 0px; font-family: Anjoman-Regular; font-weight: 600;">
-          <a class="u-button-style u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-text-active-color u-custom-text-color u-custom-text-hover-color u-custom-top-bottom-menu-spacing u-hamburger-link u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base"
+          <a class="u-button-style u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-text-active-color u-custom-text-color u-custom-text-hover-color u-custom-top-bottom-menu-spacing u-hamburger-link u-nav-link u-text-active-custom-color-4 u-text-hover-custom-color-4"
             href="#" tabindex="-1" aria-label="Open menu" aria-controls="1858">
             <svg class="u-svg-link" viewBox="0 0 24 24">
               <use xlink:href="#menu-hamburger"></use>
@@ -57,66 +42,68 @@
         </div>
         <div class="u-custom-menu u-nav-container">
           <ul class="u-custom-font u-nav u-unstyled u-nav-1" role="menubar">
-            <li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem"
-                class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white" href="#"
-                aria-haspopup="true" style="padding: 10px 20px;">بوک مارک ها</a>
+            <li role="none" class="u-nav-item"><a role="menuitem"
+                class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white"
+                href="Bookmarks.html" style="padding: 10px 20px;">بوک مارک ها</a>
             </li>
-            <li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem"
-                class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white" href="#"
-                style="padding: 10px 20px;">سفرهای من</a>
+            <li role="none" class="u-nav-item"><a role="menuitem"
+                class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white"
+                href="My-Trips.html" style="padding: 10px 20px;">سفرهای من</a>
             </li>
             <li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem"
                 class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white" href="#"
                 style="padding: 10px 20px;">پروفایل من</a>
             </li>
             <li role="none" class="u-nav-item"><a role="menuitem"
-                                                  class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white"
-                                                  href="../home.html" style="padding: 10px 20px;">خانه</a>
+                class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white" href="./"
+                style="padding: 10px 20px;">خانه</a>
             </li>
           </ul>
         </div>
         <div class="u-custom-menu u-nav-container-collapse" id="1858" role="region" aria-label="Menu panel">
-          <div class="u-black u-container-style u-inner-container-layout u-opacity u-opacity-95 u-sidenav">
+          <div class="u-container-style u-custom-color-4 u-inner-container-layout u-opacity u-opacity-95 u-sidenav">
             <div class="u-inner-container-layout u-sidenav-overflow">
               <div class="u-menu-close" tabindex="-1" aria-label="Close menu"></div>
-              <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2" role="menubar">
-                <li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem" class="u-button-style u-nav-link"
-                    href="#" aria-haspopup="true">بوک مارک ها</a>
+              <ul class="u-align-center u-custom-font u-nav u-popupmenu-items u-spacing-20 u-unstyled u-nav-2"
+                role="menubar">
+                <li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link"
+                    href="Bookmarks.html">بوک مارک ها</a>
                 </li>
-                <li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem" class="u-button-style u-nav-link"
-                    href="#">سفرهای من</a>
+                <li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link"
+                    href="My-Trips.html">سفرهای من</a>
                 </li>
                 <li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem" class="u-button-style u-nav-link"
                     href="#">پروفایل من</a>
                 </li>
                 <li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link"
-                    href="../home.html">خانه</a>
+                    href="./">خانه</a>
                 </li>
               </ul>
             </div>
           </div>
-          <div class="u-black u-menu-overlay u-opacity u-opacity-70"></div>
+          <div class="u-grey-60 u-menu-overlay u-opacity u-opacity-var" style="--opacity: 0.7;"></div>
         </div>
       </nav>
       <div
-        class="custom-expanded data-layout-selected u-align-left u-clearfix u-layout-custom-sm u-layout-custom-xs u-layout-wrap u-layout-wrap-1">
+        class="custom-expanded data-layout-selected u-align-left-lg u-align-left-md u-align-left-sm u-align-left-xl u-clearfix u-layout-custom-sm u-layout-custom-xs u-layout-wrap u-layout-wrap-1">
         <div class="u-layout">
           <div class="u-layout-row">
             <div
-              class="u-align-right u-container-align-right u-container-style u-layout-cell u-left-cell u-size-30 u-layout-cell-1"
+              class="u-align-right u-container-align-right u-container-align-right-lg u-container-align-right-md u-container-align-right-sm u-container-align-right-xl u-container-style u-layout-cell u-left-cell u-size-30 u-layout-cell-1"
               data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="250">
-              <div class="u-container-layout u-valign-top u-container-layout-1">
+              <div
+                class="u-container-layout u-valign-top-lg u-valign-top-md u-valign-top-sm u-valign-top-xl u-container-layout-1">
                 <a href="#"
                   class="u-border-2 u-border-color-var u-btn u-btn-round u-button-style u-color-var u-custom-font u-radius-50 u-text-white u-btn-1">ثبت‌نام
                 </a>
               </div>
             </div>
             <div
-              class="u-align-left u-container-align-left u-container-style u-layout-cell u-right-cell u-size-30 u-layout-cell-2"
+              class="u-align-left u-container-align-left u-container-align-left-lg u-container-align-left-xl u-container-style u-layout-cell u-right-cell u-size-30 u-layout-cell-2"
               data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="250">
-              <div class="u-container-layout u-valign-top u-container-layout-2">
+              <div class="u-container-layout u-valign-top-lg u-valign-top-xl u-container-layout-2">
                 <a href="#"
-                  class="u-active-white u-border-2 u-border-active-white u-border-hover-white u-border-white u-btn u-btn-round u-button-style u-custom-font u-hover-white u-none u-radius-50 u-text-active-black u-text-hover-black u-btn-2">ورود
+                  class="u-active-white u-align-center-xs u-border-2 u-border-active-white u-border-hover-white u-border-white u-btn u-btn-round u-button-style u-custom-font u-hover-white u-none u-radius-50 u-text-active-black u-text-hover-black u-btn-2">ورود
                 </a>
               </div>
             </div>
@@ -125,11 +112,10 @@
       </div>
     </div>
   </header>
-  <section class="u-clearfix u-section-1" id="sec-6f0c">
-    <div
-      class="u-clearfix u-sheet u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-sheet-1">
-      <div class="custom-expanded u-shape u-shape-svg u-text-custom-color-4 u-shape-1"
-        data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500">
+  <section class="u-clearfix u-section-1" id="sec-6135">
+    <div class="u-clearfix u-sheet u-sheet-1">
+      <div class="u-shape u-shape-svg u-text-custom-color-4 u-shape-1" data-animation-name="customAnimationIn"
+        data-animation-duration="1500" data-animation-delay="500">
         <svg class="u-svg-link" preserveAspectRatio="none" viewBox="0 0 160 150" style="">
           <use xlink:href="#svg-af5b"></use>
         </svg>
@@ -140,7 +126,7 @@
 	C6.9,115.6,25.2,125.2,43.2,126.9z"></path>
         </svg>
       </div>
-      <div class="u-align-left u-image u-image-circle u-image-1" data-image-width="736" data-image-height="1288"
+      <div class="u-align-left u-image u-image-circle u-image-1" data-image-width="640" data-image-height="428"
         data-animation-name="flipIn" data-animation-duration="1500" data-animation-direction="X"
         data-animation-delay="500"></div>
       <div class="u-custom-color-5 u-preserve-proportions u-shape u-shape-circle u-shape-2"
@@ -148,9 +134,8 @@
       <div
         class="custom-expanded u-align-center u-container-align-center u-container-align-left u-container-style u-group u-radius u-shape-round u-white u-group-1"
         data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="1000">
-        <div
-          class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-1">
-          <h2 class="u-custom-font u-text u-text-custom-color-4 u-text-1">گردش زیارتی با ایران‌گرد </h2>
+        <div class="u-container-layout u-valign-middle-md u-container-layout-1">
+          <h2 class="u-custom-font u-text u-text-custom-color-4 u-text-1"> گردش تاریخی با ایران‌گرد </h2>
         </div>
       </div>
     </div>
@@ -158,32 +143,7 @@
   <section class="u-align-center u-clearfix u-container-align-center u-white u-section-2" id="sec-7e29">
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <div
-      class="u-clearfix u-sheet u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-sheet-1">
+    <div class="u-clearfix u-sheet u-sheet-1">
       <div class="u-expanded-width u-list u-list-1">
         <div class="u-repeater u-repeater-1">
           <div
@@ -193,7 +153,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-1">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-1">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-2">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-2">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-1"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-2"> توضیح
@@ -209,7 +169,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-3">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-2">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-4">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-4">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-3"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-4"> توضیح
@@ -225,7 +185,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-5">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-3">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-6">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-6">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-5">نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-6">توضیح
@@ -241,7 +201,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-7">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-4">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-8">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-8">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-7"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-8"> توضیح
@@ -257,7 +217,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-9">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-5">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-10">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-10">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-9"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-10"> توضیح
@@ -273,7 +233,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-11">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-6">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-12">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-12">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-11"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-12"> توضیح
@@ -289,7 +249,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-13">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-7">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-14">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-14">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-13"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-14"> توضیح
@@ -305,7 +265,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-15">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-8">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-16">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-16">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-15"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-16"> توضیح
@@ -321,7 +281,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-17">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-9">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-18">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-18">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-17"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-18"> توضیح
@@ -337,7 +297,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-19">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-10">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-20">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-20">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-19"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-20"> توضیح
@@ -353,7 +313,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-21">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-11">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-22">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-22">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-21"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-22"> توضیح
@@ -370,7 +330,7 @@
               <div
                 class="u-container-align-center u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-12">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-24">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-24">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-23"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-24"> توضیح
@@ -386,7 +346,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-25">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-13">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-26">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-26">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-25"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-26"> توضیح
@@ -402,7 +362,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-27">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-14">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-28">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-28">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-27"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-28"> توضیح
@@ -418,7 +378,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-29">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-15">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-30">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-30">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-29"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-30"> توضیح
@@ -434,7 +394,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-31">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-16">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-32">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-32">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-31"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-32"> توضیح
@@ -450,7 +410,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-33">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-17">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-34">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-34">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-33"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-34"> توضیح
@@ -466,7 +426,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-35">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-18">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-36">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-36">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-35"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-36"> توضیح
@@ -482,7 +442,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-37">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-19">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-38">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-38">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-37"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-38"> توضیح
@@ -498,7 +458,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-39">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-20">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-40">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-40">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-39"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-40"> توضیح
@@ -514,7 +474,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-41">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-21">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-42">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-42">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-41"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-42"> توضیح
@@ -530,7 +490,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-43">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-22">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-44">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-44">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-43"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-44"> توضیح
@@ -546,7 +506,7 @@
             <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-45">
               <div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-23">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-46">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-46">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-45"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-46"> توضیح
@@ -563,7 +523,7 @@
               <div
                 class="u-container-align-center u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-24">
                 <div
-                  class="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-container-layout-48">
+                  class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-48">
                   <h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-47"> نام
                     مکان </h5>
                   <p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-48"> توضیح
@@ -577,57 +537,18 @@
     </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   </section>
-  <section class="u-align-center u-clearfix u-container-align-center u-image u-section-3" data-image-width="1920"
-    data-image-height="760" id="sec-7c93">
-    <div
-      class="u-clearfix u-sheet u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-sheet-1">
+  <section class="u-align-center u-clearfix u-container-align-center u-container-align-center-xl u-image u-section-3"
+    data-image-width="1920" data-image-height="760" id="sec-7eff">
+    <div class="u-clearfix u-sheet u-sheet-1">
       <p class="u-align-center u-custom-font u-large-text u-text u-text-variant u-text-white u-text-1"
         data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-delay="0">ایران‌گرد رو در
-        شبکه‌های اجتماعی دنبال کن و اولین کسی باش که از پیشنهادهای جدید باخبر می‌شه</p>
+        شبکه‌های اجتماعی دنبال کن و اولی​ن کسی باش که از پیشنهادهای جدید باخبر می‌شه</p>
       <div class="u-social-icons u-social-icons-1" data-animation-name="customAnimationIn"
         data-animation-duration="1000" data-animation-delay="0">
         <a class="u-social-url" title="facebook" target="_blank" href="https://facebook.com/name"><span
-            class="u-icon u-social-facebook u-social-icon u-text-white u-icon-1"><svg class="u-svg-link"
-              preserveAspectRatio="xMidYMin slice" viewBox="0 0 23.101 23.101" style="">
+            class="u-icon u-icon-rectangle u-social-facebook u-social-icon u-text-white u-icon-1"><svg
+              class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 23.101 23.101" style="">
               <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-fef9"></use>
             </svg><svg class="u-svg-content" viewBox="0 0 23.101 23.101" id="svg-fef9">
               <g>
@@ -639,7 +560,7 @@
             </svg></span>
         </a>
         <a class="u-social-url" title="twitter" target="_blank" href="https://twitter.com/name"><span
-            class="u-icon u-social-icon u-social-twitter u-text-white u-icon-2"><svg class="u-svg-link"
+            class="u-icon u-icon-rectangle u-social-icon u-social-twitter u-text-white u-icon-2"><svg class="u-svg-link"
               preserveAspectRatio="xMidYMin slice" viewBox="0 0 1200 1200" style="">
               <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-4da9"></use>
             </svg><svg class="u-svg-content" viewBox="0 0 1200 1200" x="0px" y="0px" id="svg-4da9"
@@ -651,8 +572,8 @@
             </svg></span>
         </a>
         <a class="u-social-url" title="instagram" target="_blank" href="https://instagram.com/name"><span
-            class="u-icon u-social-icon u-social-instagram u-text-white u-icon-3"><svg class="u-svg-link"
-              preserveAspectRatio="xMidYMin slice" viewBox="0 0 256 256" style="">
+            class="u-icon u-icon-rectangle u-social-icon u-social-instagram u-text-white u-icon-3"><svg
+              class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 256 256" style="">
               <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-d9a6"></use>
             </svg><svg class="u-svg-content" viewBox="0 0 256 256" id="svg-d9a6">
               <g>
@@ -663,19 +584,12 @@
             </svg></span>
         </a>
         <a class="u-social-url" target="_blank" data-type="Custom" title="Custom" href=""><span
-            class="u-file-icon u-icon u-social-custom u-social-icon u-text-white u-icon-4"><img
-                src="../src/assets/images/646094-251de927.png" alt=""></span>
+            class="u-file-icon u-icon u-icon-rectangle u-social-custom u-social-icon u-icon-4"><img
+              src="images/646094-251de927.png" alt=""></span>
         </a>
       </div>
     </div>
   </section>
-  <style class="u-overlap-style"
-    style="background-color: rgba(102, 102, 102, 0.5) !important; color: white !important;">
-    .u-overlap:not(.u-sticky-scroll) .u-header {
-      background-color: var(--color-var) !important;
-      --color-var: #999999b3 !important
-    }
-  </style>
 
 </body>
 

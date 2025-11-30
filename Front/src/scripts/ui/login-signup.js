@@ -236,3 +236,26 @@ document.getElementById("changePasswordBtn").onclick = async () => {
     err.textContent = data.error;
   }
 };
+
+// ======================================
+//         Initial Panel Check
+// ======================================
+
+document.addEventListener("DOMContentLoaded", () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const mode = urlParams.get('mode');
+
+  if (mode === 'signup') {
+    wrapper.classList.add("show-signup");
+    wrapper.classList.remove("forgot-mode");
+    showPanel(panels.signup1);
+  } else if (mode === 'login') {
+    wrapper.classList.remove("show-signup");
+    wrapper.classList.remove("forgot-mode");
+    showPanel(panels.login);
+  } else {
+    wrapper.classList.remove("show-signup");
+    wrapper.classList.remove("forgot-mode");
+    showPanel(panels.login);
+  }
+});
