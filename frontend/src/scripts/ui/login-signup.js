@@ -185,7 +185,7 @@ document.getElementById("loginBtn").onclick = async () => {
     localStorage.setItem("access_token", data.access_token);
     localStorage.setItem("token_type", data.token_type || "bearer");
     // Redirect after short delay to ensure storage
-    setTimeout(() => (window.location.href = "../../../home.html"), 100);
+    setTimeout(() => (window.location.href = "../../../index.html"), 100);
   } else {
     displayError(err, data.error);
   }

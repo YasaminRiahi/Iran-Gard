@@ -24,7 +24,7 @@
 .u-section-1 .u-image-1 {
   width: 350px;
   height: 350px;
-  background-image: url("images/94ab2208ebcbdc6c7bb0996086894363.jpg");
+  background-image: url("../../assets/images/94ab2208ebcbdc6c7bb0996086894363.jpg");
   background-position: 50% 50%;
   margin: 119px 46px 0 auto;
 }
@@ -32,7 +32,7 @@
 .u-section-1 .u-image-2 {
   width: 200px;
   height: 200px;
-  background-image: url("images/038a227904f992ecd94129615ed84f94.jpg");
+  background-image: url("../../assets/images/038a227904f992ecd94129615ed84f94.jpg");
   background-position: 50% 50%;
   margin: -356px 423px 60px auto;
 }
@@ -288,7 +288,7 @@
 }
 
 .u-section-3 {
-  background-image: url("images/footer1.jpg");
+  background-image: url("../../assets/images/footer1.jpg");
   background-position: 50% 50%;
   background-size: cover;
 }
@@ -405,19 +405,19 @@
   font-family: 'Anjoman-Regular';
   font-style: normal;
   font-weight: 400;
-  src: url(fonts/Anjoman-Regular.woff2);
+  src: url(../../assets/fonts/Anjoman-Regular.woff2);
 }
 
 @font-face {
   font-family: 'Anjoman-Bold';
   font-style: normal;
   font-weight: 400;
-  src: url(fonts/Anjoman-Bold.woff2);
+  src: url(../../assets/fonts/Anjoman-Bold.woff2);
 }
 
 @font-face {
   font-family: 'Anjoman-Regular';
   font-style: normal;
   font-weight: 400;
-  src: url(fonts/Anjoman-Regular.woff2);
+  src: url(../../assets/fonts/Anjoman-Regular.woff2);
 }

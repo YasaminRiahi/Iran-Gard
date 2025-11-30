@@ -24,7 +24,7 @@
 .u-section-1 .u-image-1 {
   width: 350px;
   height: 350px;
-  background-image: url("images/181695ea1dff97bee6b1aaae41d1b086.jpg");
+  background-image: url("../../../assets/images/181695ea1dff97bee6b1aaae41d1b086.jpg");
   background-position: 50% 50%;
   margin: 119px 46px 0 auto;
 }
@@ -32,7 +32,7 @@
 .u-section-1 .u-image-2 {
   width: 200px;
   height: 200px;
-  background-image: url("images/9818ca38ac4612d430f16e2595af40bd.jpg");
+  background-image: url("../../../assets/images/9818ca38ac4612d430f16e2595af40bd.jpg");
   background-position: 50% 50%;
   background-size: cover;
   margin: -356px 423px 60px auto;
@@ -66,7 +66,7 @@
 }
 
 .u-section-2 .u-image-1 {
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/man-walking-stone-pathway-surrou.jpg');
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('../../../assets/images/man-walking-stone-pathway-surrou.jpg');
   background-position: 50% 50%;
   --animation-custom_in-translate_x: 0px;
   --animation-custom_in-translate_y: 300px;
@@ -109,7 +109,7 @@
 }
 
 .u-section-2 .u-image-2 {
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/45677.jpg');
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('../../../assets/images/45677.jpg');
   background-position: 50% 50%;
   --animation-custom_in-translate_x: 0px;
   --animation-custom_in-translate_y: 300px;
@@ -152,7 +152,7 @@
 }
 
 .u-section-2 .u-image-3 {
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/man-walking-stone-pathway-surrou.jpg');
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('../../../assets/images/man-walking-stone-pathway-surrou.jpg');
   background-position: 50% 50%;
   --animation-custom_in-translate_x: 0px;
   --animation-custom_in-translate_y: 300px;
@@ -195,7 +195,7 @@
 }
 
 .u-section-2 .u-image-4 {
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/45677.jpg');
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('../../../assets/images/45677.jpg');
   background-position: 50% 50%;
   --animation-custom_in-translate_x: 0px;
   --animation-custom_in-translate_y: 300px;
@@ -238,7 +238,7 @@
 }
 
 .u-section-2 .u-image-5 {
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/man-walking-stone-pathway-surrou.jpg');
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('../../../assets/images/man-walking-stone-pathway-surrou.jpg');
   background-position: 50% 50%;
   --animation-custom_in-translate_x: 0px;
   --animation-custom_in-translate_y: 300px;
@@ -281,7 +281,7 @@
 }
 
 .u-section-2 .u-image-6 {
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/88bfd4e9d10d431265e291bc107e47d7.jpg');
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('../../../assets/images/88bfd4e9d10d431265e291bc107e47d7.jpg');
   background-position: 50% 50%;
   --animation-custom_in-translate_x: 0px;
   --animation-custom_in-translate_y: 300px;
@@ -338,7 +338,7 @@
 }
 
 .u-section-3 {
-  background-image: url("images/footer1.jpg");
+  background-image: url("../../../assets/images/footer1.jpg");
   background-position: 50% 50%;
   background-size: cover;
 }
@@ -455,12 +455,12 @@
   font-family: 'Anjoman-Bold';
   font-style: normal;
   font-weight: 400;
-  src: url(fonts/Anjoman-Bold.woff2);
+  src: url(../../../assets/fonts/Anjoman-Bold.woff2);
 }
 
 @font-face {
   font-family: 'Anjoman-Regular';
   font-style: normal;
   font-weight: 400;
-  src: url(fonts/Anjoman-Regular.woff2);
+  src: url(../../../assets/fonts/Anjoman-Regular.woff2);
 }

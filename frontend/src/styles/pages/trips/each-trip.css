@@ -91,7 +91,7 @@
 .u-section-1 .u-image-1 {
   width: 400px;
   height: 400px;
-  background-image: url("images/ad319067e5f8388a26cbd4fa0921fd4d.jpg");
+  background-image: url("../../../assets/images/ad319067e5f8388a26cbd4fa0921fd4d.jpg");
   background-position: 50% 50%;
   margin: 41px auto 0;
 }
@@ -148,7 +148,7 @@
 .u-section-2 .u-image-1 {
   width: 133px;
   height: 133px;
-  background-image: url("images/ec6da3db-d4a7-cbc8-c959-57cb2f78738d.jpg?rand=0094");
+  background-image: url("../../../assets/images/ec6da3db-d4a7-cbc8-c959-57cb2f78738d.jpg?rand=0094");
   background-position: 50% 50%;
   text-shadow: 0px 0px 0 rgba(0, 0, 0, 0);
   margin: 0 auto;
@@ -177,7 +177,7 @@
 .u-section-2 .u-image-2 {
   width: 133px;
   height: 133px;
-  background-image: url("images/tyty.jpg?rand=53f4");
+  background-image: url("../../../assets/images/tyty.jpg?rand=53f4");
   background-position: 50% 50%;
   text-shadow: 0px 0px 0 rgba(0, 0, 0, 0);
   margin: 0 auto;
@@ -206,7 +206,7 @@
 .u-section-2 .u-image-3 {
   width: 133px;
   height: 133px;
-  background-image: url("images/gggg.jpg?rand=9e72");
+  background-image: url("../../../assets/images/gggg.jpg?rand=9e72");
   background-position: 50% 50%;
   text-shadow: 0px 0px 0 rgba(0, 0, 0, 0);
   margin: 0 auto;
@@ -235,7 +235,7 @@
 .u-section-2 .u-image-4 {
   width: 133px;
   height: 133px;
-  background-image: url("images/ds.jpg?rand=71d1");
+  background-image: url("../../../assets/images/ds.jpg?rand=71d1");
   background-position: 50% 50%;
   text-shadow: 0px 0px 0 rgba(0, 0, 0, 0);
   --animation-custom_in-translate_x: 0px;
@@ -269,7 +269,7 @@
 .u-section-2 .u-image-5 {
   width: 133px;
   height: 133px;
-  background-image: url("images/hgghgh.jpg?rand=bb43");
+  background-image: url("../../../assets/images/hgghgh.jpg?rand=bb43");
   background-position: 50% 50%;
   text-shadow: 0px 0px 0 rgba(0, 0, 0, 0);
   margin: 0 auto;
@@ -298,7 +298,7 @@
 .u-section-2 .u-image-6 {
   width: 133px;
   height: 133px;
-  background-image: url("images/bfc62dcf-11dc-f72c-9f80-d5d6784457fc.jpg?rand=ecfe");
+  background-image: url("../../../assets/images/bfc62dcf-11dc-f72c-9f80-d5d6784457fc.jpg?rand=ecfe");
   background-position: 50% 50%;
   text-shadow: 0px 0px 0 rgba(0, 0, 0, 0);
   margin: 0 auto;
@@ -343,7 +343,7 @@
 }
 
 .u-section-4 {
-  background-image: url("images/footer1.jpg");
+  background-image: url("../../../assets/images/footer1.jpg");
   background-position: 50% 50%;
   background-size: cover;
 }
@@ -397,19 +397,19 @@
   font-family: 'Anjoman-Regular';
   font-style: normal;
   font-weight: 400;
-  src: url(fonts/Anjoman-Regular.woff2);
+  src: url(../../../assets/fonts/Anjoman-Regular.woff2);
 }
 
 @font-face {
   font-family: 'Anjoman-Bold';
   font-style: normal;
   font-weight: 400;
-  src: url(fonts/Anjoman-Bold.woff2);
+  src: url(../../../assets/fonts/Anjoman-Bold.woff2);
 }
 
 @font-face {
   font-family: 'Anjoman-Regular';
   font-style: normal;
   font-weight: 400;
-  src: url(fonts/Anjoman-Regular.woff2);
+  src: url(../../../assets/fonts/Anjoman-Regular.woff2);
 }
