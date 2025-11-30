@@ -1,0 +1,466 @@
+.u-section-1 .u-sheet-1 {
+  min-height: 543px;
+}
+
+.u-section-1 .u-line-1 {
+  position: absolute;
+  top: 0;
+  left: auto;
+  height: 119px;
+  transform-origin: center top;
+  right: 216px;
+  animation-timing-function: ease;
+}
+
+.u-section-1 .u-line-2 {
+  position: absolute;
+  top: 0;
+  left: auto;
+  height: 119px;
+  transform-origin: center top;
+  right: 513px;
+}
+
+.u-section-1 .u-image-1 {
+  width: 350px;
+  height: 350px;
+  background-image: url("images/181695ea1dff97bee6b1aaae41d1b086.jpg");
+  background-position: 50% 50%;
+  margin: 119px 46px 0 auto;
+}
+
+.u-section-1 .u-image-2 {
+  width: 200px;
+  height: 200px;
+  background-image: url("images/9818ca38ac4612d430f16e2595af40bd.jpg");
+  background-position: 50% 50%;
+  background-size: cover;
+  margin: -356px 423px 60px auto;
+}
+
+.u-section-2 {
+  min-height: 50vw;
+}
+
+.u-section-2 .u-text-1 {
+  --animation-custom_in-translate_x: -300px;
+  --animation-custom_in-translate_y: 0px;
+  --animation-custom_in-opacity: 0;
+  --animation-custom_in-rotate: 0deg;
+  --animation-custom_in-scale: 1;
+  font-size: 3.4375rem;
+  font-family: Anjoman-Bold;
+  margin: 30px auto 0;
+}
+
+.u-section-2 .u-list-1 {
+  grid-template-rows: repeat(1, auto);
+  margin: 82px 0 60px;
+}
+
+.u-section-2 .u-repeater-1 {
+  grid-template-columns: repeat(3, calc(33.3333% - 23.3333px));
+  min-height: 473px;
+  grid-auto-columns: calc(33.3333% - 23.3333px);
+  --gap: 35px;
+}
+
+.u-section-2 .u-image-1 {
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/man-walking-stone-pathway-surrou.jpg');
+  background-position: 50% 50%;
+  --animation-custom_in-translate_x: 0px;
+  --animation-custom_in-translate_y: 300px;
+  --animation-custom_in-opacity: 0;
+  --animation-custom_in-rotate: 0deg;
+  --animation-custom_in-scale: 1;
+  --radius: 30px;
+}
+
+.u-section-2 .u-container-layout-1 {
+  padding: 30px 0 0;
+}
+
+.u-section-2 .u-group-1 {
+  min-height: 113px;
+  margin-top: 0;
+  margin-bottom: 0;
+  height: auto;
+  --bottom-right-radius: 30px;
+  --bottom-left-radius: 30px;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-image: linear-gradient(rgba(64, 64, 64, 0.8), rgba(64, 64, 64, 0.8));
+  background-size: cover;
+}
+
+.u-section-2 .u-container-layout-2 {
+  padding: 10px 20px;
+}
+
+.u-section-2 .u-text-2 {
+  font-size: 1.5rem;
+  font-family: Anjoman-Regular;
+  margin: 0 0 0 auto;
+}
+
+.u-section-2 .u-text-3 {
+  font-family: Anjoman-Regular;
+  margin: 12px 0 0 auto;
+}
+
+.u-section-2 .u-image-2 {
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/45677.jpg');
+  background-position: 50% 50%;
+  --animation-custom_in-translate_x: 0px;
+  --animation-custom_in-translate_y: 300px;
+  --animation-custom_in-opacity: 0;
+  --animation-custom_in-rotate: 0deg;
+  --animation-custom_in-scale: 1;
+  --radius: 30px;
+}
+
+.u-section-2 .u-container-layout-3 {
+  padding: 30px 0 0;
+}
+
+.u-section-2 .u-group-2 {
+  min-height: 113px;
+  margin-top: 0;
+  margin-bottom: 0;
+  height: auto;
+  --bottom-right-radius: 30px;
+  --bottom-left-radius: 30px;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-image: linear-gradient(to bottom, rgba(64, 64, 64, 0.8), rgba(64, 64, 64, 0.8));
+  background-size: cover;
+}
+
+.u-section-2 .u-container-layout-4 {
+  padding: 10px 20px;
+}
+
+.u-section-2 .u-text-4 {
+  font-size: 1.5rem;
+  font-family: Anjoman-Regular;
+  margin: 0 0 0 auto;
+}
+
+.u-section-2 .u-text-5 {
+  font-family: Anjoman-Regular;
+  margin: 12px 0 0 auto;
+}
+
+.u-section-2 .u-image-3 {
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/man-walking-stone-pathway-surrou.jpg');
+  background-position: 50% 50%;
+  --animation-custom_in-translate_x: 0px;
+  --animation-custom_in-translate_y: 300px;
+  --animation-custom_in-opacity: 0;
+  --animation-custom_in-rotate: 0deg;
+  --animation-custom_in-scale: 1;
+  --radius: 30px;
+}
+
+.u-section-2 .u-container-layout-5 {
+  padding: 30px 0 0;
+}
+
+.u-section-2 .u-group-3 {
+  min-height: 113px;
+  margin-top: 0;
+  margin-bottom: 0;
+  height: auto;
+  --bottom-right-radius: 30px;
+  --bottom-left-radius: 30px;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-image: linear-gradient(to bottom, rgba(64, 64, 64, 0.8), rgba(64, 64, 64, 0.8));
+  background-size: cover;
+}
+
+.u-section-2 .u-container-layout-6 {
+  padding: 10px 20px;
+}
+
+.u-section-2 .u-text-6 {
+  font-size: 1.5rem;
+  font-family: Anjoman-Regular;
+  margin: 0 0 0 auto;
+}
+
+.u-section-2 .u-text-7 {
+  font-family: Anjoman-Regular;
+  margin: 12px 0 0 auto;
+}
+
+.u-section-2 .u-image-4 {
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/45677.jpg');
+  background-position: 50% 50%;
+  --animation-custom_in-translate_x: 0px;
+  --animation-custom_in-translate_y: 300px;
+  --animation-custom_in-opacity: 0;
+  --animation-custom_in-rotate: 0deg;
+  --animation-custom_in-scale: 1;
+  --radius: 30px;
+}
+
+.u-section-2 .u-container-layout-7 {
+  padding: 30px 0 0;
+}
+
+.u-section-2 .u-group-4 {
+  min-height: 113px;
+  margin-top: 0;
+  margin-bottom: 0;
+  height: auto;
+  --bottom-right-radius: 30px;
+  --bottom-left-radius: 30px;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-image: linear-gradient(to bottom, rgba(64, 64, 64, 0.8), rgba(64, 64, 64, 0.8));
+  background-size: cover;
+}
+
+.u-section-2 .u-container-layout-8 {
+  padding: 10px 20px;
+}
+
+.u-section-2 .u-text-8 {
+  font-size: 1.5rem;
+  font-family: Anjoman-Regular;
+  margin: 0 0 0 auto;
+}
+
+.u-section-2 .u-text-9 {
+  font-family: Anjoman-Regular;
+  margin: 12px 0 0 auto;
+}
+
+.u-section-2 .u-image-5 {
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/man-walking-stone-pathway-surrou.jpg');
+  background-position: 50% 50%;
+  --animation-custom_in-translate_x: 0px;
+  --animation-custom_in-translate_y: 300px;
+  --animation-custom_in-opacity: 0;
+  --animation-custom_in-rotate: 0deg;
+  --animation-custom_in-scale: 1;
+  --radius: 30px;
+}
+
+.u-section-2 .u-container-layout-9 {
+  padding: 30px 0 0;
+}
+
+.u-section-2 .u-group-5 {
+  min-height: 113px;
+  margin-top: 0;
+  margin-bottom: 0;
+  height: auto;
+  --bottom-right-radius: 30px;
+  --bottom-left-radius: 30px;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-image: linear-gradient(to bottom, rgba(64, 64, 64, 0.8), rgba(64, 64, 64, 0.8));
+  background-size: cover;
+}
+
+.u-section-2 .u-container-layout-10 {
+  padding: 10px 20px;
+}
+
+.u-section-2 .u-text-10 {
+  font-size: 1.5rem;
+  font-family: Anjoman-Regular;
+  margin: 0 0 0 auto;
+}
+
+.u-section-2 .u-text-11 {
+  font-family: Anjoman-Regular;
+  margin: 12px 0 0 auto;
+}
+
+.u-section-2 .u-image-6 {
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/88bfd4e9d10d431265e291bc107e47d7.jpg');
+  background-position: 50% 50%;
+  --animation-custom_in-translate_x: 0px;
+  --animation-custom_in-translate_y: 300px;
+  --animation-custom_in-opacity: 0;
+  --animation-custom_in-rotate: 0deg;
+  --animation-custom_in-scale: 1;
+  --radius: 30px;
+}
+
+.u-section-2 .u-container-layout-11 {
+  padding: 30px 0 0;
+}
+
+.u-section-2 .u-group-6 {
+  min-height: 113px;
+  margin-top: 0;
+  margin-bottom: 0;
+  height: auto;
+  --bottom-right-radius: 30px;
+  --bottom-left-radius: 30px;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-image: linear-gradient(to bottom, rgba(64, 64, 64, 0.8), rgba(64, 64, 64, 0.8));
+  background-size: cover;
+}
+
+.u-section-2 .u-container-layout-12 {
+  padding: 10px 20px;
+}
+
+.u-section-2 .u-text-12 {
+  font-size: 1.5rem;
+  font-family: Anjoman-Regular;
+  margin: 0 0 0 auto;
+}
+
+.u-section-2 .u-text-13 {
+  font-family: Anjoman-Regular;
+  margin: 12px 0 0 auto;
+}
+
+.u-section-2 .u-gallery-nav-1 {
+  position: absolute;
+  left: 10px;
+  width: 40px;
+  height: 40px;
+}
+
+.u-section-2 .u-gallery-nav-2 {
+  position: absolute;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+}
+
+.u-section-3 {
+  background-image: url("images/footer1.jpg");
+  background-position: 50% 50%;
+  background-size: cover;
+}
+
+.u-section-3 .u-sheet-1 {
+  min-height: 480px;
+}
+
+.u-section-3 .u-text-1 {
+  --animation-custom_in-translate_x: -200px;
+  --animation-custom_in-translate_y: 0px;
+  --animation-custom_in-opacity: 0;
+  --animation-custom_in-rotate: 0deg;
+  --animation-custom_in-scale: 1;
+  font-family: Anjoman-Regular;
+  width: 772px;
+  font-size: 1.5rem;
+  margin: 46px auto 0;
+}
+
+.u-section-3 .u-social-icons-1 {
+  height: 46px;
+  width: 285px;
+  min-width: 115px;
+  --animation-custom_in-translate_x: -200px;
+  --animation-custom_in-translate_y: 0px;
+  --animation-custom_in-opacity: 0;
+  --animation-custom_in-rotate: 0deg;
+  --animation-custom_in-scale: 1;
+  margin: 31px auto 60px;
+}
+
+.u-section-3 .u-icon-1 {
+  height: 46px;
+}
+
+.u-section-3 .u-icon-2 {
+  height: 46px;
+}
+
+.u-section-3 .u-icon-3 {
+  height: 46px;
+}
+
+.u-section-3 .u-icon-4 {
+  height: 0;
+  color: rgb(255, 255, 255) !important;
+}
+
+:root {}
+
+@keyframes ball-drop-and-settle {
+  0% {
+    transform: translateY(0);
+  }
+
+  20% {
+    transform: translateY(220px);
+  }
+
+  50% {
+    transform: translateY(calc(220px * 0.2));
+  }
+
+  75% {
+    transform: translateY(calc(220px * 0.4));
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.elastic-ball {
+  animation-name: ball-drop-and-settle;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes rope-stretch-and-settle {
+  0% {
+    transform: scaleY(1);
+  }
+
+  20% {
+    transform: scaleY(3.5);
+  }
+
+  50% {
+    transform: scaleY(2.5);
+  }
+
+  85% {
+    transform: scaleY(2.5);
+  }
+
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+.elastic-rope {
+  transform-origin: top;
+  animation-name: rope-stretch-and-settle;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+@font-face {
+  font-family: 'Anjoman-Bold';
+  font-style: normal;
+  font-weight: 400;
+  src: url(fonts/Anjoman-Bold.woff2);
+}
+
+@font-face {
+  font-family: 'Anjoman-Regular';
+  font-style: normal;
+  font-weight: 400;
+  src: url(fonts/Anjoman-Regular.woff2);
+}
