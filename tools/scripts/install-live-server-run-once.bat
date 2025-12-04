@@ -1,0 +1,1 @@
+npm install -g live-server --registry https://registry.npmmirror.com
