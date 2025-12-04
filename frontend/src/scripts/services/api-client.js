@@ -156,7 +156,7 @@ async function request(endpoint, options = {}) {
     // Network error or JSON parse error
     return {
       success: false,
-      error: "خطا در ارتباط با سرور: " + err.message,
+      error: "خطا در ارتباط با سرور",
     };
   }
 }
