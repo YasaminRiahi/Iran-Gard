@@ -16,6 +16,22 @@
  * const places = await apiClient.get('/places', { includeAuth: false });
  */
 
+/**
+ * Request options for API calls
+ * @typedef {Object} RequestOptions
+ * @property {boolean} [includeAuth=true] - Whether to include Authorization header
+ * @property {Object} [headers] - Additional headers to merge
+ */
+
+/**
+ * API Client with HTTP methods
+ * @typedef {Object} ApiClient
+ * @property {(endpoint: string, options?: RequestOptions) => Promise<any>} get - GET request
+ * @property {(endpoint: string, body: Object, options?: RequestOptions) => Promise<any>} post - POST request
+ * @property {(endpoint: string, body: Object, options?: RequestOptions) => Promise<any>} put - PUT request
+ * @property {(endpoint: string, options?: RequestOptions) => Promise<any>} delete - DELETE request
+ */
+
 // Auto-detect API base from frontend's location
 const getAPIBase = () => {
   const protocol = window.location.protocol;
@@ -149,7 +165,7 @@ async function request(endpoint, options = {}) {
  * Public API client with convenience methods
  * All methods automatically include Authorization header unless specified otherwise
  *
- * @type {Object}
+ * @type {ApiClient}
  * @property {Function} get - GET request
  * @property {Function} post - POST request
  * @property {Function} put - PUT request
@@ -159,8 +175,8 @@ export const apiClient = {
   /**
    * GET request
    * @param {string} endpoint - API endpoint
-   * @param {Object} options - Request options
-   * @returns {Promise<Object>} Response data
+   * @param {RequestOptions} [options] - Request options
+   * @returns {Promise<any>} Response data
    */
   get: (endpoint, options = {}) =>
     request(endpoint, { ...options, method: "GET" }),
@@ -169,8 +185,8 @@ export const apiClient = {
    * POST request
    * @param {string} endpoint - API endpoint
    * @param {Object} body - Request body
-   * @param {Object} options - Request options
-   * @returns {Promise<Object>} Response data
+   * @param {RequestOptions} [options] - Request options
+   * @returns {Promise<any>} Response data
    */
   post: (endpoint, body, options = {}) =>
     request(endpoint, { ...options, method: "POST", body }),
@@ -179,8 +195,8 @@ export const apiClient = {
    * PUT request
    * @param {string} endpoint - API endpoint
    * @param {Object} body - Request body
-   * @param {Object} options - Request options
-   * @returns {Promise<Object>} Response data
+   * @param {RequestOptions} [options] - Request options
+   * @returns {Promise<any>} Response data
    */
   put: (endpoint, body, options = {}) =>
     request(endpoint, { ...options, method: "PUT", body }),
@@ -188,8 +204,8 @@ export const apiClient = {
   /**
    * DELETE request
    * @param {string} endpoint - API endpoint
-   * @param {Object} options - Request options
-   * @returns {Promise<Object>} Response data
+   * @param {RequestOptions} [options] - Request options
+   * @returns {Promise<any>} Response data
    */
   delete: (endpoint, options = {}) =>
     request(endpoint, { ...options, method: "DELETE" }),
