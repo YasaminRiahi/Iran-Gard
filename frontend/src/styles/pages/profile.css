@@ -136,7 +136,7 @@ body {
     right: 0;
     z-index: 100;
     transition: all 0.4s ease-in-out;
-    background: rgba(170, 170, 170, 0.6);
+    background: rgba(153, 153, 153, 0.6);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
 }
@@ -171,8 +171,8 @@ body {
 .nav-item,
 .nav-item-active {
     color: white;
-    font-weight: 500;
-    font-size: 1.15rem;
+    font-weight: 700;
+    font-size: 1.07rem;
     text-decoration: none;
     padding: 0;
     transition: all 0.3s ease;
@@ -226,12 +226,10 @@ body {
 .cover-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-            to top,
+    background: linear-gradient(to top,
             rgba(0, 0, 0, 0.8),
             rgba(0, 0, 0, 0.5),
-            rgba(0, 0, 0, 0.2)
-    );
+            rgba(0, 0, 0, 0.2));
 }
 
 /* Glowing Background Effect */
@@ -254,10 +252,13 @@ body {
 }
 
 @keyframes pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
         opacity: 0.2;
     }
+
     50% {
         transform: scale(1.1);
         opacity: 0.3;
@@ -315,18 +316,23 @@ body {
 
 /* Camera Icon for Avatar Upload */
 .camera-icon-label {
+    width: 2.8rem;
+    height: 2.8rem;
     position: absolute;
     bottom: 0.5rem;
     left: 0.5rem;
     background: var(--color-accent);
     padding: 0.75rem;
     border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     transition: all 0.4s ease;
     z-index: 15;
     opacity: 0;
     transform: scale(0);
-    animation: camera-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 1.5s forwards;
+    animation: camera-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards;
 }
 
 @keyframes camera-pop {
@@ -336,8 +342,8 @@ body {
     }
 }
 
-.camera-icon-label:hover {
-    transform: scale(1.2) rotate(15deg);
+.camera-icon:hover {
+    transform: scale(1.2);
 }
 
 .camera-icon {
@@ -383,8 +389,15 @@ body {
 }
 
 @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
 }
 
 
@@ -420,11 +433,7 @@ body {
 .stat-number {
     font-size: 2rem;
     font-weight: 900;
-    background: linear-gradient(
-            135deg,
-            var(--color-accent) 0%,
-            var(--color-primary) 100%
-    );
+    background: #4b5563;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -529,14 +538,9 @@ body {
 
 /* Form Wrapper with Gradient Background */
 .profile-form-wrapper {
-    background: linear-gradient(135deg, #ffffff 0%, #f8faf9 100%);
+    background: #ffffff;
     border-radius: 2.5rem;
-    box-shadow:
-            0 30px 80px rgba(166, 178, 139, 0.25),
-            0 50px 120px rgba(166, 178, 139, 0.22),
-            0 0 0 1px rgba(166, 178, 139, 0.12),
-            0 0 80px rgba(166, 178, 139, 0.18),
-            inset 0 2px 8px rgba(245, 201, 176, 0.15);
+    box-shadow: 0 0 6px 6px rgb(0, 0, 0, 0.1);
     transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     transform: translateY(0);
     padding: 4.5rem 3.5rem;
@@ -544,43 +548,13 @@ body {
     overflow: hidden;
 }
 
-/* Animated Background Gradient */
-.form-bg-gradient {
-    position: absolute;
-    top: -30%;
-    right: -15%;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(
-            circle,
-            rgba(166, 178, 139, 0.2),
-            transparent 70%
-    );
-    border-radius: 50%;
-    animation: float-gradient 15s ease-in-out infinite;
-}
 
-@keyframes float-gradient {
-    0%, 100% {
-        transform: translate(0, 0) scale(1);
-    }
-    33% {
-        transform: translate(-40px, 50px) scale(1.15);
-    }
-    66% {
-        transform: translate(40px, -50px) scale(0.9);
-    }
-}
 
-/* Form Title with Gradient Text */
+/* Form Title  */
 .form-title {
     font-size: 2rem;
     font-weight: 700;
-    background: linear-gradient(
-            90deg,
-            rgba(245, 201, 176, 1) 49%,
-            rgba(166, 178, 139, 1) 100%
-    );
+    background-color: #111111;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -597,12 +571,10 @@ body {
     transform: translateX(-50%);
     width: 100px;
     height: 5px;
-    background: linear-gradient(
-            90deg,
+    background: linear-gradient(90deg,
             transparent,
             var(--color-primary),
-            transparent
-    );
+            transparent);
     border-radius: 3px;
 }
 
@@ -651,8 +623,8 @@ body {
     border-color: var(--color-primary);
     outline: none;
     box-shadow:
-            0 0 0 5px rgba(166, 178, 139, 0.15),
-            0 10px 30px rgba(166, 178, 139, 0.2);
+        0 0 0 5px rgba(166, 178, 139, 0.15),
+        0 10px 30px rgba(166, 178, 139, 0.2);
     transform: translateY(-3px);
 }
 
@@ -702,13 +674,13 @@ body {
 }
 
 /* Icon Animation on Input Focus */
-.form-input:focus + .input-icon {
-    transform: translateY(-50%) scale(1.12) rotate(8deg);
+.form-input:focus+.input-icon {
+    transform: translateY(-50%) scale(1.12);
     box-shadow: 0 8px 25px rgba(166, 178, 139, 0.6);
 }
 
-.form-textarea:focus + .input-icon-textarea {
-    transform: scale(1.12) rotate(8deg);
+.form-textarea:focus+.input-icon-textarea {
+    transform: scale(1.12);
 }
 
 /* Form Submit Button Wrapper */
@@ -720,7 +692,7 @@ body {
 
 /* Primary Submit Button */
 .btn-primary {
-    background: linear-gradient(135deg, #A6B28B 0%, #8f9b6a 100%);
+    background: var(--color-primary);
     position: relative;
     overflow: hidden;
     color: var(--color-white);
@@ -731,8 +703,8 @@ body {
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow:
-            0 12px 35px rgba(166, 178, 139, 0.4),
-            0 0 0 0 rgba(166, 178, 139, 0.5);
+        0 12px 12px rgba(166, 178, 139, 0.4),
+        0 0 0 0 rgba(166, 178, 139, 0.5);
     padding: 1.7rem 5rem;
     display: inline-flex;
     align-items: center;
@@ -742,8 +714,8 @@ body {
 .btn-primary:hover {
     transform: translateY(-5px) scale(1.03);
     box-shadow:
-            0 25px 60px rgba(166, 178, 139, 0.6),
-            0 0 0 0 rgba(166, 178, 139, 0);
+        0 25px 60px rgba(166, 178, 139, 0.6),
+        0 0 0 0 rgba(166, 178, 139, 0);
 }
 
 /* Button Shine Effect */
@@ -754,12 +726,10 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-            90deg,
+    background: linear-gradient(90deg,
             transparent,
             rgba(255, 255, 255, 0.35),
-            transparent
-    );
+            transparent);
     transition: left 0.6s;
 }
 
@@ -774,9 +744,17 @@ body {
 }
 
 @keyframes successPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 
@@ -839,7 +817,7 @@ body {
     font-weight: 600;
     color: var(--color-text-medium);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.05);
     min-width: 120px;
     justify-content: center;
 }
@@ -864,19 +842,17 @@ body {
 }
 
 /* Selected Gender State */
-.gender-option input[type="radio"]:checked + .gender-box {
-    background: linear-gradient(
-            135deg,
+.gender-option input[type="radio"]:checked+.gender-box {
+    background: linear-gradient(135deg,
             var(--color-primary),
-            var(--color-primary-dark)
-    );
+            var(--color-primary-dark));
     color: white;
     border-color: transparent;
     transform: translateY(-6px) scale(1.05);
     box-shadow: 0 15px 35px rgba(166, 178, 139, 0.4);
 }
 
-.gender-option input[type="radio"]:checked + .gender-box i {
+.gender-option input[type="radio"]:checked+.gender-box i {
     opacity: 1;
     transform: scale(1.3);
 }
@@ -937,7 +913,7 @@ body {
 }
 
 /* Checked Checkbox State */
-.category-checkbox-label input[type="checkbox"]:checked ~ .checkbox-custom {
+.category-checkbox-label input[type="checkbox"]:checked~.checkbox-custom {
     background-color: var(--color-primary);
     border-color: var(--color-primary);
     transform: scale(1.05);
@@ -950,7 +926,7 @@ body {
     display: none;
 }
 
-.category-checkbox-label input[type="checkbox"]:checked ~ .checkbox-custom:after {
+.category-checkbox-label input[type="checkbox"]:checked~.checkbox-custom:after {
     display: block;
     left: 7px;
     top: 3px;
@@ -962,7 +938,7 @@ body {
 }
 
 /* Checkbox Hover Effect */
-.category-checkbox-label:hover input ~ .checkbox-custom {
+.category-checkbox-label:hover input~.checkbox-custom {
     border-color: var(--color-primary-dark);
 }
 
@@ -1019,15 +995,20 @@ body {
 }
 
 @keyframes heartbeat {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
     }
+
     25% {
         transform: scale(1.2);
     }
+
     50% {
         transform: scale(1);
     }
+
     75% {
         transform: scale(1.3);
     }
@@ -1070,12 +1051,10 @@ body {
     left: -100%;
     width: 200%;
     height: 200%;
-    background: linear-gradient(
-            45deg,
+    background: linear-gradient(45deg,
             transparent,
             rgba(255, 255, 255, 0.4),
-            transparent
-    );
+            transparent);
     transform: rotate(30deg);
     transition: all 0.5s;
     opacity: 0;
@@ -1090,6 +1069,7 @@ body {
     0% {
         transform: translateX(-100%) translateY(-100%) rotate(30deg);
     }
+
     100% {
         transform: translateX(100%) translateY(100%) rotate(30deg);
     }
@@ -1140,7 +1120,7 @@ body {
 .friend-name {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--color-primary);
+    color: var(--color-text-medium);
     margin-top: 1.5rem;
 }
 
@@ -1159,11 +1139,9 @@ body {
 .friend-popup {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-            135deg,
+    background: linear-gradient(135deg,
             rgba(166, 178, 139, 0.98),
-            rgba(130, 150, 105, 0.96)
-    );
+            rgba(130, 150, 105, 0.96));
     color: var(--color-white);
     padding: 2rem 1.5rem;
     display: flex;
@@ -1231,8 +1209,7 @@ body {
 }
 
 .popup-btn-delete:hover {
-    background: var(--color-accent);
-    transform: scale(1.05);
+    transform: scale(1.03);
 }
 
 
@@ -1249,9 +1226,9 @@ body {
     padding: 0.75rem;
     border-radius: 2rem;
     box-shadow:
-            0 10px 40px rgba(166, 178, 139, 0.15),
-            0 0 0 1px rgba(166, 178, 139, 0.08),
-            inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        0 10px 40px rgba(166, 178, 139, 0.15),
+        0 0 0 1px rgba(166, 178, 139, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
     max-width: 850px;
     margin-left: auto;
     margin-right: auto;
@@ -1266,17 +1243,24 @@ body {
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(
-            circle at center,
+    background: radial-gradient(circle at center,
             rgba(166, 178, 139, 0.03) 0%,
-            transparent 70%
-    );
+            transparent 70%);
     animation: pulse-background 6s ease-in-out infinite;
 }
 
 @keyframes pulse-background {
-    0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.5; }
-    50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+
+    0%,
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: scale(1.2) rotate(180deg);
+        opacity: 1;
+    }
 }
 
 /* Friends Tab Button */
@@ -1308,12 +1292,10 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-            90deg,
+    background: linear-gradient(90deg,
             transparent,
             rgba(255, 255, 255, 0.4),
-            transparent
-    );
+            transparent);
     transition: left 0.5s;
 }
 
@@ -1334,7 +1316,7 @@ body {
 }
 
 .friends-tab-btn:hover i {
-    transform: scale(1.2) rotate(10deg);
+    transform: scale(1.2);
 }
 
 /* Active Tab State */
@@ -1342,9 +1324,9 @@ body {
     background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
     color: white;
     box-shadow:
-            0 8px 25px rgba(166, 178, 139, 0.4),
-            0 0 0 3px rgba(166, 178, 139, 0.2),
-            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        0 8px 25px rgba(166, 178, 139, 0.4),
+        0 0 0 3px rgba(166, 178, 139, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
     transform: translateY(-4px) scale(1.05);
 }
 
@@ -1353,9 +1335,17 @@ body {
 }
 
 @keyframes icon-bounce {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.3) rotate(15deg); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.3);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* Notification Badge */
@@ -1371,23 +1361,14 @@ body {
     border-radius: 12px;
     min-width: 22px;
     text-align: center;
-    box-shadow:
-            0 4px 12px rgba(239, 68, 68, 0.4),
-            0 0 0 2px white;
-    animation: badge-pulse 2s ease-in-out infinite;
-}
-
-@keyframes badge-pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
 }
 
 .friends-tab-btn.active .badge {
     background: linear-gradient(135deg, white, #f0f0f0);
     color: var(--color-primary);
     box-shadow:
-            0 4px 12px rgba(166, 178, 139, 0.3),
-            0 0 0 2px rgba(255, 255, 255, 0.5);
+        0 4px 12px rgba(166, 178, 139, 0.3),
+        0 0 0 2px rgba(255, 255, 255, 0.5);
 }
 
 /* Tab Content with smooth transitions */
@@ -1407,6 +1388,7 @@ body {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1418,17 +1400,32 @@ body {
     animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
 }
 
-.search-result-card:nth-child(1) { animation-delay: 0.1s; }
-.search-result-card:nth-child(2) { animation-delay: 0.2s; }
-.search-result-card:nth-child(3) { animation-delay: 0.3s; }
-.search-result-card:nth-child(4) { animation-delay: 0.4s; }
-.search-result-card:nth-child(5) { animation-delay: 0.5s; }
+.search-result-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.search-result-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.search-result-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.search-result-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.search-result-card:nth-child(5) {
+    animation-delay: 0.5s;
+}
 
 @keyframes slideInRight {
     from {
         opacity: 0;
         transform: translateX(-30px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -1492,7 +1489,6 @@ body {
 
 .search-result-card:hover {
     box-shadow: 0 4px 16px rgba(166, 178, 139, 0.2);
-    transform: translateX(5px);
 }
 
 /* Search Result Avatar */
@@ -1561,7 +1557,7 @@ body {
 }
 
 .btn-icon.btn-view:hover {
-    background: #e5e7eb;
+    transform: scale(1.1);
 }
 
 .request-badge {
@@ -1652,12 +1648,10 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-            90deg,
+    background: linear-gradient(90deg,
             transparent,
             rgba(255, 255, 255, 0.3),
-            transparent
-    );
+            transparent);
     transition: left 0.7s;
 }
 
@@ -1680,18 +1674,24 @@ body {
 
 /* Floating Animation Keyframes */
 @keyframes float-center {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(-10px);
     }
 }
 
 @keyframes float {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(-8px);
     }
@@ -1763,12 +1763,9 @@ body {
     padding: 30px 40px;
     width: 850px;
     height: 220px;
-    background: linear-gradient(135deg, #ffffff 0%, #fffbf9 100%);
+    background: #ffffff;
     border-radius: 100px;
-    box-shadow:
-            0 30px 80px rgba(245, 201, 176, 0.35),
-            0 0 0 3px rgba(245, 201, 176, 0.15),
-            inset 0 2px 10px rgba(245, 201, 176, 0.1);
+    box-shadow: 0 0 2px 2px rgb(0, 0, 0, 0.05);
     z-index: 10;
     opacity: 0;
     transform: translateY(100px) scale(0.9);
@@ -1814,20 +1811,21 @@ body {
     position: absolute;
     inset: -15px;
     border-radius: 50%;
-    background: linear-gradient(
-            135deg,
+    background: linear-gradient(135deg,
             transparent,
             rgba(245, 201, 176, 0.3),
-            transparent
-    );
+            transparent);
     animation: ring-glow 3s ease-in-out infinite;
 }
 
 @keyframes ring-glow {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 0.5;
         transform: rotate(0deg);
     }
+
     50% {
         opacity: 1;
         transform: rotate(180deg);
@@ -1847,11 +1845,6 @@ body {
     z-index: 2;
 }
 
-.organic-avatar-ring:hover .organic-profile-avatar {
-    transform: scale(1.05);
-}
-
-
 /* ================================================================
    22. ORGANIC SHAPES & ANIMATIONS
    ================================================================ */
@@ -1870,30 +1863,26 @@ body {
     filter: blur(1px);
     z-index: 2;
     animation:
-            shape1-dramatic-entrance 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s forwards,
-            float-blob 20s ease-in-out 2.3s infinite;
+        shape1-dramatic-entrance 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s forwards,
+        float-blob 20s ease-in-out 2.3s infinite;
 }
 
 /* Organic Shape 2 - Accent Shape */
 .organic-shape-2 {
     position: absolute;
-    top: 100px;
+    top: 120px;
     left: 22%;
     width: 200px;
     height: 200px;
-    background: linear-gradient(
-            135deg,
-            var(--color-primary) 0%,
-            var(--color-accent) 100%
-    );
+    background: var(--color-accent);
     border-radius: 30% 70% 60% 40% / 70% 30% 70% 30%;
     opacity: 1;
     transform: translate(400px, -300px) rotate(180deg) scale(0.2);
     z-index: 100;
-    box-shadow: 0 15px 40px rgba(245, 201, 176, 0.4);
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.2);
     animation:
-            shape1-dramatic-entrance 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.5s forwards,
-            float-blob 20s ease-in-out 2.1s infinite;
+        shape1-dramatic-entrance 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.5s forwards,
+        float-blob 20s ease-in-out 2.1s infinite;
 }
 
 /* Shape 1 Dramatic Entrance Animation */
@@ -1902,10 +1891,12 @@ body {
         opacity: 0;
         transform: translate(-300px, 200px) rotate(-90deg) scale(0.3);
     }
+
     60% {
         opacity: 0.7;
         transform: translate(0, 0) rotate(30deg) scale(1.1);
     }
+
     100% {
         opacity: 0.9;
         transform: translate(0, 0) rotate(25deg) scale(1);
@@ -1918,13 +1909,16 @@ body {
         opacity: 0;
         transform: translate(400px, -300px) rotate(180deg) scale(0.2);
     }
+
     50% {
         opacity: 0.9;
         transform: translate(-30px, 50px) rotate(90deg) scale(1.15);
     }
+
     70% {
         transform: translate(10px, -10px) rotate(-20deg) scale(0.95);
     }
+
     100% {
         opacity: 0.8;
         transform: translate(0, 0) rotate(-10deg) scale(1);
@@ -1933,9 +1927,12 @@ body {
 
 /* Floating Blob Animation */
 @keyframes float-blob {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: rotate(25deg) translateY(0) scale(1);
     }
+
     50% {
         transform: rotate(30deg) translateY(-30px) scale(1.05);
     }
@@ -1946,6 +1943,7 @@ body {
     0% {
         transform: rotate(-10deg) translateY(0);
     }
+
     100% {
         transform: rotate(5deg) translateY(-25px);
     }
@@ -2070,18 +2068,13 @@ body {
     transform: translateX(50px);
 }
 
-/* Fade Up Animation */
-[data-animate="fade-up"] {
-    transform: translateY(50px);
-}
-
 /* Rotate In Animation */
 [data-animate="rotate-in"] {
     transform: rotate3d(1, 1, 1, -120deg) scale(0.5);
     opacity: 0;
     transition:
-            transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55),
-            opacity 1.2s;
+        transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+        opacity 1.2s;
 }
 
 /* Slide From Left RTL Animation */
@@ -2143,6 +2136,7 @@ body {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -2150,15 +2144,18 @@ body {
 
 /* Pulse Shadow Animation */
 @keyframes pulse-shadow {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow:
-                0 12px 35px rgba(166, 178, 139, 0.4),
-                0 0 0 0 rgba(166, 178, 139, 0.5);
+            0 12px 35px rgba(166, 178, 139, 0.4),
+            0 0 0 0 rgba(166, 178, 139, 0.5);
     }
+
     50% {
         box-shadow:
-                0 12px 35px rgba(166, 178, 139, 0.4),
-                0 0 0 15px rgba(166, 178, 139, 0);
+            0 12px 35px rgba(166, 178, 139, 0.4),
+            0 0 0 15px rgba(166, 178, 139, 0);
     }
 }
 
