@@ -9,7 +9,7 @@ from app.schemas.category import FavoriteCategoryCreate, CategoryResponse
 from app.crud import user as user_crud
 from app.models.category import FavoriteCategory, Category
 
-router = APIRouter()
+router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.get("/me", response_model=UserResponse)

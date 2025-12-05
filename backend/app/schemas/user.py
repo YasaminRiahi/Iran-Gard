@@ -38,7 +38,9 @@ class UserResponse(BaseModel):
     username: str
     email: str
     gender: Optional[str] = None
-    profile_url: Optional[str] = None
+    full_name: Optional[str]
+    about_me: Optional[str]
+    profile_url: str
 
     class Config:
         from_attributes = True

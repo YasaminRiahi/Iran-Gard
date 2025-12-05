@@ -2,6 +2,7 @@
 from app.db.session import Base
 from app.models.user import User
 from app.models.verification_code import VerificationCode
+from app.models.friendship import Friendship
 
 # Models below are defined but not yet implemented in the API
 # Uncomment them as you implement the corresponding endpoints
