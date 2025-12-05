@@ -1,69 +1,15 @@
 -- Delete place_photos
-DELETE FROM place_photos 
-WHERE place_id IN (
-    SELECT place_id FROM places 
-    WHERE place_name IN (
-        'برج میلاد',
-        'کاخ گلستان',
-        'دربند',
-        'باغ کتاب',
-        'میدان نقش جهان',
-        'مسجد شیخ لطف‌الله',
-        'سی‌و‌سه‌پل',
-        'تخت جمشید',
-        'مسجد نصیرالملک',
-        'باغ ارم',
-        'حافظیه',
-        'حرم امام رضا'
-    )
-);
+DELETE FROM place_photos;
 
 -- Delete places
-DELETE FROM places 
-WHERE place_name IN (
-    'برج میلاد',
-    'کاخ گلستان',
-    'دربند',
-    'باغ کتاب',
-    'میدان نقش جهان',
-    'مسجد شیخ لطف‌الله',
-    'سی‌و‌سه‌پل',
-    'تخت جمشید',
-    'مسجد نصیرالملک',
-    'باغ ارم',
-    'حافظیه',
-    'حرم امام رضا'
-);
+DELETE FROM places;
 
 -- Delete cities
-DELETE FROM cities 
-WHERE city_name IN (
-    'تهران',
-    'اصفهان',
-    'شیراز',
-    'یزد',
-    'مشهد',
-    'کاشان',
-    'تبریز',
-    'رامسر',
-    'رشت',
-    'اهواز',
-    'کرمان',
-    'قشم'
-);
+DELETE FROM cities;
 
 -- Delete provinces
-DELETE FROM provinces 
-WHERE province_name IN (
-    'تهران',
-    'اصفهان',
-    'فارس',
-    'یزد',
-    'مازندران',
-    'گیلان',
-    'خوزستان',
-    'آذربایجان شرقی',
-    'خراسان رضوی',
-    'کرمان',
-    'هرمزگان'
-);
+DELETE FROM provinces;
+
+-- Reset sequences to start from 1
+ALTER SEQUENCE places_place_id_seq RESTART WITH 1;
+ALTER SEQUENCE place_photos_photo_num_seq RESTART WITH 1;
