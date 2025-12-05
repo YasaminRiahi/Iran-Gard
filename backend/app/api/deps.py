@@ -39,3 +39,30 @@ def get_current_user(
         raise credentials_exception
 
     return user
+
+
+oauth2_scheme_optional = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
+
+
+def get_current_user_optional(
+    db: Session = Depends(get_db),
+    token: str | None = Depends(oauth2_scheme_optional),
+) -> User | None:
+    """Get current user if authenticated, otherwise return None."""
+    if not token:
+        return None
+
+    payload = decode_access_token(token)
+    if not payload:
+        return None
+
+    user_id_str = payload.get("sub")
+    if not user_id_str:
+        return None
+
+    try:
+        user_id = int(user_id_str)
+    except (ValueError, TypeError):
+        return None
+
+    return user_crud.get_user_by_id(db, user_id)

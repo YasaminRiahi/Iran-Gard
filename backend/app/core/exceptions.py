@@ -24,6 +24,14 @@ async def validation_exception_handler(request, exc: RequestValidationError):
             "username": "نام کاربری",
             "password": "رمز عبور",
             "code": "کد تایید",
+            "place_id": "شناسه مکان",
+            "review_id": "شناسه نظر",
+            "rating": "امتیاز",
+            "review": "متن نظر",
+            "city_name": "نام شهر",
+            "category_id": "شناسه دسته‌بندی",
+            "skip": "تعداد رد شده",
+            "limit": "محدودیت",
         }
         field_label = field_names.get(field, field)
 
@@ -44,6 +52,16 @@ async def validation_exception_handler(request, exc: RequestValidationError):
             message = f"{field_label} معتبر نیست."
         elif error_type == "missing":
             message = f"{field_label} الزامی است."
+        elif error_type == "int_parsing":
+            message = f"{field_label} باید یک عدد صحیح باشد."
+        elif error_type == "greater_than_equal":
+            ge_value = error.get("ctx", {}).get("ge", 1)
+            message = f"{field_label} باید حداقل {ge_value} باشد."
+        elif error_type == "less_than_equal":
+            le_value = error.get("ctx", {}).get("le", 5)
+            message = f"{field_label} باید حداکثر {le_value} باشد."
+        elif error_type == "int_type":
+            message = f"{field_label} باید یک عدد صحیح باشد."
         else:
             message = f"{field_label} معتبر نیست."
 
