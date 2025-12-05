@@ -1,10 +1,21 @@
+import os
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
+from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
 from app.core.exceptions import validation_exception_handler
 from app.api.api import api_router
 from app.utils.email_service import EmailService, set_email_service
+
+# Get the directory where main.py is located
+BASE_DIR = Path(__file__).resolve().parent
+STATIC_DIR = BASE_DIR / "static"
+
+# Create static directory if it doesn't exist
+STATIC_DIR.mkdir(parents=True, exist_ok=True)
+(STATIC_DIR / "images").mkdir(parents=True, exist_ok=True)
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -13,6 +24,9 @@ app = FastAPI(
     docs_url=f"{settings.API_STR}/docs",
     redoc_url=f"{settings.API_STR}/redoc",
 )
+
+# Serve static files (images, etc.)
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 # Set up CORS
 app.add_middleware(
