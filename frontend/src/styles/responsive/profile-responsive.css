@@ -923,8 +923,8 @@
     }
 
     .form-input, .form-textarea {
-        padding: 1.1rem 1.1rem 1.1rem 3.8rem;
-        font-size: 0.9rem;
+        padding: 0.8rem 2rem 0.8rem 2.5rem !important;
+        font-size: 0.7rem !important;
         border-radius: 1.1rem;
     }
 
@@ -934,10 +934,10 @@
     }
 
     .input-icon, .input-icon-textarea {
-        width: 38px;
-        height: 38px;
-        font-size: 1rem;
-        left: 0.9rem;
+        width: 25px;
+        height: 25px;
+        font-size: 0.8rem;
+        left: 0.8rem;
     }
 
     .input-icon-textarea {
@@ -983,6 +983,10 @@
     .btn-icon {
         width: 35px;
         height: 35px;
+    }
+    .search-input {
+        padding: 1.2rem 1.5rem 1.2rem 1.5rem;
+        font-size: 0.8rem;
     }
 
 
@@ -1100,7 +1104,7 @@
 
     .form-input, .form-textarea {
         font-size: 0.87rem;
-        padding: 1rem 3.6rem 1rem 3.6rem;
+        padding: 0.5rem 2rem 0.5rem 2rem;
     }
 
     .btn-primary {
