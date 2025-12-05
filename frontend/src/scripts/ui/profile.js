@@ -327,10 +327,10 @@ function initMobileMenu() {
                 </button>
             </div>
             <nav class="mobile-menu-nav">
-                <a href="../../../index.html" class="mobile-menu-item">خانه</a>
-                <a href="../../../profile.html" class="mobile-menu-item active">پروفایل من</a>
-                <a href="../../../trips/my-trips.html" class="mobile-menu-item">سفرهای من</a>
-                <a href="../../../bookmarks.html" class="mobile-menu-item">بوک‌مارک‌ها</a>
+                <a href="./index.html" class="mobile-menu-item">خانه</a>
+                <a href="./profile.html" class="mobile-menu-item active">پروفایل من</a>
+                <a href="./trips/my-trips.html" class="mobile-menu-item">سفرهای من</a>
+                <a href="./bookmarks.html" class="mobile-menu-item">بوک‌مارک‌ها</a>
             </nav>
         </div>
     `;
