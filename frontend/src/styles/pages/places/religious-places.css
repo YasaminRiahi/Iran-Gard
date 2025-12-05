@@ -2381,12 +2381,12 @@
    font-family: 'Anjoman-Bold';
    font-style: normal;
    font-weight: 400;
-   src: url(fonts/Anjoman-Bold.woff2);
+   src: url(../../../assets/fonts/Anjoman-Bold.woff2);
  }
 
  @font-face {
    font-family: 'Anjoman-Regular';
    font-style: normal;
    font-weight: 400;
-   src: url(fonts/Anjoman-Regular.woff2);
+   src: url(../../../assets/fonts/Anjoman-Regular.woff2);
  }
