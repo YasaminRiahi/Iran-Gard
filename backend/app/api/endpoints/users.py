@@ -4,21 +4,40 @@ from typing import List
 from app.db.session import get_db
 from app.api.deps import get_current_user
 from app.models.user import User
-from app.schemas.user import UserResponse
+from app.schemas.user import UserResponse, SearchUserResponse
 from app.schemas.category import FavoriteCategoryCreate, CategoryResponse
 from app.crud import user as user_crud
-from app.models.category import FavoriteCategory, Category
+from app.crud import friendship as friendship_crud
+from app.models.category import FavoriteCategory, CategoryType
 
 router = APIRouter(prefix="/users", tags=["users"])
 
 
+
 @router.get("/me", response_model=UserResponse)
-def get_current_user_info(current_user: User = Depends(get_current_user)):
-    """Get current user information."""
-    return current_user
+def get_current_user_info(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # number_of_trips = get_number_of_trips(db, current_user.user_id)
+    # favorite_categories = get_favorite_categories(db, current_user.user_id)
+    user_response = {
+        "user_id": current_user.user_id,
+        "username": current_user.username,
+        "email": current_user.email,
+        "gender": current_user.gender,
+        "full_name": current_user.full_name,
+        "about_me": current_user.about_me,
+        "profile_url": current_user.profile_url,
+        "number_of_trips":0,
+        "number_of_friends":friendship_crud.get_number_of_friends(db, current_user.user_id),
+        "favorite_categories": [CategoryType.Historical,CategoryType.Entertainment]
+    }
+
+    return user_response
 
 
-@router.get("/search", response_model=List[UserResponse])
+@router.get("/search", response_model=List[SearchUserResponse])
 def search_users(
     q: str = Query(..., min_length=1),
     db: Session = Depends(get_db),
@@ -26,7 +45,20 @@ def search_users(
 ):
     """Search for users by username or email."""
     users = user_crud.search_users(db, query=q)
-    return users
+    ret_users = []
+    for test_user in users:
+        if test_user.user_id == current_user.user_id:
+            continue
+        cur_user = {
+        "user_id": test_user.user_id,
+        "username": test_user.username,
+        "full_name": test_user.full_name,
+        "about_me": test_user.about_me,
+        "profile_url": test_user.profile_url,
+        "friendship_status":friendship_crud.are_friends(db, test_user.user_id, current_user.user_id),
+        }
+        ret_users.append(cur_user)
+    return ret_users
 
 
 @router.get("/me/favorite-categories", response_model=List[CategoryResponse])
