@@ -8,7 +8,8 @@ from app.schemas.friendship import (
     FriendRequestCreate,
     FriendRequestResponse,
     FriendInfo,
-    FriendRequestInfo
+    ReceivedFriendRequestInfo,
+    SentFriendRequestInfo
 )
 from app.crud import friendship as crud_friendship
 
@@ -38,15 +39,23 @@ def send_friend_request(
             detail="Cannot send friend request to yourself"
         )
 
+
+
     # Check if friendship already exists
     existing_friendship = crud_friendship.get_friendship(
         db, current_user.user_id, addressee.user_id
     )
+
     if existing_friendship:
         if existing_friendship.status == "accepted":
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="You are already friends with this user"
+            )
+        if existing_friendship.status == "pending":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="A request exists between you and this user"
             )
         else:
             raise HTTPException(
@@ -62,14 +71,14 @@ def send_friend_request(
     return friendship
 
 
-@router.get("/pending", response_model=List[FriendRequestInfo])
-def get_pending_requests(
+@router.get("/received_pending", response_model=List[ReceivedFriendRequestInfo])
+def get_receiveed_pending_requests(
         current_user: User = Depends(deps.get_current_user),
         db: Session = Depends(deps.get_db)
 ):
-    """Get all pending friend requests (where current user is the addressee)."""
+    """Get all received pending friend requests (where current user is the addressee)."""
 
-    pending_requests = crud_friendship.get_pending_requests(db, current_user.user_id)
+    pending_requests = crud_friendship.get_received_pending_requests(db, current_user.user_id)
 
     # Build response with requester info
     result = []
@@ -91,6 +100,34 @@ def get_pending_requests(
     return result
 
 
+@router.get("/sent_pending", response_model=List[SentFriendRequestInfo])
+def get_sent_pending_requests(
+        current_user: User = Depends(deps.get_current_user),
+        db: Session = Depends(deps.get_db)
+):
+    """Get all sent pending friend requests (where current user is the requester)."""
+
+    pending_requests = crud_friendship.get_sent_pending_requests(db, current_user.user_id)
+
+    # Build response with requester info
+    result = []
+    for friendship in pending_requests:
+        addressee = db.query(User).filter(User.user_id == friendship.addressee_id).first()
+        if addressee:
+            result.append({
+                "friendship_id": friendship.friendship_id,
+                "addressee": {
+                    "user_id": addressee.user_id,
+                    "username": addressee.username,
+                    "full_name": addressee.full_name,
+                    "profile_url": addressee.profile_url,
+                    "about_me": addressee.about_me
+                },
+                "created_at": friendship.created_at
+            })
+
+    return result
+
 @router.post("/accept/{friendship_id}", response_model=FriendRequestResponse)
 def accept_request(
         friendship_id: int,
@@ -105,6 +142,24 @@ def accept_request(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Friend request not found or you don't have permission to accept it"
+        )
+
+    return friendship
+
+@router.post("/reject/{friendship_id}", response_model=FriendRequestResponse)
+def accept_request(
+        friendship_id: int,
+        current_user: User = Depends(deps.get_current_user),
+        db: Session = Depends(deps.get_db)
+):
+    """Reject a friend request."""
+
+    friendship = crud_friendship.reject_friend_request(db, friendship_id, current_user.user_id)
+
+    if not friendship:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Friend request not found or you don't have permission to reject it"
         )
 
     return friendship
@@ -129,3 +184,5 @@ def get_friends(
         }
         for friend in friends
     ]
+
+#

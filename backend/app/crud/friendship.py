@@ -32,13 +32,35 @@ def get_friendship(db: Session, user1_id: int, user2_id: int) -> Optional[Friend
         )
     ).first()
 
+def are_friends(db: Session, user1_id: int, user2_id: int) -> bool:
+    """Return True if user1 and user2 are friends (status = ACCEPTED)."""
+    friendship = db.query(Friendship).filter(
+        or_(
+            and_(Friendship.requester_id == user1_id,
+                 Friendship.addressee_id == user2_id),
+            and_(Friendship.requester_id == user2_id,
+                 Friendship.addressee_id == user1_id)
+        ),
+        Friendship.status == "ACCEPTED"
+    ).first()
 
-def get_pending_requests(db: Session, user_id: int) -> List[Friendship]:
-    """Get all pending friend requests for a user (where user is addressee)."""
+    return friendship is not None
+
+
+def get_received_pending_requests(db: Session, user_id: int) -> List[Friendship]:
+    """Get all received pending friend requests for a user (where user is addressee)."""
     return db.query(Friendship).filter(
         Friendship.addressee_id == user_id,
         Friendship.status == FriendshipStatus.PENDING
     ).all()
+
+def get_sent_pending_requests(db: Session, user_id: int) -> List[Friendship]:
+    """Get all sent pending friend requests for a user (where user is requester)."""
+    return db.query(Friendship).filter(
+        Friendship.requester_id == user_id,
+        Friendship.status == FriendshipStatus.PENDING
+    ).all()
+
 
 
 def accept_friend_request(db: Session, friendship_id: int, user_id: int) -> Optional[Friendship]:
@@ -55,6 +77,38 @@ def accept_friend_request(db: Session, friendship_id: int, user_id: int) -> Opti
         db.refresh(friendship)
 
     return friendship
+
+
+
+def reject_friend_request(db: Session, friendship_id: int, user_id: int) -> Optional[Friendship]:
+    """Reject a friend request (removes the request from DB)."""
+    friendship = db.query(Friendship).filter(
+        Friendship.friendship_id == friendship_id,
+        Friendship.addressee_id == user_id,
+        Friendship.status == FriendshipStatus.PENDING
+    ).first()
+
+    temp_friendship = None
+
+    if friendship:
+        temp_friendship = friendship
+        db.delete(friendship)
+        db.commit()
+
+    return temp_friendship
+
+
+def get_number_of_friends (db: Session, user_id: int):
+    """Get all accepted friends for a user."""
+    friendships = db.query(Friendship).filter(
+        or_(
+            Friendship.requester_id == user_id,
+            Friendship.addressee_id == user_id
+        ),
+        Friendship.status == FriendshipStatus.ACCEPTED
+    ).count()
+
+    return friendships
 
 
 def get_friends(db: Session, user_id: int) -> List[User]:

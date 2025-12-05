@@ -32,10 +32,20 @@ class FriendInfo(BaseModel):
         from_attributes = True
 
 
-class FriendRequestInfo(BaseModel):
-    """Schema for pending friend request with user info."""
+class ReceivedFriendRequestInfo(BaseModel):
+    """Schema for received pending friend request with user info."""
     friendship_id: int
     requester: FriendInfo
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class SentFriendRequestInfo(BaseModel):
+    """Schema for sent pending friend request with user info."""
+    friendship_id: int
+    addressee: FriendInfo
     created_at: datetime
 
     class Config:

@@ -2,6 +2,9 @@ from typing import Optional
 
 from pydantic import BaseModel, EmailStr, Field
 
+from app.models.category import CategoryType
+from typing import List
+
 
 class UserCreate(BaseModel):
     """User Registration"""
@@ -31,6 +34,22 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
 
 
+
+
+class SearchUserResponse(BaseModel):
+    """SearchUserResponse"""
+
+    user_id: int
+    username: str
+    full_name: Optional[str]
+    about_me: Optional[str]
+    profile_url: str
+    friendship_status: bool
+
+    class Config:
+        from_attributes = True
+
+
 class UserResponse(BaseModel):
     """User Response"""
 
@@ -41,6 +60,9 @@ class UserResponse(BaseModel):
     full_name: Optional[str]
     about_me: Optional[str]
     profile_url: str
+    number_of_trips: Optional[int]
+    number_of_friends: Optional[int]
+    favorite_categories: List[CategoryType]
 
     class Config:
         from_attributes = True
