@@ -18,4 +18,6 @@ class User(Base):
     email = Column(String(100), unique=True, nullable=False, index=True)
     user_password = Column(String(255), nullable=False)
     gender = Column(Enum(GenderType), default=GenderType.Male, nullable=False)
+    full_name = Column(String(100), nullable=True)
+    about_me = Column(String(255), nullable=True)
     profile_url = Column(String(500), nullable=False)
