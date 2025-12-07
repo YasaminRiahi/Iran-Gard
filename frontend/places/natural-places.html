@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="../src/styles/responsive/places/natural-places-responsive.css" media="screen">
   <script class="u-script" type="text/javascript" src="../src/scripts/vendor/jquery.js" defer=""></script>
   <script class="u-script" type="text/javascript" src="../src/scripts/app.js" defer=""></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="../src/scripts/services/check-login.js"></script>
 </head>
 
@@ -44,15 +46,15 @@
         <div class="u-custom-menu u-nav-container">
           <ul class="u-custom-font u-nav u-unstyled u-nav-1" role="menubar">
             <li role="none" class="u-nav-item"><a role="menuitem"
-                class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white"
+                class="view-bookmarks u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white"
                 href="../bookmarks.html" style="padding: 10px 20px;">بوک مارک ها</a>
             </li>
             <li role="none" class="u-nav-item"><a role="menuitem"
-                class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white"
+                class="view-trips u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white"
                 href="../trips/my-trips.html" style="padding: 10px 20px;">سفرهای من</a>
             </li>
             <li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem"
-                class="u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white"
+                class="view-profile u-button-style u-nav-link u-text-active-white u-text-hover-custom-color-7 u-text-white"
                 href="../profile.html" style="padding: 10px 20px;">پروفایل من</a>
             </li>
             <li role="none" class="u-nav-item"><a role="menuitem"
@@ -70,13 +72,13 @@
                 <li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link"
                     href="../index.html">خانه</a>
                 </li>
-                <li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem" class="u-button-style u-nav-link"
-                    href="../profile.html">پروفایل من</a>
+                <li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem"
+                    class="view-profile u-button-style u-nav-link" href="../profile.html">پروفایل من</a>
                 </li>
-                <li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link"
+                <li role="none" class="u-nav-item"><a role="menuitem" class="view-trips u-button-style u-nav-link"
                     href="../trips/my-trips.html">سفرهای من</a>
                 </li>
-                <li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link"
+                <li role="none" class="u-nav-item"><a role="menuitem" class="view-bookmarks u-button-style u-nav-link"
                     href="../bookmarks.html">بوک مارک ها</a>
                 </li>
               </ul>
@@ -90,7 +92,7 @@
         <div class="u-layout">
           <div class="u-layout-row">
             <div
-              class="sign-un-button u-align-right u-container-align-right u-container-align-right-lg u-container-align-right-md u-container-align-right-sm u-container-align-right-xl u-container-style u-layout-cell u-left-cell u-size-30 u-layout-cell-1"
+              class="sign-up-button u-align-right u-container-align-right u-container-align-right-lg u-container-align-right-md u-container-align-right-sm u-container-align-right-xl u-container-style u-layout-cell u-left-cell u-size-30 u-layout-cell-1"
               data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="250">
               <div
                 class="u-container-layout u-valign-top-lg u-valign-top-md u-valign-top-sm u-valign-top-xl u-container-layout-1">
