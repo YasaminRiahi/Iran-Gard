@@ -5,6 +5,18 @@
  * Copyright 2014-2021 Froala Labs
  */
 
+.my-confirm-btn,
+.my-cancel-btn,
+.my-swal-popup {
+  font-family: Anjoman-Regular;
+  border-radius: 30px;
+}
+
+.my-confirm-btn:hover,
+.my-cancel-btn:hover {
+  transform: scale(1.1);
+}
+
 .fr-clearfix::after {
   clear: both;
   display: block;
@@ -56849,3 +56861,10 @@ html {
 }
 
 /*end-variables base-font-size*/
+
+@font-face {
+  font-family: 'Anjoman-Regular';
+  font-style: normal;
+  font-weight: 400;
+  src: url(../../assets/fonts/Anjoman-Regular.woff2);
+}
