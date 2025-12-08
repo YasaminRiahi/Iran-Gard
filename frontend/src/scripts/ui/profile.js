@@ -19,7 +19,9 @@
    11. Event Listeners & Initialization
    
    ================================================================ */
-
+import {
+    getUserInformation,
+} from "../services/users-service.js"
 
 /* ================================================================
    1. PAGE LOAD & SCROLL MANAGEMENT
@@ -29,7 +31,7 @@
  * Force scroll to top before page unload
  * Prevents browser from remembering scroll position
  */
-window.addEventListener('beforeunload', function() {
+window.addEventListener('beforeunload', function () {
     window.scrollTo(0, 0);
 });
 
@@ -300,7 +302,7 @@ function initStatsAnimation() {
                 observer.unobserve(target);
             }
         });
-    }, { threshold: 0.5 }); // Trigger when 50% visible
+    }, {threshold: 0.5}); // Trigger when 50% visible
 
     // Observe all stat number elements
     statNumbers.forEach(stat => observer.observe(stat));
@@ -436,7 +438,7 @@ function enhanceFriendsTabAnimations() {
         });
 
         // Add ripple effect on click
-        button.addEventListener('mousedown', function(e) {
+        button.addEventListener('mousedown', function (e) {
             const ripple = document.createElement('span');
             const rect = this.getBoundingClientRect();
             const size = Math.max(rect.width, rect.height);
@@ -638,12 +640,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.scrollTop = 0;
 
     // Initialize all modules
+    loadUserData()
     initMobileMenu();
     initTypingAnimation();
     initScrollAnimations();
     initTabs();
     initFormHandler();
-    initStatsAnimation();
 });
 
 /**
@@ -678,3 +680,138 @@ window.addEventListener('scroll', () => {
         header.classList.remove('hide');
     }
 });
+
+
+/* ================================================================
+   12. USER DATA INTEGRATION (API)
+   ================================================================ */
+
+/**
+ * Mappings for data translation and display
+ */
+const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+/**
+ * Converts English digits in a string to Persian digits.
+ * @param {string | number} input - The string or number to convert.
+ * @returns {string} The string with Persian digits.
+ */
+function englishToPersianNumber(input) {
+    let str = String(input || 0);
+
+    const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+    for (let i = 0; i < 10; i++) {
+        str = str.replace(new RegExp(englishNumbers[i], 'g'), persianNumbers[i]);
+    }
+    return str;
+}
+
+/**
+ * Maps English gender string from API to Persian for display.
+ * @param {string} gender - The gender string (e.g., 'male', 'female').
+ * @returns {string} The corresponding Persian string.
+ */
+function getPersianGender(gender) {
+    switch (gender.toLowerCase()) {
+        case 'male':
+            return 'male'; // We keep the value as it's used in the HTML radio input
+        case 'female':
+            return 'female';
+        default:
+            return 'other';
+    }
+}
+
+
+function getCategoryInputValue(category) {
+    return category.toLowerCase().replace(/ /g, '-');
+}
+
+
+/* ================================================================
+   12. USER DATA INTEGRATION (API)
+   ================================================================ */
+
+async function loadUserData() {
+    try {
+        // 1. Fetch data from the API
+        const response = await getUserInformation();
+
+        if (response && response.success === false) {
+            console.error("API Error during data load:", response.error);
+            return;
+        }
+
+        const userData = response;
+        console.log('API Response Data:', userData);
+
+        if (!userData || typeof userData.full_name === 'undefined') {
+            console.error('API returned null or invalid data structure.');
+            return;
+        }
+
+        // 2. Select HTML Elements )
+        const profileName = document.querySelector('.profile-name');
+        const profileBio = document.querySelector('.profile-bio');
+        const avatarImage = document.querySelector('.organic-profile-avatar');
+        const tripsCount = document.querySelector('.stat-item:nth-child(1) .stat-number');
+        const friendsCount = document.querySelector('.stat-item:nth-child(2) .stat-number');
+
+        // Form inputs
+        const usernameInput = document.querySelector('input[placeholder="نام کاربری"]');
+        const emailInput = document.querySelector('input[placeholder="ایمیل"]');
+        const fullNameInput = document.querySelector('input[placeholder="نام و نام خانوادگی"]');
+        const bioTextarea = document.querySelector('.form-textarea');
+        const genderRadios = document.querySelectorAll('input[name="gender"]');
+        const categoryCheckboxes = document.querySelectorAll('input[name="category"]');
+
+        // 3. Update Elements with API Data
+
+        // Header Section
+        if (profileName) profileName.textContent = userData.full_name || 'کاربر ایران‌گرد';
+        if (profileBio) profileBio.textContent = userData.about_me || "";
+        if (avatarImage) avatarImage.src = userData.profile_url || 'https://via.placeholder.com/150';
+
+        // Stats
+        if (tripsCount)
+            tripsCount.textContent = englishToPersianNumber(userData.number_of_trips);
+        if (friendsCount)
+            friendsCount.textContent = englishToPersianNumber(userData.number_of_friends);
+
+
+        if (typeof initStatsAnimation === 'function') {
+            initStatsAnimation();
+        }
+        // Profile Form
+        if (usernameInput) usernameInput.value = userData.username || "";
+        if (emailInput) emailInput.value = userData.email || "";
+        if (fullNameInput) fullNameInput.value = userData.full_name || "";
+        if (bioTextarea) bioTextarea.value = userData.about_me || "";
+
+        // Gender Radio Buttons
+        const apiGender = getPersianGender(userData.gender || '');
+        genderRadios.forEach(radio => {
+            radio.checked = (radio.value === apiGender);
+        });
+
+        // Favorite Categories Checkboxes
+        if (userData.favorite_categories && Array.isArray(userData.favorite_categories)) {
+            categoryCheckboxes.forEach(checkbox => checkbox.checked = false);
+
+            userData.favorite_categories.forEach(apiCategory => {
+                const inputValue = getCategoryInputValue(apiCategory);
+                categoryCheckboxes.forEach(checkbox => {
+                    if (checkbox.value === inputValue) {
+                        checkbox.checked = true;
+                    }
+                });
+            });
+        }
+
+    } catch (error) {
+        console.error('Error loading user data:', error);
+    }
+}
