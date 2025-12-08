@@ -134,7 +134,7 @@ body {
 .my-swal-popup {
     direction: ltr;
     font-family: 'Anjoman';
-    font-weight: 400px;
+    font-weight: 400;
     border-radius: 30px;
 }
 

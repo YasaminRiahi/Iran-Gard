@@ -21,6 +21,7 @@
    ================================================================ */
 import {
     getUserInformation,
+    updateUserInformation,
 } from "../services/users-service.js"
 
 /* ================================================================
@@ -221,25 +222,8 @@ function initTabs() {
  */
 function initFormHandler() {
     const form = document.querySelector('.profile-form');
-
     if (form) {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            // Show success message
-            const submitBtn = form.querySelector('.btn-primary');
-            const originalText = submitBtn.innerHTML;
-
-            submitBtn.innerHTML = '<i class="fas fa-check"></i> ذخیره شد!';
-            submitBtn.classList.add('success-state');
-
-            // Reset button after 2 seconds
-            setTimeout(() => {
-                submitBtn.innerHTML = originalText;
-                submitBtn.style.background = '';
-                submitBtn.classList.remove('success-state');
-            }, 2000);
-        });
+        form.addEventListener('submit', handleProfileSave);
     }
 }
 
@@ -642,7 +626,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize all modules
     loadUserData()
     initMobileMenu();
-    initTypingAnimation();
     initScrollAnimations();
     initTabs();
     initFormHandler();
@@ -698,7 +681,7 @@ const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
  * @returns {string} The string with Persian digits.
  */
 function englishToPersianNumber(input) {
-    let str = String(input || 0);
+    let str = String(input);
 
     const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
     const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
@@ -707,27 +690,6 @@ function englishToPersianNumber(input) {
         str = str.replace(new RegExp(englishNumbers[i], 'g'), persianNumbers[i]);
     }
     return str;
-}
-
-/**
- * Maps English gender string from API to Persian for display.
- * @param {string} gender - The gender string (e.g., 'male', 'female').
- * @returns {string} The corresponding Persian string.
- */
-function getPersianGender(gender) {
-    switch (gender.toLowerCase()) {
-        case 'male':
-            return 'male'; // We keep the value as it's used in the HTML radio input
-        case 'female':
-            return 'female';
-        default:
-            return 'other';
-    }
-}
-
-
-function getCategoryInputValue(category) {
-    return category.toLowerCase().replace(/ /g, '-');
 }
 
 
@@ -773,7 +735,10 @@ async function loadUserData() {
         // Header Section
         if (profileName) profileName.textContent = userData.full_name || 'کاربر ایران‌گرد';
         if (profileBio) profileBio.textContent = userData.about_me || "";
-        if (avatarImage) avatarImage.src = userData.profile_url || 'https://via.placeholder.com/150';
+        if (typeof initTypingAnimation === "function") {
+            initTypingAnimation();
+        }
+        if (avatarImage) avatarImage.src = userData.profile_url || "";
 
         // Stats
         if (tripsCount)
@@ -792,7 +757,7 @@ async function loadUserData() {
         if (bioTextarea) bioTextarea.value = userData.about_me || "";
 
         // Gender Radio Buttons
-        const apiGender = getPersianGender(userData.gender || '');
+        const apiGender = userData.gender || "";
         genderRadios.forEach(radio => {
             radio.checked = (radio.value === apiGender);
         });
@@ -802,7 +767,7 @@ async function loadUserData() {
             categoryCheckboxes.forEach(checkbox => checkbox.checked = false);
 
             userData.favorite_categories.forEach(apiCategory => {
-                const inputValue = getCategoryInputValue(apiCategory);
+                const inputValue = apiCategory;
                 categoryCheckboxes.forEach(checkbox => {
                     if (checkbox.value === inputValue) {
                         checkbox.checked = true;
@@ -813,5 +778,92 @@ async function loadUserData() {
 
     } catch (error) {
         console.error('Error loading user data:', error);
+    }
+}
+
+
+/**
+ * Collects form data, sends it to the API, and handles success/error messages.
+ * @param {Event} e - The form submission event.
+ */
+async function handleProfileSave(e) {
+    e.preventDefault();
+
+    const submitButton = document.querySelector('.btn-submit');
+    const originalButtonText = submitButton.innerHTML;
+
+    const fullName = document.querySelector('input[placeholder="نام و نام خانوادگی"]').value;
+    const aboutMe = document.querySelector('.form-textarea').value;
+    const gender = document.querySelector('input[name="gender"]:checked')?.value || null;
+
+    const favoriteCategories = Array.from(
+        document.querySelectorAll('input[name="category"]:checked')
+    ).map(checkbox => checkbox.value);
+
+    const payload = {
+        full_name: fullName || null,
+        about_me: aboutMe || null,
+        gender: gender || null,
+        favorite_categories: favoriteCategories,
+    };
+
+
+    try {
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال ذخیره...';
+
+        const response = await updateUserInformation(payload);
+
+        if (response && response.success === false) {
+            Swal.fire({
+                text: response.error || 'خطا در به‌روزرسانی اطلاعات',
+                icon: 'error',
+                confirmButtonText: 'تأیید',
+                iconColor: '#f5c9b0',
+                confirmButtonColor: '#a6b28b',
+                color: '#4b5563',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                },
+            });
+            return;
+        }
+
+        Swal.fire({
+            text: 'اطلاعات پروفایل با موفقیت ذخیره شد',
+            icon: 'success',
+            confirmButtonText: 'تایید',
+            iconColor: '#a6b28b',
+            confirmButtonColor: '#a6b28b',
+            color: '#4b5563',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+            },
+        });
+
+        loadUserData();
+
+    } catch (error) {
+        console.error('Error saving profile:', error);
+        Swal.fire({
+            text: 'خطا در ارتباط با سرور لطفا اتصال خود را بررسی کنید',
+            icon: 'error',
+            confirmButtonText: 'تأیید',
+            iconColor: '#f5c9b0',
+            confirmButtonColor: '#a6b28b',
+            color: '#4b5563',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+            },
+        });
+    } finally {
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalButtonText;
     }
 }
