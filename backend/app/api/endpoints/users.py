@@ -3,12 +3,13 @@ from sqlalchemy.orm import Session
 from typing import List
 from app.db.session import get_db
 from app.api.deps import get_current_user
-from app.models.user import User
+from app.models.user import User, GenderType
 from app.schemas.user import UserResponse, SearchUserResponse
 from app.schemas.category import FavoriteCategoryCreate, CategoryResponse
 from app.crud import user as user_crud
 from app.crud import friendship as friendship_crud
 from app.models.category import FavoriteCategory, CategoryType
+from app.core.config import Settings
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -21,6 +22,18 @@ def get_current_user_info(
 ):
     # number_of_trips = get_number_of_trips(db, current_user.user_id)
     # favorite_categories = get_favorite_categories(db, current_user.user_id)
+    cur_gen = current_user.gender
+    settings = Settings()
+    print(settings.BACKEND_CORS_ORIGINS[1])
+
+    cur_profile = current_user.profile_url
+    if cur_gen == "Male":
+        cur_profile = settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Male.png"
+    if cur_gen == "Female":
+        cur_profile = settings.BACKEND_CORS_ORIGINS[1]+  "/static/images/genders/Female.png"
+    if cur_gen == "Other":
+        cur_profile =  settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Other.png"
+
     user_response = {
         "user_id": current_user.user_id,
         "username": current_user.username,
@@ -28,7 +41,7 @@ def get_current_user_info(
         "gender": current_user.gender,
         "full_name": current_user.full_name,
         "about_me": current_user.about_me,
-        "profile_url": current_user.profile_url,
+        "profile_url":cur_profile,
         "number_of_trips":0,
         "number_of_friends":friendship_crud.get_number_of_friends(db, current_user.user_id),
         "favorite_categories": [CategoryType.Historical,CategoryType.Entertainment]
