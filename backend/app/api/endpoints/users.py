@@ -173,6 +173,7 @@ def update_user_information(
         "user_id": current_user.user_id,
         "username": current_user.username,
         "full_name": updated_user.full_name,
+        "gender":current_user.gender,
         "about_me": updated_user.about_me,
         "profile_url": updated_user.profile_url,
         "favorite_categories": updated_user.favorite_categories,
