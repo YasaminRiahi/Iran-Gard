@@ -79,6 +79,17 @@ def accept_friend_request(db: Session, friendship_id: int, user_id: int) -> Opti
     return friendship
 
 
+def remove_friend(db: Session, friendship_id: int):
+    """Remove a friendship by ID."""
+    # Get the friendship record
+    friendship = db.query(Friendship).filter(Friendship.friendship_id == friendship_id).first()
+
+    if friendship:
+        db.delete(friendship)
+        db.commit()
+        return True
+
+    return False
 
 def reject_friend_request(db: Session, friendship_id: int, user_id: int) -> Optional[Friendship]:
     """Reject a friend request (removes the request from DB)."""
