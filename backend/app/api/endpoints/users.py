@@ -43,7 +43,7 @@ def get_current_user_info(
         "profile_url":cur_profile,
         "number_of_trips":0,
         "number_of_friends":friendship_crud.get_number_of_friends(db, current_user.user_id),
-        "favorite_categories": None
+        "favorite_categories": current_user.favorite_categories,
     }
 
     return user_response
