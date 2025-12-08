@@ -48,6 +48,13 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'Anjoman-Regular';
+    font-style: normal;
+    font-weight: 400;
+    src: url(../../assets/fonts/Anjoman-Regular.woff2);
+}
+
 
 /* ================================================================
    2. CSS VARIABLES & ROOT CONFIGURATION
@@ -122,6 +129,20 @@ body {
 }
 
 
+.my-confirm-btn,
+.my-cancel-btn,
+.my-swal-popup {
+    direction: ltr;
+    font-family: 'Anjoman';
+    font-weight: 400px;
+    border-radius: 30px;
+}
+
+.my-confirm-btn:hover,
+.my-cancel-btn:hover {
+    transform: scale(1.1);
+}
+
 /* ================================================================
    5. HEADER & NAVIGATION
    ================================================================ */
@@ -170,9 +191,10 @@ body {
 
 .nav-item,
 .nav-item-active {
+    font-family: Anjoman-Regular !important;
     color: white;
-    font-weight: 500;
-    font-size: 1.1rem;
+    font-weight: 700;
+    font-size: 1.13rem;
     text-decoration: none;
     padding: 0;
     transition: all 0.3s ease;
@@ -2165,7 +2187,6 @@ body {
     }
 }
 
-
 .auth-buttons-wrapper {
     display: flex;
     align-items: center;
@@ -2174,29 +2195,19 @@ body {
 }
 
 .auth-buttons-wrapper .u-btn-1 {
-    font-weight: 500;
+    font-family: Anjoman-Regular !important;
+    font-weight: 700;
     padding: 0.5rem 1rem;
     border-radius: 1.5rem;
     text-decoration: none;
     transition: all 0.3s ease;
     white-space: nowrap;
-    font-size: 1rem;
+    font-size: 0.95rem;
 }
-
-.auth-buttons-wrapper .log-in-button .u-btn-1 {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-}
-
-.auth-buttons-wrapper .log-in-button .u-btn-1:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
 
 .auth-buttons-wrapper .sign-up-button .u-btn-1:hover {
     filter: brightness(0.9);
 }
-
 
 .nav-item-logout-mobile {
     display: none !important;
