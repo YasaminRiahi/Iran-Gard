@@ -211,39 +211,28 @@ function setupRateReviewButtonRedirect() {
 }
 
 function setupViewProfileButtonRedirect() {
-    const viewProfileBtn = document.querySelector(".view-profile");
 
-    if (viewProfileBtn) {
-        viewProfileBtn.addEventListener("click", function (event) {
+    const viewProfileBtns = document.querySelectorAll(".view-profile");
+
+    viewProfileBtns.forEach(btn => {
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+
+        newBtn.addEventListener("click", function (event) {
             event.preventDefault();
             event.stopPropagation();
             window.location.href = getLoginSignupPath();
         });
 
-        viewProfileBtn.title = "برای مشاهده پروفایل، ابتدا وارد شوید";
-        viewProfileBtn.style.cursor = "default";
-    }
-}
-
-function setupViewBookmarksButtonRedirect() {
-    const viewBookmarksBtn = document.querySelector(".view-bookmarks");
-
-    if (viewBookmarksBtn) {
-        viewBookmarksBtn.addEventListener("click", function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            window.location.href = getLoginSignupPath();
-        });
-
-        viewBookmarksBtn.title = "برای مشاهده بوک‌مارک‌ها، ابتدا وارد شوید";
-        viewBookmarksBtn.style.cursor = "default";
-    }
+        newBtn.title = "برای مشاهده پروفایل، ابتدا وارد شوید";
+        newBtn.style.cursor = "default";
+    });
 }
 
 function setupViewTripsButtonRedirect() {
-    const viewTripsBtn = document.querySelector(".view-trips");
+    const viewTripsBtns = document.querySelectorAll(".view-trips");
 
-    if (viewTripsBtn) {
+    viewTripsBtns.forEach(viewTripsBtn => {
         viewTripsBtn.addEventListener("click", function (event) {
             event.preventDefault();
             event.stopPropagation();
@@ -252,7 +241,22 @@ function setupViewTripsButtonRedirect() {
 
         viewTripsBtn.title = "برای مشاهده سفرها، ابتدا وارد شوید";
         viewTripsBtn.style.cursor = "default";
-    }
+    });
+}
+
+function setupViewBookmarksButtonRedirect() {
+    const viewBookmarksBtns = document.querySelectorAll(".view-bookmarks");
+
+    viewBookmarksBtns.forEach(viewBookmarksBtn => {
+        viewBookmarksBtn.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            window.location.href = getLoginSignupPath();
+        });
+
+        viewBookmarksBtn.title = "برای مشاهده بوک‌مارک‌ها، ابتدا وارد شوید";
+        viewBookmarksBtn.style.cursor = "default";
+    });
 }
 
 window.addEventListener("storage", function (e) {
