@@ -3,6 +3,7 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
 
 from app.models.category import CategoryType
+from app.models.user import GenderType
 from typing import List
 
 
@@ -50,6 +51,14 @@ class SearchUserResponse(BaseModel):
         from_attributes = True
 
 
+
+class UserUpdateInformation(BaseModel):
+    """Schema for updating user information."""
+    full_name: Optional[str] = Field(None, max_length=100)
+    about_me: Optional[str] = Field(None, max_length=255)
+    gender: Optional[GenderType] = None
+    favorite_categories: Optional[List[str]] = None
+
 class UserResponse(BaseModel):
     """User Response"""
 
@@ -62,7 +71,20 @@ class UserResponse(BaseModel):
     profile_url: str
     number_of_trips: Optional[int]
     number_of_friends: Optional[int]
-    favorite_categories: List[CategoryType]
+    favorite_categories: List[str]
+
+    class Config:
+        from_attributes = True
+
+class UserEditResponse(BaseModel):
+    """User Response"""
+
+    user_id: int
+    gender: Optional[str] = None
+    full_name: Optional[str]
+    about_me: Optional[str]
+    profile_url: str
+    favorite_categories: List[str]
 
     class Config:
         from_attributes = True

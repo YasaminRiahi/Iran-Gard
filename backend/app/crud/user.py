@@ -3,8 +3,9 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from app.models.user import User
-from app.schemas.user import UserCreate
+from app.schemas.user import UserCreate, UserUpdateInformation
 from app.core.security import get_password_hash
+from app.core.config import Settings
 
 
 def get_user_by_email(db: Session, email: str) -> Optional[User]:
@@ -46,6 +47,38 @@ def create_user(db: Session, user: UserCreate) -> User:
     db.refresh(db_user)
     return db_user
 
+
+def update_user_information(
+        db: Session,
+        user_id: int,
+        user_data: UserUpdateInformation
+) -> Optional[User]:
+    """Update user information."""
+    db_user = get_user_by_id(db, user_id)
+    if not db_user:
+        return None
+
+    # Update only the fields that are provided (not None)
+    update_data = user_data.dict(exclude_unset=True)
+
+    settings = Settings()
+
+    if "gender" in update_data and update_data["gender"] == "Male":
+        update_data["profile_url"] = settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Male.png"
+    elif "gender" in update_data and update_data["gender"] == "Female":
+        update_data["profile_url"] = settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Female.png"
+    elif "gender" in update_data and update_data["gender"] == "Other":
+        update_data["profile_url"] = settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Other.png"
+
+
+    for field, value in update_data.items():
+        setattr(db_user, field, value)
+
+
+
+    db.commit()
+    db.refresh(db_user)
+    return db_user
 
 def search_users(db: Session, query: str, limit: int = 20) -> list[User]:
     """Search users by username or email."""

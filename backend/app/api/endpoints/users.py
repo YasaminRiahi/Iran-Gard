@@ -4,7 +4,7 @@ from typing import List
 from app.db.session import get_db
 from app.api.deps import get_current_user
 from app.models.user import User, GenderType
-from app.schemas.user import UserResponse, SearchUserResponse
+from app.schemas.user import UserResponse, SearchUserResponse, UserUpdateInformation,UserEditResponse
 from app.schemas.category import FavoriteCategoryCreate, CategoryResponse
 from app.crud import user as user_crud
 from app.crud import friendship as friendship_crud
@@ -24,7 +24,6 @@ def get_current_user_info(
     # favorite_categories = get_favorite_categories(db, current_user.user_id)
     cur_gen = current_user.gender
     settings = Settings()
-    print(settings.BACKEND_CORS_ORIGINS[1])
 
     cur_profile = current_user.profile_url
     if cur_gen == "Male":
@@ -44,7 +43,7 @@ def get_current_user_info(
         "profile_url":cur_profile,
         "number_of_trips":0,
         "number_of_friends":friendship_crud.get_number_of_friends(db, current_user.user_id),
-        "favorite_categories": [CategoryType.Historical,CategoryType.Entertainment]
+        "favorite_categories": None
     }
 
     return user_response
@@ -135,3 +134,55 @@ def remove_favorite_category(
     db.delete(favorite)
     db.commit()
 
+
+
+@router.put("/update-information",response_model=UserEditResponse, status_code=status.HTTP_200_OK
+)
+def update_user_information(
+        user_data: UserUpdateInformation,
+        current_user: User = Depends(get_current_user),
+        db: Session = Depends(get_db)
+):
+    """
+    Update the current user's information.
+
+    - **full_name**: User's full name (optional)
+    - **about_me**: User's bio/description (optional)
+    - **gender**: User's gender (optional)
+    - **favorite_categories**: List of favorite categories (optional)
+    """
+
+    updated_user = user_crud.update_user_information(
+        db=db,
+        user_id=current_user.user_id,
+        user_data=user_data
+    )
+
+    settings = Settings()
+    cur_gen = current_user.gender
+    cur_profile = current_user.profile_url
+    if cur_gen == "Male":
+        cur_profile = settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Male.png"
+    if cur_gen == "Female":
+        cur_profile = settings.BACKEND_CORS_ORIGINS[1]+  "/static/images/genders/Female.png"
+    if cur_gen == "Other":
+        cur_profile =  settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Other.png"
+
+
+    cur_user = {
+        "user_id": current_user.user_id,
+        "username": current_user.username,
+        "full_name": updated_user.full_name,
+        "about_me": updated_user.about_me,
+        "profile_url": updated_user.profile_url,
+        "favorite_categories": updated_user.favorite_categories,
+    }
+
+
+    if not cur_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+
+    return cur_user

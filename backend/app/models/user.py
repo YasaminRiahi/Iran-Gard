@@ -1,6 +1,7 @@
 import enum
 from sqlalchemy import Column, BigInteger, String, Enum
 from app.db.session import Base
+from sqlalchemy.dialects.postgresql import ARRAY
 
 
 class GenderType(str, enum.Enum):
@@ -8,6 +9,7 @@ class GenderType(str, enum.Enum):
 
     Male = "Male"
     Female = "Female"
+    Other = "Other"
 
 
 class User(Base):
@@ -21,3 +23,4 @@ class User(Base):
     full_name = Column(String(100), nullable=True)
     about_me = Column(String(255), nullable=True)
     profile_url = Column(String(500), nullable=False)
+    favorite_categories = Column(ARRAY(String), nullable=True, default=[])
