@@ -10,6 +10,9 @@
   <link rel="stylesheet" href="../src/styles/responsive/trips/each-trip-responsive.css" media="screen">
   <script class="u-script" type="text/javascript" src="../src/scripts/vendor/jquery.js" defer=""></script>
   <script class="u-script" type="text/javascript" src="../src/scripts/app.js" defer=""></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="../src/scripts/services/check-login.js"></script>
 </head>
 
 <body data-path-to-root="./" data-include-products="false" class="u-body u-clearfix u-xl-mode" data-lang="en">
@@ -83,6 +86,23 @@
           <div class="u-grey-60 u-menu-overlay u-opacity u-opacity-var" style="--opacity: 0.7;"></div>
         </div>
       </nav>
+      <div
+        class="custom-expanded data-layout-selected u-align-left-lg u-align-left-md u-align-left-sm u-align-left-xl u-clearfix u-layout-custom-sm u-layout-custom-xs u-layout-wrap u-layout-wrap-1">
+        <div class="u-layout">
+          <div class="u-layout-row">
+            <div
+              class="u-align-right u-container-align-right u-container-align-right-lg u-container-align-right-md u-container-align-right-sm u-container-align-right-xl u-container-style u-layout-cell u-left-cell u-size-30 u-layout-cell-1"
+              data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="250">
+              <div
+                class="u-container-layout u-valign-top-lg u-valign-top-md u-valign-top-sm u-valign-top-xl u-container-layout-1">
+                <a
+                  class="logout-button u-border-2 u-border-color-var u-btn u-btn-round u-button-style u-color-var u-custom-font u-radius-50 u-text-white u-btn-1">خروج
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
   <section class="u-align-center u-clearfix u-container-align-center u-white u-section-1" id="sec-4a0c">

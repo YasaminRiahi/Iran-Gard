@@ -48,6 +48,13 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'Anjoman-Regular';
+    font-style: normal;
+    font-weight: 400;
+    src: url(../../assets/fonts/Anjoman-Regular.woff2);
+}
+
 
 /* ================================================================
    2. CSS VARIABLES & ROOT CONFIGURATION
@@ -122,6 +129,20 @@ body {
 }
 
 
+.my-confirm-btn,
+.my-cancel-btn,
+.my-swal-popup {
+    direction: ltr;
+    font-family: 'Anjoman';
+    font-weight: 400;
+    border-radius: 30px;
+}
+
+.my-confirm-btn:hover,
+.my-cancel-btn:hover {
+    transform: scale(1.1);
+}
+
 /* ================================================================
    5. HEADER & NAVIGATION
    ================================================================ */
@@ -170,9 +191,10 @@ body {
 
 .nav-item,
 .nav-item-active {
+    font-family: Anjoman-Regular !important;
     color: white;
     font-weight: 700;
-    font-size: 1.07rem;
+    font-size: 1.13rem;
     text-decoration: none;
     padding: 0;
     transition: all 0.3s ease;
@@ -189,9 +211,7 @@ body {
 /* Mobile Menu Toggle Button */
 .menu-toggle-btn {
     display: none !important;
-    background: rgba(255, 255, 255, 0.2);
     color: white;
-    border: none;
     font-size: 1.8rem;
     width: 50px;
     height: 50px;
@@ -1397,33 +1417,33 @@ body {
 
 /* Add stagger animation to search results */
 .search-result-card {
-    animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    animation: slideInRight 1s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
 }
 
 .search-result-card:nth-child(1) {
-    animation-delay: 0.1s;
-}
-
-.search-result-card:nth-child(2) {
     animation-delay: 0.2s;
 }
 
-.search-result-card:nth-child(3) {
+.search-result-card:nth-child(2) {
     animation-delay: 0.3s;
 }
 
-.search-result-card:nth-child(4) {
+.search-result-card:nth-child(3) {
     animation-delay: 0.4s;
 }
 
-.search-result-card:nth-child(5) {
+.search-result-card:nth-child(4) {
     animation-delay: 0.5s;
+}
+
+.search-result-card:nth-child(5) {
+    animation-delay: 0.6s;
 }
 
 @keyframes slideInRight {
     from {
         opacity: 0;
-        transform: translateX(-30px);
+        transform: translateX(-200px);
     }
 
     to {
@@ -2165,4 +2185,44 @@ body {
         opacity: 1;
         transform: translateX(0);
     }
+}
+
+.auth-buttons-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-right: auto;
+}
+
+.auth-buttons-wrapper .u-btn-1 {
+    font-family: Anjoman-Regular !important;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 1.5rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    font-size: 0.95rem;
+}
+
+.auth-buttons-wrapper .sign-up-button .u-btn-1:hover {
+    filter: brightness(0.9);
+}
+
+.nav-item-logout-mobile {
+    display: none !important;
+}
+
+.logout-button-desktop .u-btn-1 {
+    min-width: 120px;
+    text-align: center;
+}
+
+.logout-btn {
+    padding-left: 2.3rem !important;
+    padding-right: 2.3rem !important;
+    min-width: 120px;
+    background: var(--color-primary) !important;
+    color: var(--color-white) !important;
+    text-align: center !important;
 }

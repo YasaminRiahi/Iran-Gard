@@ -1,13 +1,5 @@
 async function checkLoginStatus() {
     const token = localStorage.getItem("access_token");
-    console.log("Token found:", !!token);
-
-    if (!token) {
-        console.log("No token, showing auth buttons");
-        showAuthButtons();
-        setupBookmarkButtonRedirect();
-        return;
-    }
 
     try {
         const response = await fetch("http://localhost:8000/api/users/me", {
@@ -18,25 +10,50 @@ async function checkLoginStatus() {
         });
 
         if (response.ok) {
-            console.log("User is authenticated, changing UI");
+            console.log("User is authenticated");
             changeSignupToLogout();
             hideLoginButton();
-            setupBookmarkButtonNormal();
+            setupLogoutButton();
         } else {
-            console.log("Auth failed, showing buttons");
+            console.log("Auth failed");
             localStorage.removeItem("access_token");
             showAuthButtons();
             setupBookmarkButtonRedirect();
+            setupRateReviewButtonRedirect();
+            setupViewProfileButtonRedirect();
+            setupViewTripsButtonRedirect();
+            setupViewBookmarksButtonRedirect();
         }
     } catch (error) {
         console.error("Error checking login:", error);
         showAuthButtons();
         setupBookmarkButtonRedirect();
+        setupRateReviewButtonRedirect();
+        setupViewProfileButtonRedirect();
+        setupViewTripsButtonRedirect();
+        setupViewBookmarksButtonRedirect();
     }
 }
 
+function getLoginSignupPath() {
+    if (document.querySelector('a[href="login-signup.html?mode=login"]') ||
+        document.querySelector('a[href="login-signup.html?mode=signup"]')) {
+        return "login-signup.html";
+    }
+
+    return "../login-signup.html";
+}
+
+function getHomePagePath() {
+    if (document.querySelector('a[href="index.html"]')) {
+        return "index.html";
+    }
+
+    return "../index.html";
+}
+
 function changeSignupToLogout() {
-    const signupBtn = document.querySelector(".sign-un-button a.u-btn-1");
+    const signupBtn = document.querySelector(".sign-up-button a.u-btn-1");
 
     if (signupBtn) {
         signupBtn.textContent = "خروج";
@@ -49,16 +66,89 @@ function changeSignupToLogout() {
             event.preventDefault();
             event.stopPropagation();
 
-            if (confirm("آیا می‌خواهید از حساب خود خارج شوید؟")) {
-                localStorage.removeItem("access_token");
+            Swal.fire({
+                text: "آیا می‌خواهید از حساب خود خارج شوید؟",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'خروج',
+                cancelButtonText: 'انصراف',
+                reverseButtons: true,
+                confirmButtonColor: '#f5c9b0',
+                cancelButtonColor: '#a6b28b',
+                background: '#f0f0f0',
+                color: '#4b5563',
+                backdrop: 'rgba(0,0,0,0.5)',
+                showClass: {
+                    popup: 'animate__animated animate__fadeInUp animate__faster'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutDown animate__faster'
+                },
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                    cancelButton: 'my-cancel-btn'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem("access_token");
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100);
 
-                setTimeout(() => {
-                    window.location.reload();
-                }, 100);
-            }
+                    window.location.href = getHomePagePath();
+                }
+            });
         });
+    }
+}
 
-        console.log("Changed signup button to logout");
+
+function setupLogoutButton() {
+    const logoutBtn = document.querySelector(".logout-button");
+
+    if (logoutBtn) {
+        const newBtn = logoutBtn.cloneNode(true);
+        logoutBtn.parentNode.replaceChild(newBtn, logoutBtn);
+
+        newBtn.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            Swal.fire({
+                text: "آیا می‌خواهید از حساب خود خارج شوید؟",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'خروج',
+                cancelButtonText: 'انصراف',
+                reverseButtons: true,
+                confirmButtonColor: '#f5c9b0',
+                cancelButtonColor: '#a6b28b',
+                background: '#f0f0f0',
+                color: '#4b5563',
+                backdrop: 'rgba(0,0,0,0.5)',
+                showClass: {
+                    popup: 'animate__animated animate__fadeInUp animate__faster'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutDown animate__faster'
+                },
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                    cancelButton: 'my-cancel-btn'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem("access_token");
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100);
+
+                    window.location.href = getHomePagePath();
+                }
+            });
+        });
     }
 }
 
@@ -67,17 +157,16 @@ function hideLoginButton() {
 
     if (loginBtn) {
         loginBtn.style.display = "none";
-        console.log("Login button hidden");
     }
 }
 
 function showAuthButtons() {
-    const signupBtn = document.querySelector(".sign-un-button a.u-btn-1");
+    const signupBtn = document.querySelector(".sign-up-button a.u-btn-1");
     const loginBtn = document.querySelector(".log-in-button");
 
     if (signupBtn) {
         signupBtn.textContent = "ثبت‌نام";
-        signupBtn.href = "login-signup.html?mode=signup";
+        signupBtn.href = getLoginSignupPath() + "?mode=signup";
         signupBtn.classList.remove("logout-btn");
 
         const newBtn = signupBtn.cloneNode(true);
@@ -87,8 +176,6 @@ function showAuthButtons() {
     if (loginBtn) {
         loginBtn.style.display = "block";
     }
-
-    console.log("Auth buttons shown in default state");
 }
 
 function setupBookmarkButtonRedirect() {
@@ -108,37 +195,67 @@ function setupBookmarkButtonRedirect() {
     }
 }
 
-function setupBookmarkButtonNormal() {
-    const bookmarkBtn = document.querySelector(".add-bookmark-button");
+function setupRateReviewButtonRedirect() {
+    const rateReviewBtn = document.querySelector(".add-rate-review");
 
-    if (bookmarkBtn) {
-        console.log("Setting up bookmark button for normal functionality");
-
-        const newBookmarkBtn = bookmarkBtn.cloneNode(true);
-        bookmarkBtn.parentNode.replaceChild(newBookmarkBtn, bookmarkBtn);
-    }
-}
-
-function checkAuthBeforeBookmarkAction() {
-    const token = localStorage.getItem("access_token");
-
-    if (!token) {
-        window.location.href = "../login-signup.html";
-        return false;
-    }
-    return true;
-}
-
-function initializeBookmarkButtons() {
-    const bookmarkButtons = document.querySelectorAll(".add-bookmark-button, [data-bookmark-action]");
-
-    bookmarkButtons.forEach(button => {
-        button.addEventListener("click", function (event) {
-            if (!checkAuthBeforeBookmarkAction()) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
+    if (rateReviewBtn) {
+        rateReviewBtn.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            window.location.href = "../login-signup.html";
         });
+
+        rateReviewBtn.title = "برای افزودن امتیاز و نظر، ابتدا وارد شوید";
+        rateReviewBtn.style.cursor = "default";
+    }
+}
+
+function setupViewProfileButtonRedirect() {
+
+    const viewProfileBtns = document.querySelectorAll(".view-profile");
+
+    viewProfileBtns.forEach(btn => {
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+
+        newBtn.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            window.location.href = getLoginSignupPath();
+        });
+
+        newBtn.title = "برای مشاهده پروفایل، ابتدا وارد شوید";
+        newBtn.style.cursor = "default";
+    });
+}
+
+function setupViewTripsButtonRedirect() {
+    const viewTripsBtns = document.querySelectorAll(".view-trips");
+
+    viewTripsBtns.forEach(viewTripsBtn => {
+        viewTripsBtn.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            window.location.href = getLoginSignupPath();
+        });
+
+        viewTripsBtn.title = "برای مشاهده سفرها، ابتدا وارد شوید";
+        viewTripsBtn.style.cursor = "default";
+    });
+}
+
+function setupViewBookmarksButtonRedirect() {
+    const viewBookmarksBtns = document.querySelectorAll(".view-bookmarks");
+
+    viewBookmarksBtns.forEach(viewBookmarksBtn => {
+        viewBookmarksBtn.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            window.location.href = getLoginSignupPath();
+        });
+
+        viewBookmarksBtn.title = "برای مشاهده بوک‌مارک‌ها، ابتدا وارد شوید";
+        viewBookmarksBtn.style.cursor = "default";
     });
 }
 
@@ -150,5 +267,4 @@ window.addEventListener("storage", function (e) {
 
 document.addEventListener("DOMContentLoaded", function () {
     checkLoginStatus();
-    initializeBookmarkButtons();
 });
