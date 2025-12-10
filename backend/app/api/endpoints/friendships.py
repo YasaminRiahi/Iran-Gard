@@ -11,7 +11,8 @@ from app.schemas.friendship import (
     ReceivedFriendRequestInfo,
     SentFriendRequestInfo,
     FriendRemovalResponse,
-    FriendRemoveID
+    FriendRemoveID,
+    FriendshipInfoWithID
 )
 from app.crud import friendship as crud_friendship
 
@@ -87,7 +88,7 @@ def send_friend_request(
 
 
 @router.get("/received_pending", response_model=List[ReceivedFriendRequestInfo])
-def get_receiveed_pending_requests(
+def get_received_pending_requests(
         current_user: User = Depends(deps.get_current_user),
         db: Session = Depends(deps.get_db)
 ):
@@ -180,7 +181,7 @@ def accept_request(
     return friendship
 
 
-@router.get("/", response_model=List[FriendInfo])
+@router.get("/", response_model=List[FriendshipInfoWithID])
 def get_friends(
         current_user: User = Depends(deps.get_current_user),
         db: Session = Depends(deps.get_db)
@@ -191,6 +192,7 @@ def get_friends(
 
     return [
         {
+            "friendship_id":crud_friendship.get_friendship(db,current_user.user_id,friend.user_id).friendship_id,
             "user_id": friend.user_id,
             "username": friend.username,
             "full_name": friend.full_name,

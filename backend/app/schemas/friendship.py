@@ -42,6 +42,21 @@ class FriendInfo(BaseModel):
     class Config:
         from_attributes = True
 
+class FriendshipInfoWithID(BaseModel):
+    """Schema for friend information."""
+    user_id: int
+    username: str
+    full_name: Optional[str]
+    profile_url: str
+    about_me: Optional[str]
+    friendship_id: int
+
+    class Config:
+        from_attributes = True
+
+
+
+
 
 class ReceivedFriendRequestInfo(BaseModel):
     """Schema for received pending friend request with user info."""
