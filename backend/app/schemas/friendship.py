@@ -50,6 +50,7 @@ class FriendshipInfoWithID(BaseModel):
     profile_url: str
     about_me: Optional[str]
     friendship_id: int
+    common_number_of_trips: int
 
     class Config:
         from_attributes = True

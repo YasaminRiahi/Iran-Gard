@@ -197,7 +197,8 @@ def get_friends(
             "username": friend.username,
             "full_name": friend.full_name,
             "profile_url": friend.profile_url,
-            "about_me": friend.about_me
+            "about_me": friend.about_me,
+            "common_number_of_trips":0 # TODO: user trips crud to get number of trips between (user_id1 and user_id2)
         }
         for friend in friends
     ]
