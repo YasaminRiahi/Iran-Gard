@@ -17,7 +17,7 @@ from app.crud import friendship as crud_friendship
 
 router = APIRouter(prefix="/friendships", tags=["friendships"])
 
-@router.post("/remove/{friendship_id}", response_model=FriendRemovalResponse, status_code=status.HTTP_201_CREATED)
+@router.delete("/remove/{friendship_id}", response_model=FriendRemovalResponse)
 def remove_friend(
         friendship_id: int,
         current_user: User = Depends(deps.get_current_user),
