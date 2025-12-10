@@ -20,10 +20,9 @@ class FriendRequestResponse(BaseModel):
     class Config:
         from_attributes = True
 
-class FriendRemove(BaseModel):
+class FriendRemoveID(BaseModel):
     """Schema for creating a friend request."""
-    username: str = Field(..., min_length=1, max_length=50)
-
+    friendship_id: int
 
 class FriendRemovalResponse(BaseModel):
     """Schema for friend request response."""

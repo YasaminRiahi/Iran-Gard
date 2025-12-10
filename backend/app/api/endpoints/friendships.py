@@ -11,7 +11,7 @@ from app.schemas.friendship import (
     ReceivedFriendRequestInfo,
     SentFriendRequestInfo,
     FriendRemovalResponse,
-    FriendRemove
+    FriendRemoveID
 )
 from app.crud import friendship as crud_friendship
 
@@ -19,34 +19,13 @@ router = APIRouter(prefix="/friendships", tags=["friendships"])
 
 @router.delete("/remove", response_model=FriendRemovalResponse, status_code=status.HTTP_201_CREATED)
 def remove_friend(
-        request: FriendRemove,
+        request: FriendRemoveID,
         current_user: User = Depends(deps.get_current_user),
         db: Session = Depends(deps.get_db)
 ):
-    addressee = crud_friendship.get_user_by_username(db, request.username)
-    if not addressee:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
-        )
 
-    # Can't send request to yourself
-    if addressee.user_id == current_user.user_id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You cant unfriend yourself :D"
-        )
 
-    existing_friendship = crud_friendship.get_friendship(
-        db, current_user.user_id, addressee.user_id
-    )
-    if not existing_friendship:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Friend not found."
-        )
-
-    deleted_status = crud_friendship.remove_friend(db, existing_friendship.friendship_id)
+    deleted_status = crud_friendship.remove_friend(db, request.friendship_id)
     resp = {"status": deleted_status}
     return resp
 
