@@ -26,8 +26,8 @@ def upgrade() -> None:
     sa.Column('username', sa.String(length=50), nullable=False),
     sa.Column('email', sa.String(length=100), nullable=False),
     sa.Column('user_password', sa.String(length=255), nullable=False),
-    sa.Column('gender', sa.Enum('Male', 'Female','Other', name='gendertype'), nullable=False),
-    sa.Column('profile_url', sa.String(length=500), nullable=False),
+    sa.Column('gender', sa.Enum('Male', 'Female','Other', name='gendertype'),default='Other', nullable=False),
+    sa.Column('profile_url', sa.String(length=500), default='/static/images/genders/Other.png', nullable=False),
     sa.PrimaryKeyConstraint('user_id')
     )
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)

@@ -22,5 +22,5 @@ class User(Base):
     gender = Column(Enum(GenderType), default=GenderType.Other, nullable=False)
     full_name = Column(String(100), nullable=True)
     about_me = Column(String(255), nullable=True)
-    profile_url = Column(String(500), nullable=False)
+    profile_url = Column(String(500),default="/static/images/genders/Other.png", nullable=False)
     favorite_categories = Column(ARRAY(String), nullable=True, default=[])
