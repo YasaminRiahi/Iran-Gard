@@ -11,22 +11,21 @@ from app.schemas.friendship import (
     ReceivedFriendRequestInfo,
     SentFriendRequestInfo,
     FriendRemovalResponse,
-    FriendRemoveID,
     FriendshipInfoWithID
 )
 from app.crud import friendship as crud_friendship
 
 router = APIRouter(prefix="/friendships", tags=["friendships"])
 
-@router.delete("/remove", response_model=FriendRemovalResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/remove/{friendship_id}", response_model=FriendRemovalResponse, status_code=status.HTTP_201_CREATED)
 def remove_friend(
-        request: FriendRemoveID,
+        friendship_id: int,
         current_user: User = Depends(deps.get_current_user),
         db: Session = Depends(deps.get_db)
 ):
 
 
-    deleted_status = crud_friendship.remove_friend(db, request.friendship_id)
+    deleted_status = crud_friendship.remove_friend(db, friendship_id)
     resp = {"status": deleted_status}
     return resp
 
