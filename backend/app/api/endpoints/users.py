@@ -23,15 +23,15 @@ def get_current_user_info(
     # number_of_trips = get_number_of_trips(db, current_user.user_id)
     # favorite_categories = get_favorite_categories(db, current_user.user_id)
     cur_gen = current_user.gender
-    settings = Settings()
+
 
     cur_profile = current_user.profile_url
     if cur_gen == "Male":
-        cur_profile = settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Male.png"
+        cur_profile = "/static/images/genders/Male.png"
     if cur_gen == "Female":
-        cur_profile = settings.BACKEND_CORS_ORIGINS[1]+  "/static/images/genders/Female.png"
+        cur_profile = "/static/images/genders/Female.png"
     if cur_gen == "Other":
-        cur_profile =  settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Other.png"
+        cur_profile = "/static/images/genders/Other.png"
 
     user_response = {
         "user_id": current_user.user_id,
@@ -158,15 +158,14 @@ def update_user_information(
         user_data=user_data
     )
 
-    settings = Settings()
     cur_gen = current_user.gender
     cur_profile = current_user.profile_url
     if cur_gen == "Male":
-        cur_profile = settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Male.png"
+        cur_profile ="/static/images/genders/Male.png"
     if cur_gen == "Female":
-        cur_profile = settings.BACKEND_CORS_ORIGINS[1]+  "/static/images/genders/Female.png"
+        cur_profile = "/static/images/genders/Female.png"
     if cur_gen == "Other":
-        cur_profile =  settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Other.png"
+        cur_profile = "/static/images/genders/Other.png"
 
 
     cur_user = {

@@ -61,14 +61,13 @@ def update_user_information(
     # Update only the fields that are provided (not None)
     update_data = user_data.dict(exclude_unset=True)
 
-    settings = Settings()
 
     if "gender" in update_data and update_data["gender"] == "Male":
-        update_data["profile_url"] = settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Male.png"
+        update_data["profile_url"] = "/static/images/genders/Male.png"
     elif "gender" in update_data and update_data["gender"] == "Female":
-        update_data["profile_url"] = settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Female.png"
+        update_data["profile_url"] = "/static/images/genders/Female.png"
     elif "gender" in update_data and update_data["gender"] == "Other":
-        update_data["profile_url"] = settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Other.png"
+        update_data["profile_url"] = "/static/images/genders/Other.png"
 
 
     for field, value in update_data.items():
