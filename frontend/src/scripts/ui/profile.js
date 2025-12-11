@@ -22,7 +22,14 @@
 import {
     getUserInformation,
     updateUserInformation,
+    getURL,
 } from "../services/users-service.js"
+
+import {
+    getFriends,
+    removeFriend,
+} from "../services/friendships-service.js"
+
 
 /* ================================================================
    1. PAGE LOAD & SCROLL MANAGEMENT
@@ -624,7 +631,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.scrollTop = 0;
 
     // Initialize all modules
-    loadUserData()
+    loadUserData();
     initMobileMenu();
     initScrollAnimations();
     initTabs();
@@ -697,6 +704,187 @@ function englishToPersianNumber(input) {
    12. USER DATA INTEGRATION (API)
    ================================================================ */
 
+function renderFriendsList(friendsData) {
+    const friendsGrid = document.querySelector('.friends-grid');
+
+    if (!friendsGrid) {
+        console.error("friendsGrid not found!");
+        return;
+    }
+
+    if (!friendsData || friendsData.length === 0) {
+        friendsGrid.innerHTML = `
+        <div class="empty-state">
+            <i class="fas fa-users-slash"></i>
+            <h3>هنوز دوستی ندارید</h3>
+            <p>برای یافتن دوستان جدید به تب جستجو بروید.</p>
+        </div>
+    `;
+        return;
+    }
+
+    const friendsHTML = friendsData.map((friend, index) => {
+        const delay = index * 0.2;
+
+        return `
+            <div class="friend-card" data-animate="zoom-in" style="animation-delay: ${delay}s" data-user-id="${friend.user_id}">
+                <img src="${getURL()+friend.profile_url || ""}" class="friend-image" alt="${friend.full_name}">
+                
+                <div class="friend-details">
+                    <div class="friend-icon-wrapper">
+                        <i class="fas fa-user-friends friend-icon"></i>
+                    </div>
+                    <h3 class="friend-name">${friend.full_name || friend.username}</h3>
+                    <p class="friend-stats">${englishToPersianNumber(friend.common_number_of_trips)} سفر مشترک</p>
+                </div>
+                
+                <div class="friend-popup">
+                    <img src="${getURL()+friend.profile_url || ''}" class="popup-avatar" alt="${friend.full_name}">
+                    <h3 class="popup-name">${friend.username}</h3>
+                    <p class="popup-bio">${friend.about_me || 'بیوگرافی موجود نیست.'}</p>
+                    <div class="popup-actions">
+                        <button class="popup-btn-delete" data-username="${friend.username}" data-friendship-id="${friend.friendship_id}">
+                            <i class="fas fa-user-minus"></i> حذف
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    friendsGrid.innerHTML = friendsHTML;
+
+    setTimeout(() => {
+        const friendCards = friendsGrid.querySelectorAll('.friend-card[data-animate]');
+        friendCards.forEach(card => {
+            card.classList.add('animate-active');
+        });
+    }, 50);
+
+    attachDeleteFriendListeners();
+}
+function attachDeleteFriendListeners() {
+    const deleteButtons = document.querySelectorAll('.friend-card .popup-btn-delete');
+
+    deleteButtons.forEach(button => {
+        button.removeEventListener('click', deleteListener);
+        button.addEventListener('click', deleteListener);
+    });
+}
+function deleteListener(e) {
+    e.stopPropagation();
+
+    const username = this.getAttribute('data-username');
+    const friendshipID = this.getAttribute('data-friendship-id');
+
+    if (username && friendshipID) {
+        handleDeleteFriend(username, friendshipID);
+    }
+}
+async function handleDeleteFriend(username, friendshipID) {
+    if (!username || !friendshipID) {
+        console.error("Username or Friendship ID is missing for deletion.");
+        return;
+    }
+
+    const result = await Swal.fire({
+        text: `آیا مطمئن هستید که می‌خواهید ${'\u200f'}${username}${'\u200f'} را از لیست دوستان خود حذف کنید؟`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '!بله، حذف کن',
+        cancelButtonText: 'انصراف',
+        reverseButtons: true,
+        confirmButtonColor: '#f5c9b0',
+        cancelButtonColor: '#a6b28b',
+        background: '#f0f0f0',
+        color: '#4b5563',
+        customClass: {
+            popup: 'my-swal-popup',
+            confirmButton: 'my-confirm-btn',
+            cancelButton: 'my-cancel-btn'
+        },
+    });
+
+    if (result.isConfirmed) {
+        try {
+            const response = await removeFriend(friendshipID);
+
+            if (response && response.status) {
+                try {
+                    const friendsResponse = await getFriends();
+                    console.log("Friends response:", friendsResponse);
+
+                    if (friendsResponse && Array.isArray(friendsResponse)) {
+                        renderFriendsList(friendsResponse);
+
+                        const friendsCount = document.querySelector('.stat-item:nth-child(2) .stat-number');
+                        if (friendsCount) {
+                            friendsCount.textContent = englishToPersianNumber(friendsResponse.length);
+                        }
+
+                        await Swal.fire({
+                            text: 'دوست شما با موفقیت حذف شد.',
+                            icon: 'success',
+                            confirmButtonText: 'تایید',
+                            confirmButtonColor: '#a6b28b',
+                            background: '#f0f0f0',
+                            color: '#4b5563',
+                            customClass: {
+                                popup: 'my-swal-popup',
+                                confirmButton: 'my-confirm-btn',
+                            },
+                        });
+                    } else {
+                        console.error("friendsResponse is not an array:", friendsResponse);
+                        throw new Error("Failed to load friends list");
+                    }
+                } catch (fetchError) {
+                    console.error("Error fetching friends:", fetchError);
+                    Swal.fire({
+                        text: 'دوست حذف شد. صفحه به‌روزرسانی می‌شود...',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                }
+
+            } else {
+                Swal.fire({
+                    text: response.error || 'خطا در حذف دوست.',
+                    icon: 'error',
+                    confirmButtonText: 'تأیید',
+                    iconColor: '#f5c9b0',
+                    confirmButtonColor: '#a6b28b',
+                    color: '#4b5563',
+                    background: '#f0f0f0',
+                    customClass: {
+                        popup: 'my-swal-popup',
+                        confirmButton: 'my-confirm-btn',
+                    },
+                });
+            }
+        } catch (error) {
+            console.error('Error during friend deletion:', error);
+            Swal.fire({
+                text: 'در برقراری ارتباط با سرور مشکلی پیش آمد.',
+                icon: 'error',
+                confirmButtonText: 'تأیید',
+                iconColor: '#f5c9b0',
+                confirmButtonColor: '#a6b28b',
+                color: '#4b5563',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                },
+                buttonsStyling: false
+            });
+        }
+    }
+}
+
 async function loadUserData() {
     try {
         // 1. Fetch data from the API
@@ -738,7 +926,7 @@ async function loadUserData() {
         if (typeof initTypingAnimation === "function") {
             initTypingAnimation();
         }
-        if (avatarImage) avatarImage.src = userData.profile_url || "";
+        if (avatarImage) avatarImage.src = getURL()+userData.profile_url || "";
 
         // Stats
         if (tripsCount)
@@ -776,16 +964,21 @@ async function loadUserData() {
             });
         }
 
+        //friends list
+        const friendsResponse = await getFriends();
+
+        if (friendsResponse && Array.isArray(friendsResponse)) {
+            renderFriendsList(friendsResponse);
+        } else {
+            console.error("Failed to load friends list:", friendsResponse);
+        }
+
     } catch (error) {
         console.error('Error loading user data:', error);
     }
 }
 
 
-/**
- * Collects form data, sends it to the API, and handles success/error messages.
- * @param {Event} e - The form submission event.
- */
 async function handleProfileSave(e) {
     e.preventDefault();
 

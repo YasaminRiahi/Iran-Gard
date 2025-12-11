@@ -42,6 +42,16 @@ const getAPIBase = () => {
 
 const API_BASE = getAPIBase();
 
+const getURL = () => {
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+
+    return `${protocol}//${hostname}:8000`;
+};
+
+
+export const URL_BASE = getURL();
+
 /**
  * Extracts user-friendly error message from API response
  * Handles various error response formats:
