@@ -17,6 +17,9 @@ export function updateUserInformation(userData) {
     );
 }
 
+export function searchUsers(query) {
+    return apiClient.get(`${USER_ENDPOINT}/search?q=${encodeURIComponent(query)}`);
+}
 
 export function getURL () {
     return URL_BASE;

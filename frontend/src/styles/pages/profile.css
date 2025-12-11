@@ -2265,3 +2265,29 @@ body {
     color: var(--color-white) !important;
     text-align: center !important;
 }
+
+.search-result-actions .btn-add {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.search-result-actions .btn-sent {
+    background-color: var(--color-primary);
+    color: white;
+    cursor: default;
+    opacity: 0.6;
+}
+
+.search-result-actions .btn-friend{
+    background-color: var(--color-primary);
+    color: white;
+    cursor: default;
+    opacity: 0.6;
+}
+
+.search-result-actions .btn-received{
+    background-color: var(--color-primary);
+    color: white;
+    cursor: default;
+    opacity: 0.6;
+}

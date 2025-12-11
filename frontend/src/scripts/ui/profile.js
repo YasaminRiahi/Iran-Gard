@@ -22,6 +22,7 @@ import {
     getUserInformation,
     updateUserInformation,
     getURL,
+    searchUsers,
 } from "../services/users-service.js"
 
 import {
@@ -31,7 +32,8 @@ import {
     acceptFriendRequest,
     rejectFriendRequest,
     getSentPendingRequests,
-    cancelFriendRequest
+    cancelFriendRequest,
+    sendFriendRequest,
 } from "../services/friendships-service.js"
 
 
@@ -513,6 +515,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize all modules
     loadUserData();
+    initSearchListeners()
     initMobileMenu();
     initScrollAnimations();
     initTabs();
@@ -609,19 +612,19 @@ function renderFriendsList(friendsData) {
 
         return `
             <div class="friend-card" data-animate="zoom-in" style="animation-delay: ${delay}s" data-user-id="${friend.user_id}">
-                <img src="${getURL()+friend.profile_url || ""}" class="friend-image" alt="${friend.full_name}">
+                <img src="${getURL() + friend.profile_url || ""}" class="friend-image" alt="${friend.full_name}">
                 
                 <div class="friend-details">
                     <div class="friend-icon-wrapper">
                         <i class="fas fa-user-friends friend-icon"></i>
                     </div>
-                    <h3 class="friend-name">${friend.full_name || friend.username}</h3>
+                    <h3 class="friend-name">${friend.username}</h3>
                     <p class="friend-stats">${englishToPersianNumber(friend.common_number_of_trips)} سفر مشترک</p>
                 </div>
                 
                 <div class="friend-popup">
-                    <img src="${getURL()+friend.profile_url || ''}" class="popup-avatar" alt="${friend.full_name}">
-                    <h3 class="popup-name">${friend.username}</h3>
+                    <img src="${getURL() + friend.profile_url || ''}" class="popup-avatar" alt="${friend.full_name}">
+                    <h3 class="popup-name">${friend.full_name || friend.username}</h3>
                     <p class="popup-bio">${friend.about_me || 'بیوگرافی موجود نیست.'}</p>
                     <div class="popup-actions">
                         <button class="popup-btn-delete" data-username="${friend.username}" data-friendship-id="${friend.friendship_id}">
@@ -644,6 +647,7 @@ function renderFriendsList(friendsData) {
 
     attachDeleteFriendListeners();
 }
+
 function attachDeleteFriendListeners() {
     const deleteButtons = document.querySelectorAll('.friend-card .popup-btn-delete');
 
@@ -652,6 +656,7 @@ function attachDeleteFriendListeners() {
         button.addEventListener('click', deleteListener);
     });
 }
+
 function deleteListener(e) {
     e.stopPropagation();
 
@@ -662,6 +667,7 @@ function deleteListener(e) {
         handleDeleteFriend(username, friendshipID);
     }
 }
+
 async function handleDeleteFriend(username, friendshipID) {
     if (!username || !friendshipID) {
         console.error("Username or Friendship ID is missing for deletion.");
@@ -807,7 +813,7 @@ async function loadUserData() {
         if (typeof initTypingAnimation === "function") {
             initTypingAnimation();
         }
-        if (avatarImage) avatarImage.src = getURL()+userData.profile_url || "";
+        if (avatarImage) avatarImage.src = getURL() + userData.profile_url || "";
 
         // Stats
         if (tripsCount)
@@ -1000,7 +1006,7 @@ function renderReceivedRequests(requestsData) {
                 <img src="${getURL() + requester.profile_url || ""}" class="search-result-avatar" alt="${requester.full_name}">
                 
                 <div class="search-result-info">
-                    <h4 class="search-result-name">${requester.full_name || requester.username}</h4>
+                    <h4 class="search-result-name">${requester.username}</h4>
                     <p class="search-result-bio">${requester.about_me || 'بیوگرافی موجود نیست.'}</p>
                     <span class="request-badge">${englishToPersianNumber(requestDate)}</span>
                 </div>
@@ -1141,7 +1147,7 @@ function renderSentRequests(requestsData) {
                 <img src="${getURL() + addressee.profile_url || ""}" class="search-result-avatar" alt="${addressee.full_name}">
                 
                 <div class="search-result-info">
-                    <h4 class="search-result-name">${addressee.full_name || addressee.username}</h4>
+                    <h4 class="search-result-name">${addressee.username}</h4>
                     <p class="search-result-bio">${addressee.about_me || 'بیوگرافی موجود نیست.'}</p>
                     <span class="request-badge">${englishToPersianNumber(requestDate)}</span>
                 </div>
@@ -1181,6 +1187,7 @@ function attachSentRequestActionListeners() {
         button.addEventListener('click', requestActionListener);
     });
 }
+
 function updateSentRequestsBadge(count) {
     const badgeElement = document.querySelector('.friends-tab-btn[data-tab="sent-requests"] .badge');
 
@@ -1192,6 +1199,268 @@ function updateSentRequestsBadge(count) {
             badgeElement.style.display = 'inline-flex';
         } else {
             badgeElement.style.display = 'none';
+        }
+    }
+}
+
+
+//  Search Functionality
+
+function debounce(func, delay) {
+    let timeoutId;
+    return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            func.apply(this, args);
+        }, delay);
+    };
+}
+
+
+function renderSearchResults(usersData) {
+    const resultsContainer = document.getElementById('search-results');
+    if (!resultsContainer) return;
+
+    if (!usersData || usersData.length === 0) {
+        resultsContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-search-minus"></i>
+                <h3>کاربری پیدا نشد</h3>
+                <p>لطفاً نام کاربری یا ایمیل دقیق‌تری را وارد کنید.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const resultsHTML = usersData.map((user, index) => {
+        const delay = index * 0.1;
+
+        let buttonIcon;
+        let buttonClass;
+        let buttonDisabled = '';
+        let buttonTitle = 'ارسال درخواست دوستی';
+
+        if (user.friendship_status === true) {
+            buttonIcon = 'fa-user-check';
+            buttonClass = 'btn-friend';
+            buttonDisabled = 'disabled';
+            buttonTitle = 'این فرد در حال حاضر جزو دوستان شماست.';
+
+        } else if (user.is_request_received_by_them === true) {
+            buttonIcon = 'fa-user-clock';
+            buttonClass = 'btn-received';
+            buttonDisabled = 'disabled';
+            buttonTitle = 'این فرد به شما درخواست دوستی داده است. برای پذیرش/رد، به بخش درخواست‌های دریافتی مراجعه کنید.';
+
+        } else if (user.is_request_sent_by_me === true) {
+            buttonIcon = 'fa-clock';
+            buttonClass = 'btn-sent';
+            buttonDisabled = 'disabled';
+            buttonTitle = 'شما قبلاً به این فرد درخواست دوستی داده‌اید.';
+
+        } else {
+            buttonIcon = 'fa-user-plus';
+            buttonClass = 'btn-add';
+            buttonDisabled = '';
+            buttonTitle = 'ارسال درخواست دوستی جدید';
+        }
+
+        return `
+            <div class="search-result-card friend-card" 
+                 data-animate="slide-from-left-rtl" 
+                 style="animation-delay: ${delay}s" 
+                 data-user-id="${user.user_id}">
+                
+                <img src="${getURL() + user.profile_url || ""}" class="search-result-avatar" alt="${user.full_name}">
+                
+                <div class="search-result-info">
+                    <h4 class="search-result-name">${user.username}</h4>
+                    <p class="search-result-bio">${user.about_me || 'بیوگرافی موجود نیست.'}</p>
+                </div>
+                
+                <div class="search-result-actions">
+                    <button 
+                        class="btn-icon ${buttonClass} send-request-btn" 
+                        data-action="send-request" 
+                        data-username="${user.username}" 
+                        ${buttonDisabled}
+                        title="${buttonTitle}"
+                    >
+                        <i class="fas ${buttonIcon}"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    resultsContainer.innerHTML = resultsHTML;
+
+    setTimeout(() => {
+        const resultCards = resultsContainer.querySelectorAll('.friend-card[data-animate]');
+        resultCards.forEach(card => {
+            card.classList.add('animate-active');
+        });
+    }, 50);
+
+    attachSendRequestListeners();
+}
+
+async function handleSearch(query) {
+    const resultsContainer = document.getElementById('search-results');
+
+    if (!query || query.length === 0) {
+        resultsContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-user-friends"></i>
+                <h3>جستجوی دوستان جدید</h3>
+                <p>برای یافتن دوستان جدید، نام کاربری آن‌ها را جستجو کنید</p>
+            </div>
+        `;
+        return;
+    }
+
+    try {
+        resultsContainer.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i> در حال جستجو...</div>';
+
+        const [results, sentRequests, receivedRequests] = await Promise.all([
+            searchUsers(query),
+            getSentPendingRequests(),
+            getReceivedPendingRequests()
+        ]);
+
+        if (results && Array.isArray(results)) {
+
+            const sentRequestUserIds = new Set();
+            if (sentRequests && Array.isArray(sentRequests)) {
+                sentRequests.forEach(req => {
+                    if (req.addressee && req.addressee.user_id) {
+                        sentRequestUserIds.add(req.addressee.user_id);
+                    }
+                });
+            }
+            const receivedRequestUserIds = new Set();
+            if (receivedRequests && Array.isArray(receivedRequests)) {
+                receivedRequests.forEach(req => {
+                    if (req.requester && req.requester.user_id) {
+                        receivedRequestUserIds.add(req.requester.user_id);
+                    }
+                });
+            }
+            const processedResults = results.map(user => {
+                user.is_request_sent_by_me = sentRequestUserIds.has(user.user_id);
+                user.is_request_received_by_them = receivedRequestUserIds.has(user.user_id);
+
+                return user;
+            });
+
+            renderSearchResults(processedResults);
+        } else {
+            resultsContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-search-minus"></i>
+                    <h3>کاربری پیدا نشد</h3>
+                    <p>لطفاً نام کاربری یا ایمیل دقیق‌تری را وارد کنید.</p>
+                </div>
+            `;
+        }
+
+    } catch (error) {
+        console.error('Error searching users:', error);
+        resultsContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>خطا در جستجو</h3>
+                <p>خطا در ارتباط با سرور یا شبکه.</p>
+            </div>
+        `;
+    }
+}
+
+
+async function handleSendRequest(username, buttonElement) {
+    if (buttonElement.disabled) return;
+
+    buttonElement.disabled = true;
+    buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    try {
+        const response = await sendFriendRequest(username);
+
+        if (response && response.status === 'pending') {
+            Swal.fire({
+                text: `درخواست دوستی برای ${username} با موفقیت ارسال شد.`,
+                icon: 'success',
+                confirmButtonText: 'تایید',
+                confirmButtonColor: '#a6b28b',
+                background: '#f0f0f0',
+                color: '#4b5563',
+            });
+
+            buttonElement.innerHTML = '<i class="fas fa-check"></i>';
+            buttonElement.classList.remove('btn-add');
+            buttonElement.classList.add('btn-sent');
+            buttonElement.disabled = true;
+            buttonElement.title = 'درخواست ارسال شد';
+
+            await loadUserData();
+
+        } else if (response && response.error) {
+            throw new Error(response.error);
+        } else {
+            throw new Error("خطای ناشناخته در ارسال درخواست.");
+        }
+
+    } catch (error) {
+        console.error('Error sending request:', error);
+
+        buttonElement.disabled = false;
+        buttonElement.innerHTML = '<i class="fas fa-user-plus"></i> ';
+
+        Swal.fire({
+            text: error.message || 'خطا در ارسال درخواست.',
+            icon: 'error',
+            confirmButtonText: 'تأیید',
+            confirmButtonColor: '#a6b28b',
+            color: '#4b5563',
+        });
+    }
+}
+
+function attachSendRequestListeners() {
+    const buttons = document.querySelectorAll('.send-request-btn');
+
+    buttons.forEach(button => {
+        button.removeEventListener('click', sendRequestActionListener);
+
+        if (!button.disabled) {
+            button.addEventListener('click', sendRequestActionListener);
+        }
+    });
+}
+
+function sendRequestActionListener(e) {
+    e.stopPropagation();
+    const button = e.currentTarget;
+    const username = button.getAttribute('data-username');
+    handleSendRequest(username, button);
+}
+
+const debouncedSearch = debounce((query) => {
+    handleSearch(query);
+}, 300);
+
+function initSearchListeners() {
+    const searchInput = document.querySelector('.search-input');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            debouncedSearch(query);
+        });
+
+        const searchIcon = document.querySelector('.search-icon');
+        if (searchIcon) {
+            searchIcon.removeEventListener('click', handleSearch);
         }
     }
 }

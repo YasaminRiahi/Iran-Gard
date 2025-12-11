@@ -1,34 +1,40 @@
 import { apiClient } from "./api-client.js";
 
-const USER_ENDPOINT = "/friendships";
+const FRIENDSHIPS_ENDPOINT = "/friendships";
 
 
 export function getFriends(){
     return apiClient.get(
-        `${USER_ENDPOINT}`
+        `${FRIENDSHIPS_ENDPOINT}`
     );
 }
 
 export function removeFriend(friendship_ID) {
-    return apiClient.delete(`${USER_ENDPOINT}/remove/${friendship_ID}`);
+    return apiClient.delete(`${FRIENDSHIPS_ENDPOINT}/remove/${friendship_ID}`);
 }
 
 export function getReceivedPendingRequests() {
-    return apiClient.get(`${USER_ENDPOINT}/received_pending`);
+    return apiClient.get(`${FRIENDSHIPS_ENDPOINT}/received_pending`);
 }
 
 export function acceptFriendRequest(friendship_ID) {
-    return apiClient.post(`${USER_ENDPOINT}/accept/${friendship_ID}`);
+    return apiClient.post(`${FRIENDSHIPS_ENDPOINT}/accept/${friendship_ID}`);
 }
 
 export function rejectFriendRequest(friendship_ID) {
-    return apiClient.post(`${USER_ENDPOINT}/reject/${friendship_ID}`);
+    return apiClient.post(`${FRIENDSHIPS_ENDPOINT}/reject/${friendship_ID}`);
 }
 
 export function getSentPendingRequests() {
-    return apiClient.get(`${USER_ENDPOINT}/sent_pending`);
+    return apiClient.get(`${FRIENDSHIPS_ENDPOINT}/sent_pending`);
 }
 
 export function cancelFriendRequest(friendship_ID) {
-    return apiClient.post(`${USER_ENDPOINT}/reject/${friendship_ID}`);
+    return apiClient.post(`${FRIENDSHIPS_ENDPOINT}/reject/${friendship_ID}`);
+}
+
+export function sendFriendRequest(username) {
+    return apiClient.post(`${FRIENDSHIPS_ENDPOINT}/request`, {
+        username: username
+    });
 }
