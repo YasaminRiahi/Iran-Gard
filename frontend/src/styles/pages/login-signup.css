@@ -116,6 +116,9 @@ body {
     font-weight: 700;
     text-align: center;
     color: #A6B28B;
+    text-decoration: none;
+    display: block; 
+    cursor: pointer;
 }
 
 .logo.small {
