@@ -30,7 +30,7 @@ export function getSentPendingRequests() {
 }
 
 export function cancelFriendRequest(friendship_ID) {
-    return apiClient.post(`${FRIENDSHIPS_ENDPOINT}/reject/${friendship_ID}`);
+    return apiClient.delete(`${FRIENDSHIPS_ENDPOINT}/cancel/${friendship_ID}`);
 }
 
 export function sendFriendRequest(username) {

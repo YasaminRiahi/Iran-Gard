@@ -731,7 +731,12 @@ async function handleDeleteFriend(username, friendshipID) {
                         text: 'دوست حذف شد. صفحه به‌روزرسانی می‌شود...',
                         icon: 'success',
                         timer: 1500,
-                        showConfirmButton: false
+                        showConfirmButton: false,
+                        background: '#f0f0f0',
+                        color: '#4b5563',
+                        customClass: {
+                            popup: 'my-swal-popup',
+                        },
                     }).then(() => {
                         window.location.reload();
                     });
@@ -890,6 +895,7 @@ async function loadUserData() {
         } else {
             console.error("Failed to load sent requests:", sentRequestsResponse);
         }
+
 
         updateRequestsBadge(requestsData.length);
         updateSentRequestsBadge(sentRequests.length);
@@ -1226,7 +1232,7 @@ function renderSearchResults(usersData) {
             <div class="empty-state">
                 <i class="fas fa-search-minus"></i>
                 <h3>کاربری پیدا نشد</h3>
-                <p>لطفاً نام کاربری یا ایمیل دقیق‌تری را وارد کنید.</p>
+                <p>لطفاً نام کاربری یا ایمیل دقیق‌تری وارد کنید.</p>
             </div>
         `;
         return;
@@ -1253,7 +1259,7 @@ function renderSearchResults(usersData) {
             buttonTitle = 'این فرد به شما درخواست دوستی داده است. برای پذیرش/رد، به بخش درخواست‌های دریافتی مراجعه کنید.';
 
         } else if (user.is_request_sent_by_me === true) {
-            buttonIcon = 'fa-clock';
+            buttonIcon = 'fa-check';
             buttonClass = 'btn-sent';
             buttonDisabled = 'disabled';
             buttonTitle = 'شما قبلاً به این فرد درخواست دوستی داده‌اید.';
@@ -1394,6 +1400,10 @@ async function handleSendRequest(username, buttonElement) {
                 confirmButtonColor: '#a6b28b',
                 background: '#f0f0f0',
                 color: '#4b5563',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn'
+                },
             });
 
             buttonElement.innerHTML = '<i class="fas fa-check"></i>';
@@ -1422,6 +1432,11 @@ async function handleSendRequest(username, buttonElement) {
             confirmButtonText: 'تأیید',
             confirmButtonColor: '#a6b28b',
             color: '#4b5563',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn'
+            },
         });
     }
 }
