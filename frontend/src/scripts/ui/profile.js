@@ -28,6 +28,9 @@ import {
 import {
     getFriends,
     removeFriend,
+    getReceivedPendingRequests,
+    acceptFriendRequest,
+    rejectFriendRequest
 } from "../services/friendships-service.js"
 
 
@@ -263,7 +266,7 @@ function initStatsAnimation() {
                 });
 
                 const numValue = parseInt(englishValue);
-                const duration = 2000; // Animation duration in ms
+                const duration = 1000; // Animation duration in ms
                 const steps = 60; // Number of animation steps
                 const stepValue = numValue / steps;
                 const stepDuration = duration / steps;
@@ -973,6 +976,18 @@ async function loadUserData() {
             console.error("Failed to load friends list:", friendsResponse);
         }
 
+        const receivedRequestsResponse = await getReceivedPendingRequests();
+        let requestsData = [];
+
+        if (receivedRequestsResponse && Array.isArray(receivedRequestsResponse)) {
+            requestsData = receivedRequestsResponse;
+            renderReceivedRequests(requestsData);
+        } else {
+            console.error("Failed to load received requests:", receivedRequestsResponse);
+        }
+
+        updateRequestsBadge(requestsData.length);
+
     } catch (error) {
         console.error('Error loading user data:', error);
     }
@@ -1060,3 +1075,138 @@ async function handleProfileSave(e) {
         submitButton.innerHTML = originalButtonText;
     }
 }
+
+
+function renderReceivedRequests(requestsData) {
+    const requestsGrid = document.getElementById('received-requests');
+    if (!requestsGrid) return;
+
+    if (!requestsData || requestsData.length === 0) {
+        requestsGrid.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h3>درخواست دوستی جدیدی ندارید</h3>
+            </div>
+        `;
+        return;
+    }
+
+    const requestsHTML = requestsData.map((request, index) => {
+        const requester = request.requester;
+        const delay = index * 0.2;
+        const requestDate = new Date(request.created_at).toLocaleDateString('fa-IR');
+
+        return `
+            <div class="search-result-card" data-animate="slide-in-right" style="animation-delay: ${delay}s">
+                <img src="${getURL() + requester.profile_url || ""}" class="search-result-avatar" alt="${requester.full_name}">
+                
+                <div class="search-result-info">
+                    <h4 class="search-result-name">${requester.full_name || requester.username}</h4>
+                    <p class="search-result-bio">${requester.about_me || 'بیوگرافی موجود نیست.'}</p>
+                    <span class="request-badge">${englishToPersianNumber(requestDate)}</span>
+                </div>
+                
+                <div class="search-result-actions request-actions">
+                    <button class="btn-icon btn-add" title="قبول درخواست" data-action="accept" data-id="${request.friendship_id}">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn-icon btn-view" title="رد درخواست" data-action="reject" data-id="${request.friendship_id}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    requestsGrid.innerHTML = requestsHTML;
+
+    setTimeout(() => {
+        const requestCards = requestsGrid.querySelectorAll('.search-result-card[data-animate]');
+        requestCards.forEach(card => {
+            card.classList.add('animate-active');
+        });
+    }, 50);
+
+    attachRequestActionListeners();
+}
+
+function updateRequestsBadge(count) {
+    const badgeElement = document.querySelector('.friends-tab-btn[data-tab="received-requests"] .badge');
+
+    if (badgeElement) {
+        const persianCount = englishToPersianNumber(count);
+        badgeElement.textContent = persianCount;
+
+        if (count > 0) {
+            badgeElement.style.display = 'inline-flex';
+        } else {
+            badgeElement.style.display = 'none';
+        }
+    }
+}
+
+async function handleRequestAction(action, friendshipId) {
+    try {
+        let response;
+        if (action === 'accept') {
+            response = await acceptFriendRequest(friendshipId);
+        } else if (action === 'reject') {
+            response = await rejectFriendRequest(friendshipId);
+        } else {
+            return;
+        }
+
+        if (response && !response.detail && !response.error) {
+            Swal.fire({
+                text: `درخواست با موفقیت ${action === 'accept' ? 'پذیرفته' : 'رد'} شد.`,
+                icon: 'success',
+                confirmButtonText: 'تایید',
+                confirmButtonColor: '#a6b28b',
+                background: '#f0f0f0',
+                color: '#4b5563',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                },
+            });
+            loadUserData();
+        } else {
+            Swal.fire({
+                text: response.error || `خطا در ${action === 'accept' ? 'پذیرش' : 'رد'} درخواست.`,
+                icon: 'error',
+                confirmButtonText: 'تأیید',
+                iconColor: '#f5c9b0',
+                confirmButtonColor: '#a6b28b',
+                color: '#4b5563',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                },
+            });
+        }
+    } catch (error) {
+        console.error(`Error during ${action} request:`, error);
+    }
+}
+
+function attachRequestActionListeners() {
+    const buttons = document.querySelectorAll('#received-requests .request-actions button');
+
+    buttons.forEach(button => {
+        button.removeEventListener('click', requestActionListener);
+
+        button.addEventListener('click', requestActionListener);
+    });
+}
+
+function requestActionListener(e) {
+    const button = e.currentTarget;
+    const action = button.getAttribute('data-action');
+    const friendshipId = button.getAttribute('data-id');
+
+    if (action && friendshipId) {
+        handleRequestAction(action, friendshipId);
+    }
+}
+
