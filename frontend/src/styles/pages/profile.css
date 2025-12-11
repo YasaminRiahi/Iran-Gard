@@ -2146,6 +2146,30 @@ body {
     transition-delay: 0.7s;
 }
 
+/* ================================================================
+   SLIDE IN RIGHT ANIMATION FOR FRIEND REQUESTS
+   ================================================================ */
+
+/* Initial hidden state for request cards */
+#received-requests .search-result-card,
+#sent-requests .search-result-card {
+    opacity: 0;
+    transform: translateX(100px);
+}
+
+/* When animation is ready */
+#received-requests .search-result-card.ready-to-animate,
+#sent-requests .search-result-card.ready-to-animate {
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Final animated state */
+#received-requests .search-result-card.animated,
+#sent-requests .search-result-card.animated {
+    opacity: 1;
+    transform: translateX(0);
+}
+
 
 /* ================================================================
    26. UTILITY CLASSES

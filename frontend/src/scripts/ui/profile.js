@@ -14,10 +14,9 @@
    6. Stats Counter Animation
    7. Mobile Menu Management
    8. Friends Tab System
-   9. Search Functionality
-   10. Friend Request Actions
-   11. Event Listeners & Initialization
-   
+   9. Friend Request Actions
+   10. Event Listeners & Initialization
+   11. USER DATA INTEGRATION (API)
    ================================================================ */
 import {
     getUserInformation,
@@ -30,7 +29,9 @@ import {
     removeFriend,
     getReceivedPendingRequests,
     acceptFriendRequest,
-    rejectFriendRequest
+    rejectFriendRequest,
+    getSentPendingRequests,
+    cancelFriendRequest
 } from "../services/friendships-service.js"
 
 
@@ -393,6 +394,22 @@ tabButtons.forEach(button => {
         // Add active class to clicked tab and target content
         button.classList.add('active');
         document.getElementById(targetTab).classList.add('active');
+
+        const cards = targetContent.querySelectorAll('.search-result-card');
+        if (cards.length > 0) {
+            cards.forEach((card, index) => {
+                card.classList.remove('ready-to-animate', 'animated');
+                card.style.opacity = '0';
+                card.style.transform = 'translateX(100px)';
+
+                setTimeout(() => {
+                    card.classList.add('ready-to-animate');
+                    setTimeout(() => {
+                        card.classList.add('animated');
+                    }, 50);
+                }, index * 100);
+            });
+        }
     });
 });
 
@@ -480,148 +497,9 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-/* ================================================================
-   9. SEARCH FUNCTIONALITY
-   ================================================================ */
-
-// Get search elements
-const searchInput = document.querySelector('.search-input');
-const searchResults = document.getElementById('search-results');
-
-/**
- * Fake user database for search demonstration
- * In production, this would come from an API
- */
-const users = [
-    {
-        name: 'حسین کاظمی',
-        bio: 'عاشق طبیعت و کوه',
-        avatar: 'https://randomuser.me/api/portraits/men/10.jpg'
-    },
-    {
-        name: 'زهرا احمدی',
-        bio: 'گردشگر و بلاگر',
-        avatar: 'https://randomuser.me/api/portraits/women/15.jpg'
-    },
-    {
-        name: 'علی رضایی',
-        bio: 'عکاس حرفه‌ای',
-        avatar: 'https://randomuser.me/api/portraits/men/20.jpg'
-    },
-    {
-        name: 'مینا جعفری',
-        bio: 'عاشق سفر و ماجراجویی',
-        avatar: 'https://randomuser.me/api/portraits/women/30.jpg'
-    }
-];
-
-/**
- * Search input event handler
- * Filters users based on query and displays results
- */
-searchInput.addEventListener('input', (e) => {
-    const query = e.target.value.toLowerCase().trim();
-
-    // Show empty state if no query
-    if (query.length === 0) {
-        searchResults.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-user-friends"></i>
-                <h3>جستجوی دوستان جدید</h3>
-                <p>برای یافتن دوستان جدید، نام کاربری آن‌ها را جستجو کنید</p>
-            </div>
-        `;
-        return;
-    }
-
-    // Filter users based on query
-    const filtered = users.filter(user =>
-        user.name.toLowerCase().includes(query) ||
-        user.bio.toLowerCase().includes(query)
-    );
-
-    // Show no results message
-    if (filtered.length === 0) {
-        searchResults.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-search"></i>
-                <h3>نتیجه‌ای یافت نشد</h3>
-                <p>کاربری با این مشخصات پیدا نشد</p>
-            </div>
-        `;
-        return;
-    }
-
-    // Display search results
-    searchResults.innerHTML = filtered.map(user => `
-        <div class="search-result-card">
-            <img src="${user.avatar}" class="search-result-avatar" alt="${user.name}">
-            <div class="search-result-info">
-                <h4 class="search-result-name">${user.name}</h4>
-                <p class="search-result-bio">${user.bio}</p>
-            </div>
-            <div class="search-result-actions">
-                <button class="btn-icon btn-add" onclick="sendRequest(this)" title="ارسال درخواست">
-                    <i class="fas fa-user-plus"></i>
-                </button>
-                <button class="btn-icon btn-view" title="مشاهده پروفایل">
-                    <i class="fas fa-eye"></i>
-                </button>
-            </div>
-        </div>
-    `).join('');
-});
-
 
 /* ================================================================
-   10. FRIEND REQUEST ACTIONS
-   ================================================================ */
-
-/**
- * Send friend request
- * Changes button state to indicate request sent
- * @param {HTMLElement} button - The clicked add friend button
- */
-function sendRequest(button) {
-    const card = button.closest('.search-result-card');
-
-    // Update button to show success state
-    button.innerHTML = '<i class="fas fa-check"></i>';
-    button.style.background = '#10b981';
-    button.disabled = true;
-    button.title = 'درخواست ارسال شد';
-
-    // Fade out card after delay
-    setTimeout(() => {
-        card.style.opacity = '0.5';
-    }, 500);
-}
-
-/**
- * Handle accept/reject friend requests
- * Animates card removal on action
- */
-document.addEventListener('click', (e) => {
-    // Accept friend request
-    if (e.target.closest('.btn-icon.btn-add') && e.target.closest('#received-requests')) {
-        const card = e.target.closest('.search-result-card');
-        card.style.transform = 'translateX(100%)';
-        card.style.opacity = '0';
-        setTimeout(() => card.remove(), 400);
-    }
-
-    // Reject friend request
-    if (e.target.closest('.btn-icon.btn-view') && e.target.closest('#received-requests')) {
-        const card = e.target.closest('.search-result-card');
-        card.style.transform = 'translateX(-100%)';
-        card.style.opacity = '0';
-        setTimeout(() => card.remove(), 400);
-    }
-});
-
-
-/* ================================================================
-   11. EVENT LISTENERS & INITIALIZATION
+   9. EVENT LISTENERS & INITIALIZATION
    ================================================================ */
 
 /**
@@ -676,7 +554,7 @@ window.addEventListener('scroll', () => {
 
 
 /* ================================================================
-   12. USER DATA INTEGRATION (API)
+   10. USER DATA INTEGRATION (API)
    ================================================================ */
 
 /**
@@ -704,7 +582,7 @@ function englishToPersianNumber(input) {
 
 
 /* ================================================================
-   12. USER DATA INTEGRATION (API)
+   11. USER DATA INTEGRATION (API)
    ================================================================ */
 
 function renderFriendsList(friendsData) {
@@ -981,12 +859,34 @@ async function loadUserData() {
 
         if (receivedRequestsResponse && Array.isArray(receivedRequestsResponse)) {
             requestsData = receivedRequestsResponse;
-            renderReceivedRequests(requestsData);
+            if (document.readyState === 'complete') {
+                renderReceivedRequests(requestsData);
+            } else {
+                window.addEventListener('load', () => {
+                    renderReceivedRequests(requestsData);
+                });
+            }
         } else {
             console.error("Failed to load received requests:", receivedRequestsResponse);
         }
 
+        const sentRequestsResponse = await getSentPendingRequests();
+        let sentRequests = [];
+        if (sentRequestsResponse && Array.isArray(sentRequestsResponse)) {
+            sentRequests = sentRequestsResponse;
+            if (document.readyState === 'complete') {
+                renderSentRequests(sentRequests);
+            } else {
+                window.addEventListener('load', () => {
+                    renderSentRequests(sentRequests);
+                });
+            }
+        } else {
+            console.error("Failed to load sent requests:", sentRequestsResponse);
+        }
+
         updateRequestsBadge(requestsData.length);
+        updateSentRequestsBadge(sentRequests.length);
 
     } catch (error) {
         console.error('Error loading user data:', error);
@@ -1093,11 +993,10 @@ function renderReceivedRequests(requestsData) {
 
     const requestsHTML = requestsData.map((request, index) => {
         const requester = request.requester;
-        const delay = index * 0.2;
         const requestDate = new Date(request.created_at).toLocaleDateString('fa-IR');
 
         return `
-            <div class="search-result-card" data-animate="slide-in-right" style="animation-delay: ${delay}s">
+            <div class="search-result-card" data-index="${index}">
                 <img src="${getURL() + requester.profile_url || ""}" class="search-result-avatar" alt="${requester.full_name}">
                 
                 <div class="search-result-info">
@@ -1120,12 +1019,18 @@ function renderReceivedRequests(requestsData) {
 
     requestsGrid.innerHTML = requestsHTML;
 
-    setTimeout(() => {
-        const requestCards = requestsGrid.querySelectorAll('.search-result-card[data-animate]');
-        requestCards.forEach(card => {
-            card.classList.add('animate-active');
+    requestAnimationFrame(() => {
+        const cards = requestsGrid.querySelectorAll('.search-result-card');
+
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.classList.add('ready-to-animate');
+                setTimeout(() => {
+                    card.classList.add('animated');
+                }, 50);
+            }, index * 100);
         });
-    }, 50);
+    });
 
     attachRequestActionListeners();
 }
@@ -1152,6 +1057,8 @@ async function handleRequestAction(action, friendshipId) {
             response = await acceptFriendRequest(friendshipId);
         } else if (action === 'reject') {
             response = await rejectFriendRequest(friendshipId);
+        } else if (action === 'cancel') {
+            response = await cancelFriendRequest(friendshipId);
         } else {
             return;
         }
@@ -1210,3 +1117,81 @@ function requestActionListener(e) {
     }
 }
 
+function renderSentRequests(requestsData) {
+    const requestsGrid = document.getElementById('sent-requests');
+    if (!requestsGrid) return;
+
+    if (!requestsData || requestsData.length === 0) {
+        requestsGrid.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-paper-plane"></i>
+                <h3>درخواست ارسال شده‌ای ندارید</h3>
+                <p>برای ارسال درخواست دوستی جدید به تب جستجو بروید.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const requestsHTML = requestsData.map((request, index) => {
+        const addressee = request.addressee;
+        const requestDate = new Date(request.created_at).toLocaleDateString('fa-IR');
+
+        return `
+            <div class="search-result-card" data-index="${index}">
+                <img src="${getURL() + addressee.profile_url || ""}" class="search-result-avatar" alt="${addressee.full_name}">
+                
+                <div class="search-result-info">
+                    <h4 class="search-result-name">${addressee.full_name || addressee.username}</h4>
+                    <p class="search-result-bio">${addressee.about_me || 'بیوگرافی موجود نیست.'}</p>
+                    <span class="request-badge">${englishToPersianNumber(requestDate)}</span>
+                </div>
+                
+                <div class="search-result-actions request-actions">
+                    <button class="btn-icon btn-view" title="لغو درخواست" data-action="cancel" data-id="${request.friendship_id}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    requestsGrid.innerHTML = requestsHTML;
+
+    requestAnimationFrame(() => {
+        const cards = requestsGrid.querySelectorAll('.search-result-card');
+
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.classList.add('ready-to-animate');
+                setTimeout(() => {
+                    card.classList.add('animated');
+                }, 50);
+            }, index * 100);
+        });
+    });
+
+    attachSentRequestActionListeners();
+}
+
+function attachSentRequestActionListeners() {
+    const buttons = document.querySelectorAll('#sent-requests .request-actions button');
+
+    buttons.forEach(button => {
+        button.removeEventListener('click', requestActionListener);
+        button.addEventListener('click', requestActionListener);
+    });
+}
+function updateSentRequestsBadge(count) {
+    const badgeElement = document.querySelector('.friends-tab-btn[data-tab="sent-requests"] .badge');
+
+    if (badgeElement) {
+        const persianCount = englishToPersianNumber(count);
+        badgeElement.textContent = persianCount;
+
+        if (count > 0) {
+            badgeElement.style.display = 'inline-flex';
+        } else {
+            badgeElement.style.display = 'none';
+        }
+    }
+}

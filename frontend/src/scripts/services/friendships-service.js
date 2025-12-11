@@ -24,3 +24,11 @@ export function acceptFriendRequest(friendship_ID) {
 export function rejectFriendRequest(friendship_ID) {
     return apiClient.post(`${USER_ENDPOINT}/reject/${friendship_ID}`);
 }
+
+export function getSentPendingRequests() {
+    return apiClient.get(`${USER_ENDPOINT}/sent_pending`);
+}
+
+export function cancelFriendRequest(friendship_ID) {
+    return apiClient.post(`${USER_ENDPOINT}/reject/${friendship_ID}`);
+}
