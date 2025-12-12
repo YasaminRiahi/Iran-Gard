@@ -4,7 +4,7 @@
  * Stores access token in localStorage after successful login
  */
 
-import { apiClient } from "./api-client.js";
+import { apiClient } from "/src/scripts/services/api-client.js";
 
 const AUTH_ENDPOINT = "/auth";
 

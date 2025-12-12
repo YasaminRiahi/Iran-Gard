@@ -1,21 +1,23 @@
-FROM python:3.13-slim
+FROM python:3.11
 
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy and install Python dependencies
-COPY requirements.txt .
+# Copy requirements and install dependencies
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY . .
+COPY backend ./backend
+
+# Copy database migrations and files
+COPY database ./database
+
+# Copy static files
+COPY static ./static
 
 # Expose port
-EXPOSE 8000
+EXPOSE ${BACKEND_PORT}
 
-# Run migrations and start application
-CMD ["sh", "-c", "python -m alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4"]
+# Run migrations and start uvicorn
+WORKDIR /app/backend
+CMD sh -c "alembic upgrade head && exec uvicorn main:app --host 0.0.0.0 --port 8000"

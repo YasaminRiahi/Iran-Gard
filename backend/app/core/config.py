@@ -1,60 +1,67 @@
-import os
+from pathlib import Path
 from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import field_validator
 
-
-# Determine which .env file to use (absolute path to backend folder)
-backend_dir = os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-)
-env_file = os.getenv("ENVIRONMENT", "dev")
-if env_file == "prod":
-    env_file_path = os.path.join(backend_dir, ".env.prod")
-elif env_file == "test":
-    env_file_path = os.path.join(backend_dir, ".env.test")
-else:
-    env_file_path = os.path.join(backend_dir, ".env.dev")
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=env_file_path, case_sensitive=True, extra="ignore"
+        env_file=str(ROOT_DIR / ".env"),
+        env_file_encoding="utf-8",
+        # env_file=(
+        #     [
+        #         str(ROOT_DIR / ".env"),
+        #         str(ROOT_DIR / ".env.local"),
+        #     ]
+        #     if (ROOT_DIR / ".env").exists()
+        #     else []
+        # ),
+        # env_file_encoding="utf-8",
+        extra="ignore",
     )
 
     # Project Information
-    PROJECT_NAME: str = "Iran-Gard API"
-    VERSION: str = "1.0.0"
-    API_STR: str = "/api"
+    PROJECT_NAME: str
+    VERSION: str
+    API_STR: str
 
-    # Environment Mode
-    ENVIRONMENT: str = "dev"  # dev, test, prod
+    # Server Configuration
+    BACKEND_PORT: int
 
-    # Database
-    DATABASE_URL: str = "postgresql://postgres:1@localhost:5432/iran-gard"
+    # Database Configuration
+    DB_DRIVER: str = "postgresql"
+    DB_USER: str
+    DB_PASSWORD: str
+    DB_HOST: str
+    DB_PORT: int
+    DB_NAME: str
 
     # Security
-    SECRET_KEY: str = "your-secret-key-here-change-in-production"
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    SIGNUP_TOKEN_EXPIRE_MINUTES: int = 15
+    SECRET_KEY: str
+    ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+    SIGNUP_TOKEN_EXPIRE_MINUTES: int
 
     # CORS
-    BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
+    BACKEND_CORS_ORIGINS: List[str]
 
     # Email Configuration (SMTP)
-    EMAIL_SMTP_SERVER: str = "smtp.gmail.com"
-    EMAIL_SMTP_PORT: int = 587
-    EMAIL_ADDRESS: str = ""
-    EMAIL_PASSWORD: str = ""
+    EMAIL_SMTP_SERVER: str
+    EMAIL_SMTP_PORT: int
+    EMAIL_ADDRESS: str
+    EMAIL_PASSWORD: str
 
-    def __init__(self, **data):
-        super().__init__(**data)
-        # Process CORS origins if it's a string
-        if isinstance(self.BACKEND_CORS_ORIGINS, str):
-            self.BACKEND_CORS_ORIGINS = [
-                i.strip() for i in self.BACKEND_CORS_ORIGINS.split(",")
-            ]
+    # Logging Configuration
+    LOG_SQL: bool
+
+    # API Documentation
+    API_DOCS_ENABLED: bool = True
+
+    @property
+    def DATABASE_URL(self) -> str:
+        """Construct DATABASE_URL from components."""
+        return f"{self.DB_DRIVER}://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
 
 settings = Settings()
