@@ -1,15 +1,12 @@
-async function checkLoginStatus() {
+import { apiClient } from "/src/scripts/services/api-client.js";
+
+export async function checkLoginStatus() {
     const token = localStorage.getItem("access_token");
 
     try {
-        const response = await fetch("http://localhost:8000/api/users/me", {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        });
+        const response = await apiClient.get('/users/me');
 
-        if (response.ok) {
+        if (response && response.success !== false) {
             console.log("User is authenticated");
             changeSignupToLogout();
             hideLoginButton();

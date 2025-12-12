@@ -16,6 +16,8 @@
  * const places = await apiClient.get('/places', { includeAuth: false });
  */
 
+import { getAPIBase } from '/src/scripts/config.js';
+
 /**
  * Request options for API calls
  * @typedef {Object} RequestOptions
@@ -32,15 +34,8 @@
  * @property {(endpoint: string, options?: RequestOptions) => Promise<any>} delete - DELETE request
  */
 
-// Auto-detect API base from frontend's location
-const getAPIBase = () => {
-  const protocol = window.location.protocol;
-  const hostname = window.location.hostname;
-
-  return `${protocol}//${hostname}:8000/api`;
-};
-
-const API_BASE = getAPIBase();
+// Get API base URL
+export const API_BASE = getAPIBase();
 
 /**
  * Extracts user-friendly error message from API response

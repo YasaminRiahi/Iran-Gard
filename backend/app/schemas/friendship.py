@@ -20,10 +20,6 @@ class FriendRequestResponse(BaseModel):
     class Config:
         from_attributes = True
 
-class FriendRemove(BaseModel):
-    """Schema for creating a friend request."""
-    username: str = Field(..., min_length=1, max_length=50)
-
 
 class FriendRemovalResponse(BaseModel):
     """Schema for friend request response."""
@@ -42,6 +38,22 @@ class FriendInfo(BaseModel):
 
     class Config:
         from_attributes = True
+
+class FriendshipInfoWithID(BaseModel):
+    """Schema for friend information."""
+    user_id: int
+    username: str
+    full_name: Optional[str]
+    profile_url: str
+    about_me: Optional[str]
+    friendship_id: int
+    common_number_of_trips: int
+
+    class Config:
+        from_attributes = True
+
+
+
 
 
 class ReceivedFriendRequestInfo(BaseModel):

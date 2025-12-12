@@ -21,7 +21,6 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     """Upgrade schema."""
     # Add 'Other' to the GenderType enum
-    op.execute("ALTER TYPE gendertype ADD VALUE IF NOT EXISTS 'Other'")
 
     # Add favorite_categories column
     op.add_column('users', sa.Column('favorite_categories', postgresql.ARRAY(sa.String()), nullable=True))

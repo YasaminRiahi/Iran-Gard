@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="src/styles/responsive/profile-responsive.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="src/scripts/services/check-login.js"></script>
+    <script type="module" src="src/scripts/services/check-login.js"></script>
 </head>
 
 <body>
@@ -148,7 +148,7 @@
                                     <input type="radio" name="gender" value="Other">
                                     <span class="gender-box">
                                         <i class="fas fa-question other-icon"></i>
-                                        سایر
+                                        ترجیح می‌دهم نگویم
                                     </span>
                                 </label>
                             </div>
@@ -186,7 +186,7 @@
 
                     <div class="form-input-group" style="grid-column: 1 / -1;">
                         <textarea rows="3" class="form-textarea" placeholder="درباره من..." data-animate="fade-up"
-                            style="animation-delay: 0.2s">دوستدار جنگل و کمپ</textarea>
+                            style="animation-delay: 0.2s"></textarea>
                         <div class="input-icon-textarea" style="right: auto; left: 1rem;"><i class="fas fa-pen"></i>
                         </div>
                     </div>
@@ -211,12 +211,12 @@
                 <button class="friends-tab-btn" data-tab="received-requests">
                     <i class="fas fa-user-plus"></i>
                     <span>درخواست‌های دریافتی</span>
-                    <span class="badge">3</span>
+                    <span class="badge"></span>
                 </button>
                 <button class="friends-tab-btn" data-tab="sent-requests">
                     <i class="fas fa-paper-plane"></i>
                     <span>درخواست‌های ارسالی</span>
-                    <span class="badge">2</span>
+                    <span class="badge"></span>
                 </button>
                 <button class="friends-tab-btn" data-tab="add-friend">
                     <i class="fas fa-search"></i>
@@ -233,161 +233,16 @@
                     </div>
                 </div>
 
-                <div class="friends-grid">
-                    <div class="friend-card" data-animate="zoom-in">
-                        <img src="https://randomuser.me/api/portraits/women/44.jpg" class="friend-image">
-                        <div class="friend-details">
-                            <div class="friend-icon-wrapper">
-                                <i class="fas fa-user-friends friend-icon"></i>
-                            </div>
-                            <h3 class="friend-name">نازنین یوسفی</h3>
-                            <p class="friend-stats">۲۱ سفر مشترک</p>
-                        </div>
-                        <div class="friend-popup">
-                            <img src="https://randomuser.me/api/portraits/women/44.jpg" class="popup-avatar">
-                            <h3 class="popup-name">nazi-ysf</h3>
-                            <p class="popup-bio">عاشق کویر، ستاره‌ها و چای آتیشی</p>
-                            <div class="popup-actions">
-                                <button class="popup-btn-delete"><i class="fas fa-user-minus"></i> حذف</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="friend-card" data-animate="zoom-in" style="animation-delay: 0.2s">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" class="friend-image">
-                        <div class="friend-details">
-                            <div class="friend-icon-wrapper">
-                                <i class="fas fa-user-friends friend-icon"></i>
-                            </div>
-                            <h3 class="friend-name">علی محمدی</h3>
-                            <p class="friend-stats">۱۵ سفر مشترک</p>
-                        </div>
-                        <div class="friend-popup">
-                            <img src="https://randomuser.me/api/portraits/men/32.jpg" class="popup-avatar">
-                            <h3 class="popup-name">Ali-mhd</h3>
-                            <p class="popup-bio">کوه‌نورد و عکاس طبیعت</p>
-                            <div class="popup-actions">
-                                <button class="popup-btn-delete"><i class="fas fa-user-minus"></i> حذف</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="friend-card" data-animate="zoom-in" style="animation-delay: 0.4s">
-                        <img src="https://randomuser.me/api/portraits/women/68.jpg" class="friend-image">
-                        <div class="friend-details">
-                            <div class="friend-icon-wrapper">
-                                <i class="fas fa-user-friends friend-icon"></i>
-                            </div>
-                            <h3 class="friend-name">سارا رضایی</h3>
-                            <p class="friend-stats">۲۸ سفر مشترک</p>
-                        </div>
-                        <div class="friend-popup">
-                            <img src="https://randomuser.me/api/portraits/women/68.jpg" class="popup-avatar">
-                            <h3 class="popup-name">Sara-rezaei</h3>
-                            <p class="popup-bio">بلاگر سفر و گردشگری</p>
-                            <div class="popup-actions">
-                                <button class="popup-btn-delete"><i class="fas fa-user-minus"></i> حذف</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="friends-grid"></div>
             </div>
-            <div class="friends-tab-content" id="received-requests">
-                <div class="search-section">
-                    <div class="search-result-card">
-                        <img src="https://randomuser.me/api/portraits/men/45.jpg" class="search-result-avatar"
-                            alt="User">
-                        <div class="search-result-info">
-                            <h4 class="search-result-name">محمد احمدی</h4>
-                            <p class="search-result-bio">گردشگر و عکاس طبیعت</p>
-                            <span class="request-badge">زمان</span>
-                        </div>
-                        <div class="search-result-actions">
-                            <button class="btn-icon btn-add" title="قبول درخواست">
-                                <i class="fas fa-check"></i>
-                            </button>
-                            <button class="btn-icon btn-view" title="رد درخواست">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
+            <div class="friends-tab-content search-section" id="received-requests"></div>
 
-                    <div class="search-result-card">
-                        <img src="https://randomuser.me/api/portraits/women/50.jpg" class="search-result-avatar"
-                            alt="User">
-                        <div class="search-result-info">
-                            <h4 class="search-result-name">فاطمه کریمی</h4>
-                            <p class="search-result-bio">عاشق کوه‌نوردی و ماجراجویی</p>
-                            <span class="request-badge">زمان</span>
-                        </div>
-                        <div class="search-result-actions">
-                            <button class="btn-icon btn-add" title="قبول درخواست">
-                                <i class="fas fa-check"></i>
-                            </button>
-                            <button class="btn-icon btn-view" title="رد درخواست">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="search-result-card">
-                        <img src="https://randomuser.me/api/portraits/men/78.jpg" class="search-result-avatar"
-                            alt="User">
-                        <div class="search-result-info">
-                            <h4 class="search-result-name">رضا موسوی</h4>
-                            <p class="search-result-bio">بلاگر سفر و فرهنگ</p>
-                            <span class="request-badge">زمان</span>
-                        </div>
-                        <div class="search-result-actions">
-                            <button class="btn-icon btn-add" title="قبول درخواست">
-                                <i class="fas fa-check"></i>
-                            </button>
-                            <button class="btn-icon btn-view" title="رد درخواست">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="friends-tab-content" id="sent-requests">
-                <div class="search-section">
-                    <div class="search-result-card">
-                        <img src="https://randomuser.me/api/portraits/women/25.jpg" class="search-result-avatar"
-                            alt="User">
-                        <div class="search-result-info">
-                            <h4 class="search-result-name">مریم حسینی</h4>
-                            <p class="search-result-bio">عاشق تاریخ و فرهنگ ایران</p>
-                            <span class="request-badge">زمان</span>
-                        </div>
-                        <div class="search-result-actions">
-                            <button class="btn-icon btn-view" title="لغو درخواست">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="search-result-card">
-                        <img src="https://randomuser.me/api/portraits/men/62.jpg" class="search-result-avatar"
-                            alt="User">
-                        <div class="search-result-info">
-                            <h4 class="search-result-name">امیر صادقی</h4>
-                            <p class="search-result-bio">گردشگر حرفه‌ای</p>
-                            <span class="request-badge">زمان</span>
-                        </div>
-                        <div class="search-result-actions">
-                            <button class="btn-icon btn-view" title="لغو درخواست">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="friends-tab-content search-section" id="sent-requests"></div>
 
             <div class="friends-tab-content" id="add-friend">
                 <div class="search-section">
                     <div class="search-box">
-                        <input type="text" class="search-input" placeholder="نام کاربری را جستجو کنید...">
+                        <input type="text" class="search-input" placeholder="نام کاربری یا ایمیل را جستجو کنید...">
                         <i class="fas fa-search search-icon"></i>
                     </div>
 
@@ -395,7 +250,7 @@
                         <div class="empty-state">
                             <i class="fas fa-user-friends"></i>
                             <h3>جستجوی دوستان جدید</h3>
-                            <p>برای یافتن دوستان جدید، نام کاربری آن‌ها را جستجو کنید</p>
+                            <p>برای یافتن دوستان جدید، نام کاربری یا ایمیل آن‌ها را جستجو کنید</p>
                         </div>
                     </div>
                 </div>

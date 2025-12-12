@@ -14,15 +14,28 @@
    6. Stats Counter Animation
    7. Mobile Menu Management
    8. Friends Tab System
-   9. Search Functionality
-   10. Friend Request Actions
-   11. Event Listeners & Initialization
-   
+   9. Friend Request Actions
+   10. Event Listeners & Initialization
+   11. USER DATA INTEGRATION (API)
    ================================================================ */
 import {
     getUserInformation,
     updateUserInformation,
+    getURL,
+    searchUsers,
 } from "../services/users-service.js"
+
+import {
+    getFriends,
+    removeFriend,
+    getReceivedPendingRequests,
+    acceptFriendRequest,
+    rejectFriendRequest,
+    getSentPendingRequests,
+    cancelFriendRequest,
+    sendFriendRequest,
+} from "../services/friendships-service.js"
+
 
 /* ================================================================
    1. PAGE LOAD & SCROLL MANAGEMENT
@@ -256,7 +269,7 @@ function initStatsAnimation() {
                 });
 
                 const numValue = parseInt(englishValue);
-                const duration = 2000; // Animation duration in ms
+                const duration = 1000; // Animation duration in ms
                 const steps = 60; // Number of animation steps
                 const stepValue = numValue / steps;
                 const stepDuration = duration / steps;
@@ -383,6 +396,22 @@ tabButtons.forEach(button => {
         // Add active class to clicked tab and target content
         button.classList.add('active');
         document.getElementById(targetTab).classList.add('active');
+
+        const cards = targetContent.querySelectorAll('.search-result-card');
+        if (cards.length > 0) {
+            cards.forEach((card, index) => {
+                card.classList.remove('ready-to-animate', 'animated');
+                card.style.opacity = '0';
+                card.style.transform = 'translateX(100px)';
+
+                setTimeout(() => {
+                    card.classList.add('ready-to-animate');
+                    setTimeout(() => {
+                        card.classList.add('animated');
+                    }, 50);
+                }, index * 100);
+            });
+        }
     });
 });
 
@@ -470,148 +499,9 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-/* ================================================================
-   9. SEARCH FUNCTIONALITY
-   ================================================================ */
-
-// Get search elements
-const searchInput = document.querySelector('.search-input');
-const searchResults = document.getElementById('search-results');
-
-/**
- * Fake user database for search demonstration
- * In production, this would come from an API
- */
-const users = [
-    {
-        name: 'حسین کاظمی',
-        bio: 'عاشق طبیعت و کوه',
-        avatar: 'https://randomuser.me/api/portraits/men/10.jpg'
-    },
-    {
-        name: 'زهرا احمدی',
-        bio: 'گردشگر و بلاگر',
-        avatar: 'https://randomuser.me/api/portraits/women/15.jpg'
-    },
-    {
-        name: 'علی رضایی',
-        bio: 'عکاس حرفه‌ای',
-        avatar: 'https://randomuser.me/api/portraits/men/20.jpg'
-    },
-    {
-        name: 'مینا جعفری',
-        bio: 'عاشق سفر و ماجراجویی',
-        avatar: 'https://randomuser.me/api/portraits/women/30.jpg'
-    }
-];
-
-/**
- * Search input event handler
- * Filters users based on query and displays results
- */
-searchInput.addEventListener('input', (e) => {
-    const query = e.target.value.toLowerCase().trim();
-
-    // Show empty state if no query
-    if (query.length === 0) {
-        searchResults.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-user-friends"></i>
-                <h3>جستجوی دوستان جدید</h3>
-                <p>برای یافتن دوستان جدید، نام کاربری آن‌ها را جستجو کنید</p>
-            </div>
-        `;
-        return;
-    }
-
-    // Filter users based on query
-    const filtered = users.filter(user =>
-        user.name.toLowerCase().includes(query) ||
-        user.bio.toLowerCase().includes(query)
-    );
-
-    // Show no results message
-    if (filtered.length === 0) {
-        searchResults.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-search"></i>
-                <h3>نتیجه‌ای یافت نشد</h3>
-                <p>کاربری با این مشخصات پیدا نشد</p>
-            </div>
-        `;
-        return;
-    }
-
-    // Display search results
-    searchResults.innerHTML = filtered.map(user => `
-        <div class="search-result-card">
-            <img src="${user.avatar}" class="search-result-avatar" alt="${user.name}">
-            <div class="search-result-info">
-                <h4 class="search-result-name">${user.name}</h4>
-                <p class="search-result-bio">${user.bio}</p>
-            </div>
-            <div class="search-result-actions">
-                <button class="btn-icon btn-add" onclick="sendRequest(this)" title="ارسال درخواست">
-                    <i class="fas fa-user-plus"></i>
-                </button>
-                <button class="btn-icon btn-view" title="مشاهده پروفایل">
-                    <i class="fas fa-eye"></i>
-                </button>
-            </div>
-        </div>
-    `).join('');
-});
-
 
 /* ================================================================
-   10. FRIEND REQUEST ACTIONS
-   ================================================================ */
-
-/**
- * Send friend request
- * Changes button state to indicate request sent
- * @param {HTMLElement} button - The clicked add friend button
- */
-function sendRequest(button) {
-    const card = button.closest('.search-result-card');
-
-    // Update button to show success state
-    button.innerHTML = '<i class="fas fa-check"></i>';
-    button.style.background = '#10b981';
-    button.disabled = true;
-    button.title = 'درخواست ارسال شد';
-
-    // Fade out card after delay
-    setTimeout(() => {
-        card.style.opacity = '0.5';
-    }, 500);
-}
-
-/**
- * Handle accept/reject friend requests
- * Animates card removal on action
- */
-document.addEventListener('click', (e) => {
-    // Accept friend request
-    if (e.target.closest('.btn-icon.btn-add') && e.target.closest('#received-requests')) {
-        const card = e.target.closest('.search-result-card');
-        card.style.transform = 'translateX(100%)';
-        card.style.opacity = '0';
-        setTimeout(() => card.remove(), 400);
-    }
-
-    // Reject friend request
-    if (e.target.closest('.btn-icon.btn-view') && e.target.closest('#received-requests')) {
-        const card = e.target.closest('.search-result-card');
-        card.style.transform = 'translateX(-100%)';
-        card.style.opacity = '0';
-        setTimeout(() => card.remove(), 400);
-    }
-});
-
-
-/* ================================================================
-   11. EVENT LISTENERS & INITIALIZATION
+   9. EVENT LISTENERS & INITIALIZATION
    ================================================================ */
 
 /**
@@ -624,7 +514,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.scrollTop = 0;
 
     // Initialize all modules
-    loadUserData()
+    loadUserData();
+    initSearchListeners()
     initMobileMenu();
     initScrollAnimations();
     initTabs();
@@ -666,7 +557,7 @@ window.addEventListener('scroll', () => {
 
 
 /* ================================================================
-   12. USER DATA INTEGRATION (API)
+   10. USER DATA INTEGRATION (API)
    ================================================================ */
 
 /**
@@ -694,8 +585,197 @@ function englishToPersianNumber(input) {
 
 
 /* ================================================================
-   12. USER DATA INTEGRATION (API)
+   11. USER DATA INTEGRATION (API)
    ================================================================ */
+
+function renderFriendsList(friendsData) {
+    const friendsGrid = document.querySelector('.friends-grid');
+
+    if (!friendsGrid) {
+        console.error("friendsGrid not found!");
+        return;
+    }
+
+    if (!friendsData || friendsData.length === 0) {
+        friendsGrid.innerHTML = `
+        <div class="empty-state">
+            <i class="fas fa-users-slash"></i>
+            <h3>هنوز دوستی ندارید</h3>
+            <p>برای یافتن دوستان جدید به تب جستجو بروید.</p>
+        </div>
+    `;
+        return;
+    }
+
+    const friendsHTML = friendsData.map((friend, index) => {
+        const delay = index * 0.2;
+
+        return `
+            <div class="friend-card" data-animate="zoom-in" style="animation-delay: ${delay}s" data-user-id="${friend.user_id}">
+                <img src="${getURL() + friend.profile_url || ""}" class="friend-image" alt="${friend.full_name}">
+                
+                <div class="friend-details">
+                    <div class="friend-icon-wrapper">
+                        <i class="fas fa-user-friends friend-icon"></i>
+                    </div>
+                    <h3 class="friend-name">${friend.username}</h3>
+                    <p class="friend-stats">${englishToPersianNumber(friend.common_number_of_trips)} سفر مشترک</p>
+                </div>
+                
+                <div class="friend-popup">
+                    <img src="${getURL() + friend.profile_url || ''}" class="popup-avatar" alt="${friend.full_name}">
+                    <h3 class="popup-name">${friend.full_name || friend.username}</h3>
+                    <p class="popup-bio">${friend.about_me || 'بیوگرافی موجود نیست.'}</p>
+                    <div class="popup-actions">
+                        <button class="popup-btn-delete" data-username="${friend.username}" data-friendship-id="${friend.friendship_id}">
+                            <i class="fas fa-user-minus"></i> حذف
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    friendsGrid.innerHTML = friendsHTML;
+
+    setTimeout(() => {
+        const friendCards = friendsGrid.querySelectorAll('.friend-card[data-animate]');
+        friendCards.forEach(card => {
+            card.classList.add('animate-active');
+        });
+    }, 50);
+
+    attachDeleteFriendListeners();
+}
+
+function attachDeleteFriendListeners() {
+    const deleteButtons = document.querySelectorAll('.friend-card .popup-btn-delete');
+
+    deleteButtons.forEach(button => {
+        button.removeEventListener('click', deleteListener);
+        button.addEventListener('click', deleteListener);
+    });
+}
+
+function deleteListener(e) {
+    e.stopPropagation();
+
+    const username = this.getAttribute('data-username');
+    const friendshipID = this.getAttribute('data-friendship-id');
+
+    if (username && friendshipID) {
+        handleDeleteFriend(username, friendshipID);
+    }
+}
+
+async function handleDeleteFriend(username, friendshipID) {
+    if (!username || !friendshipID) {
+        console.error("Username or Friendship ID is missing for deletion.");
+        return;
+    }
+
+    const result = await Swal.fire({
+        text: `آیا مطمئن هستید که می‌خواهید ${'\u200f'}${username}${'\u200f'} را از لیست دوستان خود حذف کنید؟`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '!بله، حذف کن',
+        cancelButtonText: 'انصراف',
+        reverseButtons: true,
+        confirmButtonColor: '#f5c9b0',
+        cancelButtonColor: '#a6b28b',
+        background: '#f0f0f0',
+        color: '#4b5563',
+        customClass: {
+            popup: 'my-swal-popup',
+            confirmButton: 'my-confirm-btn',
+            cancelButton: 'my-cancel-btn'
+        },
+    });
+
+    if (result.isConfirmed) {
+        try {
+            const response = await removeFriend(friendshipID);
+
+            if (response && response.status) {
+                try {
+                    const friendsResponse = await getFriends();
+                    console.log("Friends response:", friendsResponse);
+
+                    if (friendsResponse && Array.isArray(friendsResponse)) {
+                        renderFriendsList(friendsResponse);
+
+                        const friendsCount = document.querySelector('.stat-item:nth-child(2) .stat-number');
+                        if (friendsCount) {
+                            friendsCount.textContent = englishToPersianNumber(friendsResponse.length);
+                        }
+
+                        await Swal.fire({
+                            text: 'دوست شما با موفقیت حذف شد.',
+                            icon: 'success',
+                            confirmButtonText: 'تایید',
+                            confirmButtonColor: '#a6b28b',
+                            background: '#f0f0f0',
+                            color: '#4b5563',
+                            customClass: {
+                                popup: 'my-swal-popup',
+                                confirmButton: 'my-confirm-btn',
+                            },
+                        });
+                    } else {
+                        console.error("friendsResponse is not an array:", friendsResponse);
+                        throw new Error("Failed to load friends list");
+                    }
+                } catch (fetchError) {
+                    console.error("Error fetching friends:", fetchError);
+                    Swal.fire({
+                        text: 'دوست حذف شد. صفحه به‌روزرسانی می‌شود...',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        background: '#f0f0f0',
+                        color: '#4b5563',
+                        customClass: {
+                            popup: 'my-swal-popup',
+                        },
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                }
+
+            } else {
+                Swal.fire({
+                    text: response.error || 'خطا در حذف دوست.',
+                    icon: 'error',
+                    confirmButtonText: 'تأیید',
+                    iconColor: '#f5c9b0',
+                    confirmButtonColor: '#a6b28b',
+                    color: '#4b5563',
+                    background: '#f0f0f0',
+                    customClass: {
+                        popup: 'my-swal-popup',
+                        confirmButton: 'my-confirm-btn',
+                    },
+                });
+            }
+        } catch (error) {
+            console.error('Error during friend deletion:', error);
+            Swal.fire({
+                text: 'در برقراری ارتباط با سرور مشکلی پیش آمد.',
+                icon: 'error',
+                confirmButtonText: 'تأیید',
+                iconColor: '#f5c9b0',
+                confirmButtonColor: '#a6b28b',
+                color: '#4b5563',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                },
+                buttonsStyling: false
+            });
+        }
+    }
+}
 
 async function loadUserData() {
     try {
@@ -738,7 +818,7 @@ async function loadUserData() {
         if (typeof initTypingAnimation === "function") {
             initTypingAnimation();
         }
-        if (avatarImage) avatarImage.src = userData.profile_url || "";
+        if (avatarImage) avatarImage.src = getURL() + userData.profile_url || "";
 
         // Stats
         if (tripsCount)
@@ -776,16 +856,56 @@ async function loadUserData() {
             });
         }
 
+        //friends list
+        const friendsResponse = await getFriends();
+
+        if (friendsResponse && Array.isArray(friendsResponse)) {
+            renderFriendsList(friendsResponse);
+        } else {
+            console.error("Failed to load friends list:", friendsResponse);
+        }
+
+        const receivedRequestsResponse = await getReceivedPendingRequests();
+        let requestsData = [];
+
+        if (receivedRequestsResponse && Array.isArray(receivedRequestsResponse)) {
+            requestsData = receivedRequestsResponse;
+            if (document.readyState === 'complete') {
+                renderReceivedRequests(requestsData);
+            } else {
+                window.addEventListener('load', () => {
+                    renderReceivedRequests(requestsData);
+                });
+            }
+        } else {
+            console.error("Failed to load received requests:", receivedRequestsResponse);
+        }
+
+        const sentRequestsResponse = await getSentPendingRequests();
+        let sentRequests = [];
+        if (sentRequestsResponse && Array.isArray(sentRequestsResponse)) {
+            sentRequests = sentRequestsResponse;
+            if (document.readyState === 'complete') {
+                renderSentRequests(sentRequests);
+            } else {
+                window.addEventListener('load', () => {
+                    renderSentRequests(sentRequests);
+                });
+            }
+        } else {
+            console.error("Failed to load sent requests:", sentRequestsResponse);
+        }
+
+
+        updateRequestsBadge(requestsData.length);
+        updateSentRequestsBadge(sentRequests.length);
+
     } catch (error) {
         console.error('Error loading user data:', error);
     }
 }
 
 
-/**
- * Collects form data, sends it to the API, and handles success/error messages.
- * @param {Event} e - The form submission event.
- */
 async function handleProfileSave(e) {
     e.preventDefault();
 
@@ -865,5 +985,497 @@ async function handleProfileSave(e) {
     } finally {
         submitButton.disabled = false;
         submitButton.innerHTML = originalButtonText;
+    }
+}
+
+
+function renderReceivedRequests(requestsData) {
+    const requestsGrid = document.getElementById('received-requests');
+    if (!requestsGrid) return;
+
+    if (!requestsData || requestsData.length === 0) {
+        requestsGrid.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h3>درخواست دوستی جدیدی ندارید</h3>
+            </div>
+        `;
+        return;
+    }
+
+    const requestsHTML = requestsData.map((request, index) => {
+        const requester = request.requester;
+        const requestDate = new Date(request.created_at).toLocaleDateString('fa-IR');
+
+        return `
+            <div class="search-result-card" data-index="${index}">
+                <img src="${getURL() + requester.profile_url || ""}" class="search-result-avatar" alt="${requester.full_name}">
+                
+                <div class="search-result-info">
+                    <h4 class="search-result-name">${requester.username}</h4>
+                    <p class="search-result-bio">${requester.about_me || 'بیوگرافی موجود نیست.'}</p>
+                    <span class="request-badge">${englishToPersianNumber(requestDate)}</span>
+                </div>
+                
+                <div class="search-result-actions request-actions">
+                    <button class="btn-icon btn-add" title="قبول درخواست" data-action="accept" data-id="${request.friendship_id}">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn-icon btn-view" title="رد درخواست" data-action="reject" data-id="${request.friendship_id}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    requestsGrid.innerHTML = requestsHTML;
+
+    requestAnimationFrame(() => {
+        const cards = requestsGrid.querySelectorAll('.search-result-card');
+
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.classList.add('ready-to-animate');
+                setTimeout(() => {
+                    card.classList.add('animated');
+                }, 50);
+            }, index * 100);
+        });
+    });
+
+    attachRequestActionListeners();
+}
+
+function updateRequestsBadge(count) {
+    const badgeElement = document.querySelector('.friends-tab-btn[data-tab="received-requests"] .badge');
+
+    if (badgeElement) {
+        const persianCount = englishToPersianNumber(count);
+        badgeElement.textContent = persianCount;
+
+        if (count > 0) {
+            badgeElement.style.display = 'inline-flex';
+        } else {
+            badgeElement.style.display = 'none';
+        }
+    }
+}
+
+async function handleRequestAction(action, friendshipId) {
+    try {
+        let response;
+        if (action === 'accept') {
+            response = await acceptFriendRequest(friendshipId);
+        } else if (action === 'reject') {
+            response = await rejectFriendRequest(friendshipId);
+        } else if (action === 'cancel') {
+            response = await cancelFriendRequest(friendshipId);
+        } else {
+            return;
+        }
+
+        if (response && !response.detail && !response.error) {
+            Swal.fire({
+                text: `درخواست با موفقیت ${action === 'accept' ? 'پذیرفته' : 'رد'} شد.`,
+                icon: 'success',
+                confirmButtonText: 'تایید',
+                confirmButtonColor: '#a6b28b',
+                background: '#f0f0f0',
+                color: '#4b5563',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                },
+            });
+            loadUserData();
+        } else {
+            Swal.fire({
+                text: response.error || `خطا در ${action === 'accept' ? 'پذیرش' : 'رد'} درخواست.`,
+                icon: 'error',
+                confirmButtonText: 'تأیید',
+                iconColor: '#f5c9b0',
+                confirmButtonColor: '#a6b28b',
+                color: '#4b5563',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                },
+            });
+        }
+    } catch (error) {
+        console.error(`Error during ${action} request:`, error);
+    }
+}
+
+function attachRequestActionListeners() {
+    const buttons = document.querySelectorAll('#received-requests .request-actions button');
+
+    buttons.forEach(button => {
+        button.removeEventListener('click', requestActionListener);
+
+        button.addEventListener('click', requestActionListener);
+    });
+}
+
+function requestActionListener(e) {
+    const button = e.currentTarget;
+    const action = button.getAttribute('data-action');
+    const friendshipId = button.getAttribute('data-id');
+
+    if (action && friendshipId) {
+        handleRequestAction(action, friendshipId);
+    }
+}
+
+function renderSentRequests(requestsData) {
+    const requestsGrid = document.getElementById('sent-requests');
+    if (!requestsGrid) return;
+
+    if (!requestsData || requestsData.length === 0) {
+        requestsGrid.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-paper-plane"></i>
+                <h3>درخواست ارسال شده‌ای ندارید</h3>
+                <p>برای ارسال درخواست دوستی جدید به تب جستجو بروید.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const requestsHTML = requestsData.map((request, index) => {
+        const addressee = request.addressee;
+        const requestDate = new Date(request.created_at).toLocaleDateString('fa-IR');
+
+        return `
+            <div class="search-result-card" data-index="${index}">
+                <img src="${getURL() + addressee.profile_url || ""}" class="search-result-avatar" alt="${addressee.full_name}">
+                
+                <div class="search-result-info">
+                    <h4 class="search-result-name">${addressee.username}</h4>
+                    <p class="search-result-bio">${addressee.about_me || 'بیوگرافی موجود نیست.'}</p>
+                    <span class="request-badge">${englishToPersianNumber(requestDate)}</span>
+                </div>
+                
+                <div class="search-result-actions request-actions">
+                    <button class="btn-icon btn-view" title="لغو درخواست" data-action="cancel" data-id="${request.friendship_id}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    requestsGrid.innerHTML = requestsHTML;
+
+    requestAnimationFrame(() => {
+        const cards = requestsGrid.querySelectorAll('.search-result-card');
+
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.classList.add('ready-to-animate');
+                setTimeout(() => {
+                    card.classList.add('animated');
+                }, 50);
+            }, index * 100);
+        });
+    });
+
+    attachSentRequestActionListeners();
+}
+
+function attachSentRequestActionListeners() {
+    const buttons = document.querySelectorAll('#sent-requests .request-actions button');
+
+    buttons.forEach(button => {
+        button.removeEventListener('click', requestActionListener);
+        button.addEventListener('click', requestActionListener);
+    });
+}
+
+function updateSentRequestsBadge(count) {
+    const badgeElement = document.querySelector('.friends-tab-btn[data-tab="sent-requests"] .badge');
+
+    if (badgeElement) {
+        const persianCount = englishToPersianNumber(count);
+        badgeElement.textContent = persianCount;
+
+        if (count > 0) {
+            badgeElement.style.display = 'inline-flex';
+        } else {
+            badgeElement.style.display = 'none';
+        }
+    }
+}
+
+
+//  Search Functionality
+
+function debounce(func, delay) {
+    let timeoutId;
+    return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            func.apply(this, args);
+        }, delay);
+    };
+}
+
+
+function renderSearchResults(usersData) {
+    const resultsContainer = document.getElementById('search-results');
+    if (!resultsContainer) return;
+
+    if (!usersData || usersData.length === 0) {
+        resultsContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-search-minus"></i>
+                <h3>کاربری پیدا نشد</h3>
+                <p>لطفاً نام کاربری یا ایمیل دقیق‌تری وارد کنید.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const resultsHTML = usersData.map((user, index) => {
+        const delay = index * 0.1;
+
+        let buttonIcon;
+        let buttonClass;
+        let buttonDisabled = '';
+        let buttonTitle = 'ارسال درخواست دوستی';
+
+        if (user.friendship_status === true) {
+            buttonIcon = 'fa-user-check';
+            buttonClass = 'btn-friend';
+            buttonDisabled = 'disabled';
+            buttonTitle = 'این فرد در حال حاضر جزو دوستان شماست.';
+
+        } else if (user.is_request_received_by_them === true) {
+            buttonIcon = 'fa-user-clock';
+            buttonClass = 'btn-received';
+            buttonDisabled = 'disabled';
+            buttonTitle = 'این فرد به شما درخواست دوستی داده است. برای پذیرش/رد، به بخش درخواست‌های دریافتی مراجعه کنید.';
+
+        } else if (user.is_request_sent_by_me === true) {
+            buttonIcon = 'fa-check';
+            buttonClass = 'btn-sent';
+            buttonDisabled = 'disabled';
+            buttonTitle = 'شما قبلاً به این فرد درخواست دوستی داده‌اید.';
+
+        } else {
+            buttonIcon = 'fa-user-plus';
+            buttonClass = 'btn-add';
+            buttonDisabled = '';
+            buttonTitle = 'ارسال درخواست دوستی جدید';
+        }
+
+        return `
+            <div class="search-result-card friend-card" 
+                 data-animate="slide-from-left-rtl" 
+                 style="animation-delay: ${delay}s" 
+                 data-user-id="${user.user_id}">
+                
+                <img src="${getURL() + user.profile_url || ""}" class="search-result-avatar" alt="${user.full_name}">
+                
+                <div class="search-result-info">
+                    <h4 class="search-result-name">${user.username}</h4>
+                    <p class="search-result-bio">${user.about_me || 'بیوگرافی موجود نیست.'}</p>
+                </div>
+                
+                <div class="search-result-actions">
+                    <button 
+                        class="btn-icon ${buttonClass} send-request-btn" 
+                        data-action="send-request" 
+                        data-username="${user.username}" 
+                        ${buttonDisabled}
+                        title="${buttonTitle}"
+                    >
+                        <i class="fas ${buttonIcon}"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    resultsContainer.innerHTML = resultsHTML;
+
+    setTimeout(() => {
+        const resultCards = resultsContainer.querySelectorAll('.friend-card[data-animate]');
+        resultCards.forEach(card => {
+            card.classList.add('animate-active');
+        });
+    }, 50);
+
+    attachSendRequestListeners();
+}
+
+async function handleSearch(query) {
+    const resultsContainer = document.getElementById('search-results');
+
+    if (!query || query.length === 0) {
+        resultsContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-user-friends"></i>
+                <h3>جستجوی دوستان جدید</h3>
+                <p>برای یافتن دوستان جدید، نام کاربری آن‌ها را جستجو کنید</p>
+            </div>
+        `;
+        return;
+    }
+
+    try {
+        resultsContainer.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i> در حال جستجو...</div>';
+
+        const [results, sentRequests, receivedRequests] = await Promise.all([
+            searchUsers(query),
+            getSentPendingRequests(),
+            getReceivedPendingRequests()
+        ]);
+
+        if (results && Array.isArray(results)) {
+
+            const sentRequestUserIds = new Set();
+            if (sentRequests && Array.isArray(sentRequests)) {
+                sentRequests.forEach(req => {
+                    if (req.addressee && req.addressee.user_id) {
+                        sentRequestUserIds.add(req.addressee.user_id);
+                    }
+                });
+            }
+            const receivedRequestUserIds = new Set();
+            if (receivedRequests && Array.isArray(receivedRequests)) {
+                receivedRequests.forEach(req => {
+                    if (req.requester && req.requester.user_id) {
+                        receivedRequestUserIds.add(req.requester.user_id);
+                    }
+                });
+            }
+            const processedResults = results.map(user => {
+                user.is_request_sent_by_me = sentRequestUserIds.has(user.user_id);
+                user.is_request_received_by_them = receivedRequestUserIds.has(user.user_id);
+
+                return user;
+            });
+
+            renderSearchResults(processedResults);
+        } else {
+            resultsContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-search-minus"></i>
+                    <h3>کاربری پیدا نشد</h3>
+                    <p>لطفاً نام کاربری یا ایمیل دقیق‌تری را وارد کنید.</p>
+                </div>
+            `;
+        }
+
+    } catch (error) {
+        console.error('Error searching users:', error);
+        resultsContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>خطا در جستجو</h3>
+                <p>خطا در ارتباط با سرور یا شبکه.</p>
+            </div>
+        `;
+    }
+}
+
+
+async function handleSendRequest(username, buttonElement) {
+    if (buttonElement.disabled) return;
+
+    buttonElement.disabled = true;
+    buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    try {
+        const response = await sendFriendRequest(username);
+
+        if (response && response.status === 'pending') {
+            Swal.fire({
+                text: `درخواست دوستی برای ${username} با موفقیت ارسال شد.`,
+                icon: 'success',
+                confirmButtonText: 'تایید',
+                confirmButtonColor: '#a6b28b',
+                background: '#f0f0f0',
+                color: '#4b5563',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn'
+                },
+            });
+
+            buttonElement.innerHTML = '<i class="fas fa-check"></i>';
+            buttonElement.classList.remove('btn-add');
+            buttonElement.classList.add('btn-sent');
+            buttonElement.disabled = true;
+            buttonElement.title = 'درخواست ارسال شد';
+
+            await loadUserData();
+
+        } else if (response && response.error) {
+            throw new Error(response.error);
+        } else {
+            throw new Error("خطای ناشناخته در ارسال درخواست.");
+        }
+
+    } catch (error) {
+        console.error('Error sending request:', error);
+
+        buttonElement.disabled = false;
+        buttonElement.innerHTML = '<i class="fas fa-user-plus"></i> ';
+
+        Swal.fire({
+            text: error.message || 'خطا در ارسال درخواست.',
+            icon: 'error',
+            confirmButtonText: 'تأیید',
+            confirmButtonColor: '#a6b28b',
+            color: '#4b5563',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn'
+            },
+        });
+    }
+}
+
+function attachSendRequestListeners() {
+    const buttons = document.querySelectorAll('.send-request-btn');
+
+    buttons.forEach(button => {
+        button.removeEventListener('click', sendRequestActionListener);
+
+        if (!button.disabled) {
+            button.addEventListener('click', sendRequestActionListener);
+        }
+    });
+}
+
+function sendRequestActionListener(e) {
+    e.stopPropagation();
+    const button = e.currentTarget;
+    const username = button.getAttribute('data-username');
+    handleSendRequest(username, button);
+}
+
+const debouncedSearch = debounce((query) => {
+    handleSearch(query);
+}, 300);
+
+function initSearchListeners() {
+    const searchInput = document.querySelector('.search-input');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            debouncedSearch(query);
+        });
+
+        const searchIcon = document.querySelector('.search-icon');
+        if (searchIcon) {
+            searchIcon.removeEventListener('click', handleSearch);
+        }
     }
 }

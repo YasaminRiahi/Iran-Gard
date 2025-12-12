@@ -11,44 +11,42 @@ from app.schemas.friendship import (
     ReceivedFriendRequestInfo,
     SentFriendRequestInfo,
     FriendRemovalResponse,
-    FriendRemove
+    FriendshipInfoWithID
 )
 from app.crud import friendship as crud_friendship
 
 router = APIRouter(prefix="/friendships", tags=["friendships"])
 
-@router.delete("/remove", response_model=FriendRemovalResponse, status_code=status.HTTP_201_CREATED)
+# raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="User not found"
+#         )
+
+@router.delete("/remove/{friendship_id}", response_model=FriendRemovalResponse)
 def remove_friend(
-        request: FriendRemove,
+        friendship_id: int,
         current_user: User = Depends(deps.get_current_user),
         db: Session = Depends(deps.get_db)
 ):
-    addressee = crud_friendship.get_user_by_username(db, request.username)
-    if not addressee:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
-        )
 
-    # Can't send request to yourself
-    if addressee.user_id == current_user.user_id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You cant unfriend yourself :D"
-        )
 
-    existing_friendship = crud_friendship.get_friendship(
-        db, current_user.user_id, addressee.user_id
-    )
-    if not existing_friendship:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Friend not found."
-        )
-
-    deleted_status = crud_friendship.remove_friend(db, existing_friendship.friendship_id)
+    deleted_status = crud_friendship.remove_friend(db, friendship_id)
     resp = {"status": deleted_status}
     return resp
+
+# I CANT FUCKING BELIEVE THIS
+@router.delete("/cancel/{friendship_id}", response_model=FriendRemovalResponse)
+def remove_friend(
+        friendship_id: int,
+        current_user: User = Depends(deps.get_current_user),
+        db: Session = Depends(deps.get_db)
+):
+
+
+    deleted_status = crud_friendship.remove_friend(db, friendship_id)
+    resp = {"status": deleted_status}
+    return resp
+
 
 
 @router.post("/request", response_model=FriendRequestResponse, status_code=status.HTTP_201_CREATED)
@@ -108,7 +106,7 @@ def send_friend_request(
 
 
 @router.get("/received_pending", response_model=List[ReceivedFriendRequestInfo])
-def get_receiveed_pending_requests(
+def get_received_pending_requests(
         current_user: User = Depends(deps.get_current_user),
         db: Session = Depends(deps.get_db)
 ):
@@ -201,7 +199,7 @@ def accept_request(
     return friendship
 
 
-@router.get("/", response_model=List[FriendInfo])
+@router.get("/", response_model=List[FriendshipInfoWithID])
 def get_friends(
         current_user: User = Depends(deps.get_current_user),
         db: Session = Depends(deps.get_db)
@@ -212,11 +210,13 @@ def get_friends(
 
     return [
         {
+            "friendship_id":crud_friendship.get_friendship(db,current_user.user_id,friend.user_id).friendship_id,
             "user_id": friend.user_id,
             "username": friend.username,
             "full_name": friend.full_name,
             "profile_url": friend.profile_url,
-            "about_me": friend.about_me
+            "about_me": friend.about_me,
+            "common_number_of_trips":0 # TODO: user trips crud to get number of trips between (user_id1 and user_id2)
         }
         for friend in friends
     ]

@@ -5,11 +5,8 @@ from app.db.session import get_db
 from app.api.deps import get_current_user
 from app.models.user import User, GenderType
 from app.schemas.user import UserResponse, SearchUserResponse, UserUpdateInformation,UserEditResponse
-from app.schemas.category import FavoriteCategoryCreate, CategoryResponse
 from app.crud import user as user_crud
 from app.crud import friendship as friendship_crud
-from app.models.category import FavoriteCategory, CategoryType
-from app.core.config import Settings
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -20,18 +17,16 @@ def get_current_user_info(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # number_of_trips = get_number_of_trips(db, current_user.user_id)
-    # favorite_categories = get_favorite_categories(db, current_user.user_id)
     cur_gen = current_user.gender
-    settings = Settings()
+
 
     cur_profile = current_user.profile_url
     if cur_gen == "Male":
-        cur_profile = settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Male.png"
+        cur_profile = "/static/images/genders/Male.png"
     if cur_gen == "Female":
-        cur_profile = settings.BACKEND_CORS_ORIGINS[1]+  "/static/images/genders/Female.png"
+        cur_profile = "/static/images/genders/Female.png"
     if cur_gen == "Other":
-        cur_profile =  settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Other.png"
+        cur_profile = "/static/images/genders/Other.png"
 
     user_response = {
         "user_id": current_user.user_id,
@@ -73,66 +68,7 @@ def search_users(
     return ret_users
 
 
-@router.get("/me/favorite-categories", response_model=List[CategoryResponse])
-def get_favorite_categories(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Get user's favorite categories."""
-    favorites = db.query(Category).join(FavoriteCategory).filter(
-        FavoriteCategory.user_id == current_user.user_id
-    ).all()
-    return favorites
 
-
-@router.post("/me/favorite-categories", status_code=status.HTTP_201_CREATED)
-def add_favorite_category(
-    category: FavoriteCategoryCreate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Add a category to user's favorites."""
-    # Check if already exists
-    existing = db.query(FavoriteCategory).filter(
-        FavoriteCategory.user_id == current_user.user_id,
-        FavoriteCategory.category_id == category.category_id
-    ).first()
-
-    if existing:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Category already in favorites"
-        )
-
-    favorite = FavoriteCategory(
-        user_id=current_user.user_id,
-        category_id=category.category_id
-    )
-    db.add(favorite)
-    db.commit()
-    return {"message": "Category added to favorites"}
-
-
-@router.delete("/me/favorite-categories/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
-def remove_favorite_category(
-    category_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Remove a category from user's favorites."""
-    favorite = db.query(FavoriteCategory).filter(
-        FavoriteCategory.user_id == current_user.user_id,
-        FavoriteCategory.category_id == category_id
-    ).first()
-
-    if not favorite:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Favorite category not found"
-        )
-
-    db.delete(favorite)
-    db.commit()
 
 
 
@@ -158,15 +94,14 @@ def update_user_information(
         user_data=user_data
     )
 
-    settings = Settings()
     cur_gen = current_user.gender
     cur_profile = current_user.profile_url
     if cur_gen == "Male":
-        cur_profile = settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Male.png"
+        cur_profile ="/static/images/genders/Male.png"
     if cur_gen == "Female":
-        cur_profile = settings.BACKEND_CORS_ORIGINS[1]+  "/static/images/genders/Female.png"
+        cur_profile = "/static/images/genders/Female.png"
     if cur_gen == "Other":
-        cur_profile =  settings.BACKEND_CORS_ORIGINS[1]+ "/static/images/genders/Other.png"
+        cur_profile = "/static/images/genders/Other.png"
 
 
     cur_user = {
