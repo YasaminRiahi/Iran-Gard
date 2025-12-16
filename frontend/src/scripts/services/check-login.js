@@ -1,7 +1,5 @@
 import { apiClient } from "/src/scripts/services/api-client.js";
 
-export import { apiClient } from "./api-client.js";
-
 async function checkLoginStatus() {
     const token = localStorage.getItem("access_token");
 
@@ -184,7 +182,7 @@ function setupRateReviewButtonRedirect() {
         rateReviewBtn.addEventListener("click", function (event) {
             event.preventDefault();
             event.stopPropagation();
-            window.location.href = "../login-signup.html";
+            window.location.href = "/login-signup.html";
         });
 
         rateReviewBtn.title = "برای افزودن امتیاز و نظر، ابتدا وارد شوید";
