@@ -1,15 +1,13 @@
+import { apiClient } from "./api-client.js";
+
 async function checkLoginStatus() {
     const token = localStorage.getItem("access_token");
 
     try {
-        const response = await fetch("http://localhost:8000/api/users/me", {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        });
+        const response = await apiClient.get("/users/me");
 
-        if (response.ok) {
+
+        if (response.success !== false) {
             console.log("User is authenticated");
             changeSignupToLogout();
             hideLoginButton();
@@ -33,23 +31,6 @@ async function checkLoginStatus() {
         setupViewTripsButtonRedirect();
         setupViewBookmarksButtonRedirect();
     }
-}
-
-function getLoginSignupPath() {
-    if (document.querySelector('a[href="login-signup.html?mode=login"]') ||
-        document.querySelector('a[href="login-signup.html?mode=signup"]')) {
-        return "login-signup.html";
-    }
-
-    return "../login-signup.html";
-}
-
-function getHomePagePath() {
-    if (document.querySelector('a[href="index.html"]')) {
-        return "index.html";
-    }
-
-    return "../index.html";
 }
 
 function changeSignupToLogout() {
@@ -96,7 +77,7 @@ function changeSignupToLogout() {
                         window.location.reload();
                     }, 100);
 
-                    window.location.href = getHomePagePath();
+                    window.location.href = "/index.html";
                 }
             });
         });
@@ -145,7 +126,7 @@ function setupLogoutButton() {
                         window.location.reload();
                     }, 100);
 
-                    window.location.href = getHomePagePath();
+                    window.location.href = "/index.html";
                 }
             });
         });
@@ -166,7 +147,7 @@ function showAuthButtons() {
 
     if (signupBtn) {
         signupBtn.textContent = "ثبت‌نام";
-        signupBtn.href = getLoginSignupPath() + "?mode=signup";
+        signupBtn.href = "/login-signup.html?mode=signup";
         signupBtn.classList.remove("logout-btn");
 
         const newBtn = signupBtn.cloneNode(true);
@@ -221,7 +202,7 @@ function setupViewProfileButtonRedirect() {
         newBtn.addEventListener("click", function (event) {
             event.preventDefault();
             event.stopPropagation();
-            window.location.href = getLoginSignupPath();
+            window.location.href = "/login-signup.html";
         });
 
         newBtn.title = "برای مشاهده پروفایل، ابتدا وارد شوید";
@@ -236,7 +217,7 @@ function setupViewTripsButtonRedirect() {
         viewTripsBtn.addEventListener("click", function (event) {
             event.preventDefault();
             event.stopPropagation();
-            window.location.href = getLoginSignupPath();
+            window.location.href = "/login-signup.html";
         });
 
         viewTripsBtn.title = "برای مشاهده سفرها، ابتدا وارد شوید";
@@ -251,7 +232,7 @@ function setupViewBookmarksButtonRedirect() {
         viewBookmarksBtn.addEventListener("click", function (event) {
             event.preventDefault();
             event.stopPropagation();
-            window.location.href = getLoginSignupPath();
+            window.location.href = "/login-signup.html";
         });
 
         viewBookmarksBtn.title = "برای مشاهده بوک‌مارک‌ها، ابتدا وارد شوید";
