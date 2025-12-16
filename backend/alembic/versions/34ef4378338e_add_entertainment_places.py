@@ -20,7 +20,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    sql_file = Path(__file__).parent.parent.parent.parent / 'Database' / 'migrations' / '007_insert_provinces_cities_places_up.sql'
+    sql_file = Path(__file__).parent.parent.parent.parent / 'database' / 'migrations' / '007_insert_provinces_cities_places_up.sql'
     with open(sql_file, encoding="utf-8") as f:
         op.execute(f.read())
 
