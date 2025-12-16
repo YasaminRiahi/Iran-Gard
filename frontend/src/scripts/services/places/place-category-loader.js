@@ -1,4 +1,4 @@
-import { apiClient } from "../api-client.js";
+import { apiClient } from "/src/scripts/services/api-client.js";
 
 function getCategoryIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
