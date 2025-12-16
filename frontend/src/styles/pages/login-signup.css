@@ -1,13 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: Anjoman-Regular;
 }
 
 body {
-    font-family: 'Vazirmatn', sans-serif;
     background: #fff;
     min-height: 100vh;
     display: flex;
@@ -117,8 +115,9 @@ body {
     text-align: center;
     color: #A6B28B;
     text-decoration: none;
-    display: block; 
+    display: block;
     cursor: pointer;
+    font-family: Anjoman-Bold;
 }
 
 .logo.small {
@@ -160,7 +159,7 @@ h2 {
 
 .input-group input:focus {
     border-color: #A6B28B;
-    box-shadow: 0 0 0 5px rgba(143, 161, 121, 0.22);
+    box-shadow: 0 0 0 2px rgba(143, 161, 121, 0.22);
     outline: none;
 }
 
@@ -176,13 +175,13 @@ h2 {
     font-weight: 600;
     cursor: pointer;
     position: relative;
-    box-shadow: 0 12px 35px rgba(143, 161, 121, 0.45);
+    box-shadow: 0 8px 10px rgba(143, 161, 121, 0.45);
     transition: all 0.3s;
 }
 
 .main-btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 20px 45px rgba(143, 161, 121, 0.6);
+    box-shadow: 0 10px 20px rgba(143, 161, 121, 0.6);
 }
 
 .main-btn.loading .btn-text {
@@ -213,7 +212,8 @@ h2 {
     }
 }
 
-.error-text, .success-text {
+.error-text,
+.success-text {
     min-height: 15px;
     text-align: center;
     font-size: 14px;
@@ -229,7 +229,8 @@ h2 {
     color: #336600;
 }
 
-.links, .bottom-link {
+.links,
+.bottom-link {
     text-align: center;
     margin-top: 22px;
     color: #666;
@@ -251,4 +252,18 @@ h2 {
 
 .link-btn:hover {
     text-decoration: underline;
+}
+
+@font-face {
+    font-family: 'Anjoman-Regular';
+    font-style: normal;
+    font-weight: 400;
+    src: url(/src/assets/fonts/Anjoman-Regular.woff2);
+}
+
+@font-face {
+    font-family: 'Anjoman-Bold';
+    font-style: normal;
+    font-weight: 400;
+    src: url(/src/assets/fonts/Anjoman-Bold.woff2);
 }
