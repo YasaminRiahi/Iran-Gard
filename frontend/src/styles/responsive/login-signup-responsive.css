@@ -78,6 +78,7 @@
     .logo {
         font-size: 32px;
         color:#333 ;
+        text-decoration: none;
     }
 
     h2 {
@@ -140,6 +141,7 @@
 
     .logo {
         font-size: 28px;
+        text-decoration: none;
     }
 
     .logo.small {
@@ -232,6 +234,7 @@
     .logo {
         font-size: 32px;
         color:#333 ;
+        text-decoration: none;
     }
 
     h2 {
@@ -298,6 +301,7 @@
 
     .logo {
         font-size: 28px;
+        text-decoration: none;
     }
 
     .logo.small {

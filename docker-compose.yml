@@ -1,44 +1,78 @@
 services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: iran-gard-postgres-${ENVIRONMENT:-dev}
+  database:
+    image: postgres:15
+    container_name: database
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-iran-gard}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "${DB_PORT:-5432}:5432"
-    restart: always
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      test: ["CMD-SHELL", "pg_isready -d ${DB_NAME} -U ${DB_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - iran-gard-network
 
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: iran-gard-backend-${ENVIRONMENT:-dev}
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      ENVIRONMENT: ${ENVIRONMENT:-dev}
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: backend
     env_file:
-      - backend/.env.${ENVIRONMENT:-dev}
+      - .env
+    environment:
+      DB_HOST: database
+      DB_PORT: 5432
     ports:
-      - "${BACKEND_PORT:-8000}:8000"
-    restart: always
+      - "${BACKEND_PORT}:8000"
+    depends_on:
+      database:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/docs"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - iran-gard-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        API_BASE_URL: ${SERVER_URL}${API_STR}
+    container_name: frontend
+    ports:
+      - "443:443"
     volumes:
-      - ./backend:/app/backend
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-kf",
+          "https://localhost/index.html",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - iran-gard-network
 
 volumes:
   postgres_data:
+    driver: local
+
+networks:
+  iran-gard-network:
+    driver: bridge

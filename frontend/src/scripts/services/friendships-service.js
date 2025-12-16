@@ -1,4 +1,4 @@
-import { apiClient } from "./api-client.js";
+import { apiClient } from "/src/scripts/services/api-client.js";
 
 const FRIENDSHIPS_ENDPOINT = "/friendships";
 
@@ -30,7 +30,7 @@ export function getSentPendingRequests() {
 }
 
 export function cancelFriendRequest(friendship_ID) {
-    return apiClient.post(`${FRIENDSHIPS_ENDPOINT}/reject/${friendship_ID}`);
+    return apiClient.delete(`${FRIENDSHIPS_ENDPOINT}/cancel/${friendship_ID}`);
 }
 
 export function sendFriendRequest(username) {

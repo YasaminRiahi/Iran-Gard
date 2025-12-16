@@ -10,7 +10,7 @@ from app.api.api import api_router
 from app.utils.email_service import EmailService, set_email_service
 
 # Get the directory where main.py is located
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_DIR = BASE_DIR / "static"
 
 # Create static directory if it doesn't exist
@@ -20,13 +20,15 @@ STATIC_DIR.mkdir(parents=True, exist_ok=True)
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    openapi_url=f"{settings.API_STR}/openapi.json",
-    docs_url=f"{settings.API_STR}/docs",
-    redoc_url=f"{settings.API_STR}/redoc",
+    openapi_url=(
+        f"{settings.API_STR}/openapi.json" if settings.API_DOCS_ENABLED else None
+    ),
+    docs_url=f"{settings.API_STR}/docs" if settings.API_DOCS_ENABLED else None,
+    redoc_url=f"{settings.API_STR}/redoc" if settings.API_DOCS_ENABLED else None,
 )
 
 # Serve static files (images, etc.)
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+app.mount(f"{settings.API_STR}/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 # Set up CORS
 app.add_middleware(
@@ -73,4 +75,4 @@ def health_check():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, log_level="debug",reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=settings.BACKEND_PORT, reload=True)

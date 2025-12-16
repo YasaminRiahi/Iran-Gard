@@ -1,4 +1,4 @@
-import { apiClient , URL_BASE } from "./api-client.js";
+import { apiClient , API_BASE } from "/src/scripts/services/api-client.js";
 
 const USER_ENDPOINT = "/users";
 
@@ -22,5 +22,5 @@ export function searchUsers(query) {
 }
 
 export function getURL () {
-    return URL_BASE;
+    return API_BASE;
 }

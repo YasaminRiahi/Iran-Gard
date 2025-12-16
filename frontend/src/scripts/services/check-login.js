@@ -1,13 +1,14 @@
-import { apiClient } from "./api-client.js";
+import { apiClient } from "/src/scripts/services/api-client.js";
+
+export import { apiClient } from "./api-client.js";
 
 async function checkLoginStatus() {
     const token = localStorage.getItem("access_token");
 
     try {
-        const response = await apiClient.get("/users/me");
+        const response = await apiClient.get('/users/me');
 
-
-        if (response.success !== false) {
+        if (response && response.success !== false) {
             console.log("User is authenticated");
             changeSignupToLogout();
             hideLoginButton();

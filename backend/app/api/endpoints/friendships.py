@@ -17,6 +17,11 @@ from app.crud import friendship as crud_friendship
 
 router = APIRouter(prefix="/friendships", tags=["friendships"])
 
+# raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="User not found"
+#         )
+
 @router.delete("/remove/{friendship_id}", response_model=FriendRemovalResponse)
 def remove_friend(
         friendship_id: int,
@@ -28,6 +33,20 @@ def remove_friend(
     deleted_status = crud_friendship.remove_friend(db, friendship_id)
     resp = {"status": deleted_status}
     return resp
+
+# I CANT FUCKING BELIEVE THIS
+@router.delete("/cancel/{friendship_id}", response_model=FriendRemovalResponse)
+def remove_friend(
+        friendship_id: int,
+        current_user: User = Depends(deps.get_current_user),
+        db: Session = Depends(deps.get_db)
+):
+
+
+    deleted_status = crud_friendship.remove_friend(db, friendship_id)
+    resp = {"status": deleted_status}
+    return resp
+
 
 
 @router.post("/request", response_model=FriendRequestResponse, status_code=status.HTTP_201_CREATED)

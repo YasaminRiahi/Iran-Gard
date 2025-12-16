@@ -22,14 +22,14 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema."""
-    sql_file = Path(__file__).parent.parent.parent.parent / 'Database' / 'migrations' / '004_insert_new_users_up.sql'
+    sql_file = Path(__file__).parent.parent.parent.parent / 'database' / 'migrations' / '004_insert_new_users_up.sql'
     with open(sql_file) as f:
         op.execute(f.read())
 
 
 def downgrade() -> None:
     """Downgrade schema."""
-    sql_file = Path(__file__).parent.parent.parent.parent / 'Database' / 'migrations' / '004_insert_new_users_down.sql'
+    sql_file = Path(__file__).parent.parent.parent.parent / 'database' / 'migrations' / '004_insert_new_users_down.sql'
     with open(sql_file) as f:
         op.execute(f.read())
 
