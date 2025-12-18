@@ -58,6 +58,12 @@ class Settings(BaseSettings):
     # API Documentation
     API_DOCS_ENABLED: bool = True
 
+    # Grok AI / LLM Configuration
+    GROQ_API_KEY: str
+    LLM_MODEL: str
+    LLM_ENABLED: bool
+    LLM_PROXY: str
+
     @property
     def DATABASE_URL(self) -> str:
         """Construct DATABASE_URL from components."""

@@ -49,7 +49,6 @@ class PlaceDetailResponse(BaseModel):
     province_name: Optional[str] = Field(None, description="Province name")
     category_id: Optional[int] = Field(None, description="Category ID")
     avg_rating: Optional[float] = Field(None, description="Average rating from reviews (1-5)")
-    review_summary: Optional[str] = Field(None, description="AI-generated summary (placeholder)")
     is_bookmarked: bool = Field(False, description="Whether current user has bookmarked this place")
     picture_urls: List[str] = Field(default_factory=list, description="List of up to 4 photo URLs")
 

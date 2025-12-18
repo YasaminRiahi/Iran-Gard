@@ -87,7 +87,6 @@ def get_place_detail(
         province_name=place.province_name,
         category_id=place.category_id,
         avg_rating=round(float(avg_rating), 2) if avg_rating else None,
-        review_summary=None,  # Placeholder for future AI-generated summary
         is_bookmarked=is_bookmarked,
         picture_urls=picture_urls,
     )
