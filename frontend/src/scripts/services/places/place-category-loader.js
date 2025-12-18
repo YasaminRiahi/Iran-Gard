@@ -36,7 +36,7 @@ async function loadPlaces() {
     container.innerHTML = "";
 
     try {
-        const places = await apiClient.get(`/places?category_id=${categoryId}&limit=${limitCount}`, {
+        const places = await apiClient.get(`/places?category_id=${categoryId}&limit=${limitCount}&sort_by=rating&sort_order=desc`, {
             includeAuth: false,
         });
 
