@@ -31,6 +31,8 @@ class PlaceUpdate(BaseModel):
 
 class PlaceResponse(PlaceBase):
     place_id: int
+    first_picture_url: Optional[str] = Field(None, description="URL of the first/main picture")
+    avg_rating: Optional[float] = Field(None, description="Average rating from reviews (1-5)")
 
     class Config:
         from_attributes = True
@@ -39,14 +41,17 @@ class PlaceResponse(PlaceBase):
 class PlaceDetailResponse(BaseModel):
     """Detailed place response for GET /places/{id}."""
 
-    id: int
-    title: str  # maps to place_name
-    description: Optional[str] = None
-    location: Optional[PlaceLocation] = None
-    avg_rating: Optional[float] = None
-    review_summary: Optional[str] = None  # placeholder for future AI summary
-    is_bookmarked: bool = False
-    picture_urls: List[str] = []  # max 4 URLs
+    id: int = Field(..., description="Place ID")
+    title: str = Field(..., description="Place name")
+    description: Optional[str] = Field(None, description="Place description")
+    location: Optional[PlaceLocation] = Field(None, description="Google Maps coordinates")
+    city_name: Optional[str] = Field(None, description="City name")
+    province_name: Optional[str] = Field(None, description="Province name")
+    category_id: Optional[int] = Field(None, description="Category ID")
+    avg_rating: Optional[float] = Field(None, description="Average rating from reviews (1-5)")
+    review_summary: Optional[str] = Field(None, description="AI-generated summary (placeholder)")
+    is_bookmarked: bool = Field(False, description="Whether current user has bookmarked this place")
+    picture_urls: List[str] = Field(default_factory=list, description="List of up to 4 photo URLs")
 
     class Config:
         from_attributes = True

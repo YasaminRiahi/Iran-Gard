@@ -30,17 +30,20 @@ def get_place(
     current_user: Optional[User] = Depends(get_current_user_optional),
 ):
     """
-    Get a place by ID with detailed information.
+    Get a place by ID with complete detailed information.
 
-    Returns:
+    Returns all place fields including:
     - id: place ID
     - title: place name
     - description: place description
+    - city_name: city where the place is located
+    - province_name: province where the place is located
+    - category_id: category ID of the place
     - location: Google Maps coordinates {lat, lng}
-    - avg_rating: average rating (1-5)
-    - review_summary: AI-generated summary (placeholder)
-    - is_bookmarked: whether current user has bookmarked this place
+    - avg_rating: average rating from reviews (1-5)
     - picture_urls: list of up to 4 photo URLs
+    - review_summary: AI-generated summary (placeholder for future)
+    - is_bookmarked: whether current user has bookmarked this place
     """
     user_id = current_user.user_id if current_user else None
     place = place_crud.get_place_detail(db, place_id=place_id, user_id=user_id)
@@ -54,30 +57,72 @@ def get_place(
 
 @router.get("", response_model=List[PlaceResponse])
 def get_places(
-    city_name: Optional[str] = Query(None, description="نام شهر"),
-    category_id: Optional[int] = Query(None, description="شناسه دسته‌بندی"),
-    skip: int = Query(0, ge=0, description="تعداد رکوردهای رد شده"),
-    limit: int = Query(100, ge=1, le=500, description="حداکثر تعداد نتایج"),
+    city_name: Optional[str] = Query(None, description="Filter by city name"),
+    province_name: Optional[str] = Query(None, description="Filter by province name"),
+    category_id: Optional[int] = Query(None, description="Filter by category ID"),
+    skip: int = Query(0, ge=0, description="Number of records to skip (pagination offset)"),
+    limit: int = Query(100, ge=1, le=500, description="Maximum number of results to return"),
+    sort_by: str = Query("name", description="Field to sort by: 'name' (place name), 'rating' (average rating), 'city' (city name). Default: 'name'"),
+    sort_order: str = Query("asc", description="Sort order: 'asc' (ascending) or 'desc' (descending). Default: 'asc'"),
     db: Session = Depends(get_db),
 ):
     """
-    Get places with optional filtering:
-    - by city
-    - by category
+    Get places with optional filtering and sorting.
+    
+    **Filtering:**
+    All filters can be combined together:
+    - `province_name`: Filter by province name
+    - `city_name`: Filter by city name
+    - `category_id`: Filter by category ID
+    - Can use any combination of these filters (they work together with AND logic)
+    
+    **Examples:**
+    - `GET /places?city_name=Tehran&category_id=1` - Places in Tehran AND category 1
+    - `GET /places?province_name=Tehran&sort_by=rating&sort_order=desc` - All places in Tehran province, sorted by highest rating
+    - `GET /places?city_name=Isfahan&category_id=2&sort_by=rating` - Places in Isfahan AND category 2, sorted by rating
+    
+    **Sorting:**
+    - `sort_by`: Choose field to sort by
+      - `name`: Sort by place name (alphabetical)
+      - `rating`: Sort by average rating from reviews (1-5)
+      - `city`: Sort by city name
+      - Default: `name`
+    - `sort_order`: Choose sort direction
+      - `asc`: Ascending (A-Z, 0-5 for ratings)
+      - `desc`: Descending (Z-A, 5-0 for ratings)
+      - Default: `asc`
+    
+    **Pagination:**
+    - `skip`: Number of records to skip
+    - `limit`: Maximum number of results (1-500)
     """
-    if city_name:
-        return place_crud.get_places_by_city(
-            db, city_name=city_name, skip=skip, limit=limit
-        )
-    elif category_id:
-        return place_crud.get_places_by_category(
-            db, category_id=category_id, skip=skip, limit=limit
-        )
-    else:
+    # Validate sort_by parameter
+    valid_sort_fields = ["name", "rating", "city"]
+    if sort_by.lower() not in valid_sort_fields:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="لطفاً نام شهر یا شناسه دسته‌بندی را وارد کنید.",
+            detail=f"Invalid sort_by value. Must be one of: {', '.join(valid_sort_fields)}",
         )
+    
+    # Validate sort_order parameter
+    valid_sort_orders = ["asc", "desc"]
+    if sort_order.lower() not in valid_sort_orders:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid sort_order value. Must be 'asc' or 'desc'",
+        )
+    
+    # Use the unified filter function that supports all filter combinations
+    return place_crud.get_places_filtered(
+        db,
+        city_name=city_name,
+        province_name=province_name,
+        category_id=category_id,
+        skip=skip,
+        limit=limit,
+        sort_by=sort_by.lower(),
+        sort_order=sort_order.lower(),
+    )
 
 
 # ==================== REVIEW ENDPOINTS ====================

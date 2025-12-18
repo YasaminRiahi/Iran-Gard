@@ -36,20 +36,14 @@ async function loadPlaces() {
     container.innerHTML = "";
 
     try {
-        const initialPlaces = await apiClient.get(`/places?category_id=${categoryId}&limit=${limitCount}`, {
+        const places = await apiClient.get(`/places?category_id=${categoryId}&limit=${limitCount}`, {
             includeAuth: false,
         });
 
-        if (!Array.isArray(initialPlaces)) {
-            console.error("Invalid response: Expected an array of places.", initialPlaces);
+        if (!Array.isArray(places)) {
+            console.error("Invalid response: Expected an array of places.", places);
             return;
         }
-
-        const detailedPlacePromises = initialPlaces.map(place =>
-            apiClient.get(`/places/${place.place_id}`, { includeAuth: false })
-        );
-
-        const detailedPlaces = await Promise.all(detailedPlacePromises);
 
         const createAnimationObserver = () => {
             const observer = new IntersectionObserver((entries) => {
@@ -86,17 +80,16 @@ async function loadPlaces() {
 
         const animationObserver = createAnimationObserver();
 
-        detailedPlaces.forEach((place, index) => {
+        places.forEach((place, index) => {
             const number = index + 1;
-            const href = `/places/each-place.html?id=${place.id}`;
+            const href = `/places/each-place.html?id=${place.place_id}`;
 
-            const initialPlaceData = initialPlaces.find(p => p.place_id === place.id);
-            const city_name = initialPlaceData ? initialPlaceData.city_name : 'نامشخص';
-            const province_name = initialPlaceData ? initialPlaceData.province_name : 'نامشخص';
+            const city_name = place.city_name || 'نامشخص';
+            const province_name = place.province_name || 'نامشخص';
             const locationText = `شهر ${city_name} استان ${province_name}`;
 
-            const imageUrl = place.picture_urls && place.picture_urls.length > 0
-                ? place.picture_urls[0]
+            const imageUrl = place.first_picture_url
+                ? place.first_picture_url
                 : 'https://i.pinimg.com/736x/29/bd/ac/29bdac9c4d725f009e83ea2b09254e33.jpg';
 
             const durationMs = 1500;
@@ -127,7 +120,7 @@ async function loadPlaces() {
 					<div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-${(number * 2) - 1}">
 						<div class="u-container-style u-expanded-width u-gradient u-group u-opacity u-opacity-80 u-group-${number}">
 							<div class="u-container-layout u-valign-middle-lg u-valign-middle-sm u-valign-middle-xs u-container-layout-${(number * 2)}">
-								<h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-${(number * 2) - 1}">${place.title}</h5>
+								<h5 class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-${(number * 2) - 1}">${place.place_name}</h5>
 								<p class="u-align-center u-custom-font u-hover-feature u-text u-text-body-alt-color u-text-${(number * 2)}">${locationText}</p>
 							</div>
 						</div>
