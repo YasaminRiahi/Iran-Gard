@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func as sql_func, desc as sql_desc
+from sqlalchemy import func as sql_func, desc as sql_desc, asc as sql_asc
 from app.models.place import Place, PlacePhoto, PlaceReview, LikedReview, Wishlist
 from app.schemas.place import (
     PlaceCreate,
@@ -165,9 +165,9 @@ def get_places_filtered(
         column = Place.place_name
 
     if sort_order == "desc":
-        base_query = base_query.order_by(sql_desc(column))
+        base_query = base_query.order_by(sql_desc(column).nulls_last())
     else:
-        base_query = base_query.order_by(column)
+        base_query = base_query.order_by(sql_asc(column).nulls_last())
 
     # Apply pagination
     base_query = base_query.offset(skip).limit(limit)
