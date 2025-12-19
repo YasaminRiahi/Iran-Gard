@@ -21,6 +21,7 @@ python-dotenv==1.2.1
 
 # Utilities
 python-multipart==0.0.21
+httpx==0.28.1
 
 # LLM / AI
 groq==1.0.0
