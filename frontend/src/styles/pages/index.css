@@ -4,7 +4,7 @@
 }
 
 .u-section-1 {
-  background-image: linear-gradient(0deg, rgba(102, 102, 102, 0.45), rgba(102, 102, 102, 0.45)), url('../../assets/images/ChatGPTImageOct23202504_14_01PM.png');
+  background-image: linear-gradient(0deg, rgba(102, 102, 102, 0.45), rgba(102, 102, 102, 0.45)), url('../../assets/images/ChatGPTImageOct23202504_14_01PM.jpg');
   background-size: cover, cover;
 }
 
@@ -145,7 +145,7 @@
 .u-section-2 .u-image-1 {
   width: 328px;
   height: 328px;
-  background-image: url("../../assets/images/IranOnEarth.png");
+  background-image: url("../../assets/images/IranOnEarth.jpg");
   background-position: 50% 50%;
   --animation-custom_in-translate_x: -300px;
   --animation-custom_in-translate_y: 0px;
@@ -333,7 +333,7 @@
   --animation-custom_in-opacity: 0;
   --animation-custom_in-rotate: 0deg;
   --animation-custom_in-scale: 0.3;
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('../../assets/images/photo-1619522108988-3724075be800.jpeg');
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('../../assets/images/photo-1619522108988-3724075be800.jpg');
   --radius: 50px;
   background-position: 50% 50%;
 }
@@ -497,7 +497,7 @@
   --animation-custom_in-opacity: 0;
   --animation-custom_in-rotate: 0deg;
   --animation-custom_in-scale: 0.3;
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('../../assets/images/photo-1632782532013-bd3f5f9197db.jpeg');
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('../../assets/images/photo-1632782532013-bd3f5f9197db.webp');
   background-position: 50% 50%;
   --radius: 50px;
 }
@@ -552,7 +552,7 @@
   --animation-custom_in-opacity: 0;
   --animation-custom_in-rotate: 0deg;
   --animation-custom_in-scale: 0.3;
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('../../assets/images/photo-1691600351468-f6cbbb5987a9.jpeg');
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('../../assets/images/photo-1691600351468-f6cbbb5987a9.webp');
   background-position: 50% 50%;
   --radius: 50px;
 }
@@ -876,7 +876,7 @@
 .u-section-4 .u-image-1 {
   height: 238px;
   width: 238px;
-  background-image: url("../../assets/images/BeigeSimpleMinimalisticWomanAvatar1.png");
+  background-image: url("../../assets/images/BeigeSimpleMinimalisticWomanAvatar1.webp");
   background-position: 50% 50%;
   --animation-custom_in-translate_x: 50px;
   --animation-custom_in-translate_y: 0px;
@@ -997,7 +997,7 @@
 .u-section-4 .u-image-3 {
   height: 221px;
   width: 221px;
-  background-image: url("../../assets/images/ColourfulMinimalBrainstormRoadmapMindMap.png");
+  background-image: url("../../assets/images/ColourfulMinimalBrainstormRoadmapMindMap.webp");
   background-position: 50% 50%;
   --animation-custom_in-translate_x: 50px;
   --animation-custom_in-translate_y: 0px;
@@ -1044,7 +1044,7 @@
 .u-section-4 .u-image-4 {
   height: 238px;
   width: 238px;
-  background-image: url("../../assets/images/YellowandPinkColorfulCreditCardHacksTipsandTricksInstagramPost.png");
+  background-image: url("../../assets/images/YellowandPinkColorfulCreditCardHacksTipsandTricksInstagramPost.webp");
   background-position: 50% 50%;
   --animation-custom_in-translate_x: 50px;
   --animation-custom_in-translate_y: 0px;

@@ -47,11 +47,11 @@ body {
 }
 
 .bg-login {
-    background-image: url("../../assets/images/login-signup/login-bg-desktop.png");
+    background-image: url("../../assets/images/login-signup/login-bg-desktop.webp");
 }
 
 .bg-signup {
-    background-image: url("../../assets/images/login-signup/signup-bg-desktop.png");
+    background-image: url("../../assets/images/login-signup/signup-bg-desktop.webp");
     left: -100%;
 }
 
