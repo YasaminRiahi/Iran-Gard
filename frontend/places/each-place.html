@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script type="module" src="/src/scripts/services/check-login.js"></script>
+  <script type="module" src="/src/scripts/services/places/place-detail-loader.js"></script>
 </head>
 
 <body data-path-to-root="./" data-include-products="false"
@@ -122,7 +123,7 @@
       class="u-align-right u-container-align-right u-container-align-right-xl u-container-style u-custom-color-4 u-group u-radius-30 u-shape-round u-group-1"
       data-animation-name="customAnimationIn" data-animation-duration="1250" data-animation-delay="500">
       <div class="u-container-layout u-valign-middle-md u-valign-middle-xs u-container-layout-1">
-        <h1 class="u-align-center-xs u-custom-font u-text u-text-1">نام مکان</h1>
+        <h1 class="place-title u-align-center-xs u-custom-font u-text u-text-1">نام مکان</h1>
         <a href="#"
           class="add-bookmark-button u-border-none u-btn u-btn-round u-button-style u-custom-font u-hover-white u-radius u-text-active-grey-50 u-text-custom-color-4 u-text-hover-grey-50 u-white u-btn-1">افزودن
           به بوک مارک </a>
@@ -153,8 +154,10 @@
             <div
               class="u-align-right u-container-align-right u-container-style u-layout-cell u-size-33-lg u-size-33-xl u-size-33-xxl u-size-60-md u-size-60-sm u-size-60-xs u-white u-layout-cell-2">
               <div class="u-container-layout u-valign-middle-md u-container-layout-2">
-                <h1 class="u-custom-font u-text u-text-default u-text-1">نام مکان</h1>
-                <p class="u-custom-font u-text u-text-default u-text-2">
+                <h1 class="place-title u-custom-font u-text u-text-default u-text-1">نام مکان</h1>
+                <br>
+                <br>
+                <p dir="rtl" class="u-custom-font u-text u-text-2">
                   توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;​توضیح&nbsp;
                 </p>
               </div>
@@ -175,6 +178,7 @@
           <div class="u-layout-row">
             <div class="u-container-style u-layout-cell u-size-30 u-layout-cell-1">
               <div class="u-container-layout u-valign-top u-container-layout-1">
+                <br>
                 <div
                   class="custom-expanded u-container-align-center-sm u-container-align-center-xs u-container-style u-group u-radius u-shape-round u-white u-group-1"
                   data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-delay="200"
@@ -183,7 +187,7 @@
                       class="u-align-center-sm u-align-center-xs u-file-icon u-icon u-icon-1"><img
                         src="../src/assets/images/477406.png" alt=""></span>
                     <h3 class="u-align-center u-text u-text-2" data-animation-name="counter"
-                      data-animation-event="scroll" data-animation-duration="3000">4.6</h3>
+                      data-animation-event="scroll" data-animation-duration="3000"></h3>
                     <h4 class="u-align-center u-custom-font u-text u-text-3">امتیاز<br>
                     </h4>
                   </div>
@@ -195,10 +199,13 @@
                 <h1 class="u-align-right u-custom-font u-text u-text-default u-text-4"
                   data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-delay="200">
                   خلاصه نظرات</h1>
-                <p class="u-align-center-xs u-align-right-lg u-align-right-md u-align-right-sm u-align-right-xl u-custom-font u-text u-text-5"
+                <br>
+                <p dir="rtl"
+                  class="u-align-center-xs u-align-right-lg u-align-right-md u-align-right-sm u-align-right-xl u-custom-font u-text u-text-5"
                   data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="200">
                   &nbsp;خلاصهخلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;خلاصه&nbsp;&nbsp;
                 </p>
+                <br>
                 <a href="#"
                   class="u-border-none u-btn u-btn-round u-button-style u-custom-color-4 u-custom-font u-radius u-btn-1"
                   data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-delay="200">همه

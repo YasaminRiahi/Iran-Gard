@@ -167,7 +167,7 @@ function setupBookmarkButtonRedirect() {
         newBookmarkBtn.addEventListener("click", function (event) {
             event.preventDefault();
             event.stopPropagation();
-            window.location.href = "../login-signup.html";
+            window.location.href = "/login-signup.html";
         });
 
         newBookmarkBtn.title = "برای افزودن بوک‌مارک، ابتدا وارد شوید";
