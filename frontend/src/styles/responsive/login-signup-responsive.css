@@ -14,7 +14,7 @@
     }
 
     .bg-login {
-        background-image: url("../../assets/images/login-signup/login-bg-mobile.png");
+        background-image: url("../../assets/images/login-signup/login-bg-mobile.webp");
         height: 100vh;
         top: 0;
         left: 0;
@@ -23,7 +23,7 @@
     }
 
     .bg-signup {
-        background-image: url("../../assets/images/login-signup/signup-bg-mobile.png");
+        background-image: url("../../assets/images/login-signup/signup-bg-mobile.webp");
         height: 100vh;
         top: -100vh;
         left: 0 !important;
