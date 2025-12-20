@@ -122,3 +122,32 @@ def update_user_information(
         )
 
     return cur_user
+
+
+@router.get("/{user_id}/full-info", response_model=UserResponse)
+def get_user_full_info(
+        user_id: int,
+        db: Session = Depends(get_db)
+):
+    """
+    اطلاعات کامل یک کاربر را بر اساس آی‌دی برمی‌گرداند.
+    """
+    current_user = user_crud.get_user_by_id(db, user_id=user_id)
+    if not current_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+
+    user_response = {
+        "user_id": current_user.user_id,
+        "username": current_user.username,
+        "email": current_user.email,
+        "gender": current_user.gender,
+        "full_name": current_user.full_name,
+        "about_me": current_user.about_me,
+        "profile_url":current_user.profile_url,
+        "number_of_trips":0,
+        "number_of_friends":friendship_crud.get_number_of_friends(db, current_user.user_id),
+        "favorite_categories": current_user.favorite_categories,
+    }
+
+    return user_response

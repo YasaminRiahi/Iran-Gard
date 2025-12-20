@@ -11,7 +11,8 @@ from app.schemas.friendship import (
     ReceivedFriendRequestInfo,
     SentFriendRequestInfo,
     FriendRemovalResponse,
-    FriendshipInfoWithID
+    FriendshipInfoWithID,
+FriendCancelResponse
 )
 from app.crud import friendship as crud_friendship
 
@@ -35,8 +36,8 @@ def remove_friend(
     return resp
 
 # I CANT FUCKING BELIEVE THIS
-@router.delete("/cancel/{friendship_id}", response_model=FriendRemovalResponse)
-def remove_friend(
+@router.delete("/cancel/{friendship_id}", response_model=FriendCancelResponse)
+def cancel_friend(
         friendship_id: int,
         current_user: User = Depends(deps.get_current_user),
         db: Session = Depends(deps.get_db)
