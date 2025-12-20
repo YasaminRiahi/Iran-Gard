@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ایران‌گرد | جزئیات سفر</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../src/styles/pages/trips/trip-management.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Leaflet Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-polylinedecorator@1.6.0/dist/leaflet.polylineDecorator.js"></script>
+
+    <script type="module" src="../src/scripts/services/check-login.js"></script>
+</head>
+
+<body>
+<!-- Header -->
+<header class="main-header fixed-header">
+    <div class="header-container">
+        <div class="logo-icon-wrapper">
+            <img src="../src/assets/images/ChatGPTImageNov20202506_51_17PM.png" alt="ایران‌گرد"
+                 style="width: 210px; height: 140px;">
+        </div>
+
+        <nav class="header-nav">
+            <a href="../index.html" class="nav-item">خانه</a>
+            <a href="../profile.html" class="nav-item">پروفایل من</a>
+            <a href="../trips/my-trips.html" class="nav-item">سفرهای من</a>
+            <a href="../bookmarks.html" class="nav-item">بوک‌مارک‌ها</a>
+        </nav>
+
+        <button class="menu-toggle-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="auth-buttons-wrapper">
+            <div class="sign-up-button">
+                <a href="#" class="u-btn-1"></a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Hero Section با اطلاعات سفر -->
+<!-- Hero Section با تصویر پس‌زمینه و انیمیشن -->
+<section class="trip-hero-section">
+    <div class="hero-background-wrapper">
+        <div class="hero-image-overlay"></div>
+        <div class="hero-floating-elements">
+            <div class="floating-circle circle-1"></div>
+            <div class="floating-circle circle-2"></div>
+            <div class="floating-circle circle-3"></div>
+        </div>
+    </div>
+
+    <div class="hero-content-wrapper">
+        <div class="trip-badge-status">
+            <i class="fas fa-plane"></i>
+            <span>در حال سفر</span>
+        </div>
+
+        <h1 class="trip-hero-title">سفر به تهران</h1>
+
+        <div class="trip-hero-meta">
+            <div class="meta-item-hero">
+                <div class="meta-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="meta-text">
+                    <span class="meta-label">تاریخ سفر</span>
+                    <span class="meta-value">۱۰ تا ۱۵ آذر ۱۴۰۳</span>
+                </div>
+            </div>
+
+            <div class="meta-item-hero">
+                <div class="meta-icon">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <div class="meta-text">
+                    <span class="meta-label">مقصد</span>
+                    <span class="meta-value">تهران</span>
+                </div>
+            </div>
+
+            <div class="meta-item-hero">
+                <div class="meta-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="meta-text">
+                    <span class="meta-label">همسفران</span>
+                    <span class="meta-value">۴ نفر</span>
+                </div>
+            </div>
+
+            <div class="meta-item-hero">
+                <div class="meta-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="meta-text">
+                    <span class="meta-label">مدت سفر</span>
+                    <span class="meta-value">۵ روز</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-actions">
+            <button class="btn-hero-primary" id="endTripBtn">
+                <i class="fas fa-flag-checkered"></i>
+                <span>پایان سفر</span>
+            </button>
+            <button class="btn-hero-secondary" onclick="window.print()">
+                <i class="fas fa-print"></i>
+                <span>چاپ خلاصه</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Tabs Navigation -->
+<div class="tabs-bar">
+    <div class="tabs-container">
+        <div class="tab-buttons-group">
+            <button class="tab-button active" data-tab="locations">
+                <i class="fas fa-map-pin"></i> مکان‌ها
+            </button>
+            <button class="tab-button" data-tab="daily-plans">
+                <i class="fas fa-route"></i> پلن روزانه
+            </button>
+            <button class="tab-button" data-tab="expenses">
+                <i class="fas fa-wallet"></i> هزینه‌ها
+            </button>
+            <button class="tab-button" data-tab="participants">
+                <i class="fas fa-user-friends"></i> اعضا
+            </button>
+            <div class="tab-indicator" id="indicator"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<main class="main-content">
+
+    <!-- Tab 1: مکان‌های گردشگری -->
+    <section id="locations" class="tab-content">
+        <div class="section-header">
+            <h2><i class="fas fa-map-marked-alt"></i> مکان‌های گردشگری</h2>
+            <div class="header-actions">
+                <button class="btn-add-location" id="addLocationBtn">
+                    <i class="fas fa-plus"></i> افزودن مکان
+                </button>
+                <button class="btn-auto-generate" id="autoGenerateBtn">
+                    <i class="fas fa-magic"></i> اتو جنریت
+                </button>
+            </div>
+        </div>
+
+        <div class="locations-map" id="locationsMap"></div>
+
+        <div class="locations-list" id="locationsList">
+            <!-- مکان‌ها به صورت داینامیک اضافه می‌شوند -->
+        </div>
+    </section>
+
+    <!-- Tab 2: پلن روزانه -->
+    <section id="daily-plans" class="tab-content hidden">
+        <div class="section-header">
+            <h2><i class="fas fa-calendar-day"></i> برنامه روزانه سفر</h2>
+            <div class="header-actions">
+                <button class="btn-create-plan" id="createPlanBtn">
+                    <i class="fas fa-plus"></i> ایجاد پلن
+                </button>
+                <button class="btn-auto-plan" id="autoPlanBtn">
+                    <i class="fas fa-robot"></i> اتو جنریت پلن
+                </button>
+            </div>
+        </div>
+
+        <!-- مپ جداگانه برای پلن‌ها -->
+        <div class="plans-map" id="plansMap"></div>
+
+        <div class="plans-grid" id="plansGrid">
+            <!-- پلن‌ها به صورت داینامیک اضافه می‌شوند -->
+        </div>
+    </section>
+
+    <!-- Tab 3: هزینه‌ها -->
+    <section id="expenses" class="tab-content hidden">
+        <div class="section-header">
+            <h2><i class="fas fa-receipt"></i> مدیریت هزینه‌های سفر</h2>
+            <button class="btn-add-expense" id="addExpenseBtn">
+                <i class="fas fa-plus"></i> ثبت هزینه جدید
+            </button>
+        </div>
+
+        <div class="expenses-summary">
+            <div class="summary-card">
+                <i class="fas fa-coins"></i>
+                <div>
+                    <h4>کل هزینه‌ها</h4>
+                    <p class="amount" id="totalExpense">۰ تومان</p>
+                </div>
+            </div>
+            <div class="summary-card">
+                <i class="fas fa-user-check"></i>
+                <div>
+                    <h4>سهم هر نفر</h4>
+                    <p class="amount" id="perPersonExpense">۰ تومان</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="expenses-list" id="expensesList">
+            <!-- هزینه‌ها به صورت داینامیک اضافه می‌شوند -->
+        </div>
+
+        <div class="settlement-section">
+            <h3><i class="fas fa-balance-scale"></i> تسویه حساب</h3>
+            <div id="settlementList" class="settlement-list">
+                <!-- تسویه‌ها به صورت داینامیک محاسبه می‌شوند -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Tab 4: اعضای سفر -->
+    <section id="participants" class="tab-content hidden">
+        <div class="section-header">
+            <h2><i class="fas fa-users"></i> اعضای سفر</h2>
+        </div>
+
+        <div class="participants-grid" id="participantsGrid">
+        </div>
+    </section>
+
+</main>
+
+<!-- Modal: افزودن مکان -->
+<div id="addLocationModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-map-marker-alt"></i> افزودن مکان جدید</h2>
+            <button class="modal-close" id="closeLocationModal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="available-locations-grid" id="availableLocationsGrid">
+                <!-- مکان‌های موجود نمایش داده می‌شوند -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: ایجاد پلن روزانه -->
+<div id="createPlanModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-calendar-plus"></i> ایجاد پلن روزانه</h2>
+            <button class="modal-close" id="closePlanModal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label><i class="fas fa-calendar-day"></i> انتخاب روز</label>
+                <select id="planDaySelect" class="form-select">
+                    <option value="">روز را انتخاب کنید...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-city"></i> انتخاب شهر</label>
+                <select id="planCitySelect" class="form-select">
+                    <option value="">شهر را انتخاب کنید...</option>
+                </select>
+            </div>
+            <div class="selected-plan-locations" id="selectedPlanLocations">
+                <h4>مکان‌های انتخابی برای این پلن:</h4>
+                <div id="planLocationsList"></div>
+            </div>
+            <button class="btn-save-plan" id="savePlanBtn">
+                <i class="fas fa-check"></i> ذخیره پلن
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: ثبت هزینه -->
+<div id="addExpenseModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-money-bill-wave"></i> ثبت هزینه جدید</h2>
+            <button class="modal-close" id="closeExpenseModal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label><i class="fas fa-tag"></i> دسته‌بندی</label>
+                <select id="expenseCategory" class="form-select">
+                    <option value="food">غذا</option>
+                    <option value="transport">حمل‌ونقل</option>
+                    <option value="accommodation">اقامت</option>
+                    <option value="entertainment">سرگرمی</option>
+                    <option value="shopping">خرید</option>
+                    <option value="other">سایر</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-info-circle"></i> توضیحات</label>
+                <input type="text" id="expenseDescription" class="form-input" placeholder="مثلاً: شام در رستوران">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-coins"></i> مبلغ (تومان)</label>
+                <input type="number" id="expenseAmount" class="form-input" placeholder="۰">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> پرداخت‌کننده</label>
+                <select id="expensePayer" class="form-select">
+                    <!-- اعضا به صورت داینامیک اضافه می‌شوند -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-users"></i> افراد سهیم</label>
+                <div id="expenseParticipants" class="checkbox-group">
+                    <!-- اعضا به صورت داینامیک اضافه می‌شوند -->
+                </div>
+            </div>
+            <button class="btn-save-expense" id="saveExpenseBtn">
+                <i class="fas fa-check"></i> ثبت هزینه
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="main-footer">
+    <div class="footer-content-wrapper">
+        <p class="cta-text">
+            ایران‌گرد رو در شبکه‌های اجتماعی دنبال کن و اولین کسی باش که از پیشنهادهای جدید باخبر می‌شه
+        </p>
+
+        <div class="u-social-icons">
+            <a class="u-social-url" title="facebook" target="_blank" href="https://facebook.com/name">
+                    <span class="u-icon u-social-facebook u-social-icon u-text-white">
+                        <svg class="u-svg-content" viewBox="0 0 23.101 23.101">
+                            <g>
+                                <path d="M8.258,4.458c0-0.144,0.02-0.455,0.06-0.931c0.043-0.477,0.223-0.976,0.546-1.5c0.32-0.522,0.839-0.991,1.561-1.406
+           C11.144,0.208,12.183,0,13.539,0h3.82v4.163h-2.797c-0.277,0-0.535,0.104-0.768,0.309c-0.231,0.205-0.35,0.4-0.35,0.581v2.59h3.914
+           c-0.041,0.507-0.086,1-0.138,1.476l-0.155,1.258c-0.062,0.425-0.125,0.819-0.187,1.182h-3.462v11.542H8.258V11.558H5.742V7.643
+           h2.516V4.458z"></path>
+                            </g>
+                        </svg>
+                    </span>
+            </a>
+
+            <a class="u-social-url" title="twitter" target="_blank" href="https://twitter.com/name">
+                    <span class="u-icon u-social-icon u-social-twitter u-text-white">
+                        <svg class="u-svg-content" viewBox="0 0 1200 1200">
+                            <g>
+                                <path d="M15.1,136.7L429,690.1L12.5,1140.1h93.7l364.6-393.9l294.6,393.9h319L647.3,555.5L1035,136.7h-93.7
+           L605.4,499.5L334.1,136.7H15.1z M152.9,205.8h146.5L946.6,1071H800.1L152.9,205.8z"></path>
+                            </g>
+                        </svg>
+                    </span>
+            </a>
+
+            <a class="u-social-url" title="instagram" target="_blank" href="https://instagram.com/name">
+                    <span class="u-icon u-social-icon u-social-instagram u-text-white">
+                        <svg class="u-svg-content" viewBox="0 0 256 256">
+                            <g>
+                                <path d="M127.999746,23.06353 C162.177385,23.06353 166.225393,23.1936027 179.722476,23.8094161 C192.20235,24.3789926 198.979853,26.4642218 203.490736,28.2166477 C209.464938,30.5386501 213.729395,33.3128586 218.208268,37.7917319 C222.687141,42.2706052 225.46135,46.5350617 227.782844,52.5092638 C229.535778,57.0201472 231.621007,63.7976504 232.190584,76.277016 C232.806397,89.7746075 232.93647,93.8226147 232.93647,128.000254 C232.93647,162.177893 232.806397,166.225901 232.190584,179.722984 C231.621007,192.202858 229.535778,198.980361 227.782844,203.491244 C225.46135,209.465446 222.687141,213.729903 218.208268,218.208776 C213.729395,222.687649 209.464938,225.461858 203.490736,227.783352 C198.979853,229.536286 192.20235,231.621516 179.722476,232.191092 C166.227425,232.806905 162.179418,232.936978 127.999746,232.936978 C93.8200742,232.936978 89.772067,232.806905 76.277016,232.191092 C63.7971424,231.621516 57.0196391,229.536286 52.5092638,227.783352 C46.5345536,225.461858 42.2700971,222.687649 37.7912238,218.208776 C33.3123505,213.729903 30.538142,209.465446 28.2166477,203.491244 C26.4637138,198.980361 24.3784845,192.202858 23.808908,179.723492 C23.1930946,166.225901 23.0630219,162.177893 23.0630219,128.000254 C23.0630219,93.8226147 23.1930946,89.7746075 23.808908,76.2775241 C24.3784845,63.7976504 26.4637138,57.0201472 28.2166477,52.5092638 C30.538142,46.5350617 33.3123505,42.2706052 37.7912238,37.7917319 C42.2700971,33.3128586 46.5345536,30.5386501 52.5092638,28.2166477 C57.0196391,26.4642218 63.7971424,24.3789926 76.2765079,23.8094161 C89.7740994,23.1936027 93.8221066,23.06353 127.999746,23.06353 Z M127.999746,0 C93.2367791,0 88.8783247,0.147348072 75.2257637,0.770274749 C61.601148,1.39218523 52.2968794,3.55566141 44.1546281,6.72008828 C35.7374966,9.99121548 28.5992446,14.3679613 21.4833489,21.483857 C14.3674532,28.5997527 9.99070739,35.7380046 6.71958019,44.1551362 C3.55515331,52.2973875 1.39167714,61.6016561 0.769766653,75.2262718 C0.146839975,88.8783247 0,93.2372872 0,128.000254 C0,162.763221 0.146839975,167.122183 0.769766653,180.774236 C1.39167714,194.398852 3.55515331,203.703121 6.71958019,211.845372 C9.99070739,220.261995 14.3674532,227.400755 21.4833489,234.516651 C28.5992446,241.632547 35.7374966,246.009293 44.1546281,249.28042 C52.2968794,252.444847 61.601148,254.608323 75.2257637,255.230233 C88.8783247,255.85316 93.2367791,256 127.999746,256 C162.762713,256 167.121675,255.85316 180.773728,255.230233 C194.398344,254.608323 203.702613,252.444847 211.844864,249.28042 C220.261995,246.009293 227.400247,241.632547 234.516143,234.516651 C241.632039,227.400755 246.008785,220.262503 249.279912,211.845372 C252.444339,203.703121 254.607815,194.398852 255.229725,180.774236 C255.852652,167.122183 256,162.763221 256,128.000254 C256,93.2372872 255.852652,88.8783247 255.229725,75.2262718 C254.607815,61.6016561 252.444339,52.2973875 249.279912,44.1551362 C246.008785,35.7380046 241.632039,28.5997527 234.516143,21.483857 C227.400247,14.3679613 220.261995,9.99121548 211.844864,6.72008828 C203.702613,3.55566141 194.398344,1.39218523 180.773728,0.770274749 C167.121675,0.147348072 162.762713,0 127.999746,0 Z M127.999746,62.2703115 C91.698262,62.2703115 62.2698034,91.69877 62.2698034,128.000254 C62.2698034,164.301738 91.698262,193.730197 127.999746,193.730197 C164.30123,193.730197 193.729689,164.301738 193.729689,128.000254 C193.729689,91.69877 164.30123,62.2703115 127.999746,62.2703115 Z M127.999746,170.667175 C104.435741,170.667175 85.3328252,151.564259 85.3328252,128.000254 C85.3328252,104.436249 104.435741,85.3333333 127.999746,85.3333333 C151.563751,85.3333333 170.666667,104.436249 170.666667,128.000254 C170.666667,151.564259 151.563751,170.667175 127.999746,170.667175 Z M211.686338,59.6734287 C211.686338,68.1566129 204.809755,75.0337031 196.326571,75.0337031 C187.843387,75.0337031 180.966297,68.1566129 180.966297,59.6734287 C180.966297,51.1902445 187.843387,44.3136624 196.326571,44.3136624 C204.809755,44.3136624 211.686338,51.1902445 211.686338,59.6734287 Z"
+                                      fill="currentColor"></path>
+                            </g>
+                        </svg>
+                    </span>
+            </a>
+
+            <a class="u-social-url email" target="_blank" data-type="Custom" title="Custom" href="">
+                    <span class="u-icon u-social-custom u-social-icon u-text-white">
+                        <img src="../src/assets/images/646094-251de927.png" alt="">
+                    </span>
+            </a>
+        </div>
+    </div>
+</footer>
+
+<script src="../src/scripts/ui/trip-management.js"></script>
+</body>
+
+</html>
