@@ -647,27 +647,88 @@ document.getElementById('finishTrip').addEventListener('click', () => {
     });
 });
 
-// ============ Logout button ============
 
-document.querySelector('.logout-btn').addEventListener('click', () => {
-    Swal.fire({
-        text: 'آیا مطمئن هستید که می‌خواهید خارج شوید؟',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'بله، خروج',
-        cancelButtonText: 'انصراف',
-        cancelButtonColor: '#f5c9b0',
-        confirmButtonColor: '#a6b28b',
-        background: '#f0f0f0',
-        color: '#4b5563',
-        customClass: {
-            popup: 'my-swal-popup',
-            confirmButton: 'my-confirm-btn',
-            cancelButton: 'my-cancel-btn'
-        },
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = '../index.html';
+
+
+
+function initMobileMenu() {
+    // Mobile menu HTML structure
+    const mobileMenuHTML = `
+        <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-menu-header">
+                <h3 style="color: white; margin: 0;">منو</h3>
+                <button class="mobile-menu-close" id="mobileMenuClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <nav class="mobile-menu-nav">
+                <a href="/index.html" class="mobile-menu-item">خانه</a>
+                <a href="/profile.html" class="mobile-menu-item">پروفایل من</a>
+                <a href="/trips/my-trips.html" class="mobile-menu-item active">سفرهای من</a>
+                <a href="/bookmarks.html" class="mobile-menu-item">بوک‌مارک‌ها</a>
+            </nav>
+        </div>
+    `;
+
+    // Inject mobile menu into DOM
+    document.body.insertAdjacentHTML('beforeend', mobileMenuHTML);
+
+    // Get menu elements
+    const menuToggle = document.querySelector('.menu-toggle-btn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+    const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+    /**
+     * Close mobile menu
+     * Removes active classes and restores body scroll
+     */
+    const closeMenu = () => {
+        mobileMenu.classList.remove('active');
+        mobileMenuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    };
+
+    // Open menu on toggle button click
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+            mobileMenuOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scroll
+        });
+    }
+
+    // Close menu on close button click
+    if (mobileMenuClose) {
+        mobileMenuClose.addEventListener('click', closeMenu);
+    }
+
+    // Close menu on overlay click
+    if (mobileMenuOverlay) {
+        mobileMenuOverlay.addEventListener('click', closeMenu);
+    }
+}
+
+function viewTrip(tripId) {
+    window.location.href = `/trips/each-trip.html?id=${tripId}`;
+}
+function editTrip(tripId) {
+    // انتقال به صفحه ویرایش سفر
+    window.location.href = `../trips/trip-management.html?id=${tripId}`;
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM fully loaded'); // برای دیباگ
+    initMobileMenu();
+    initScrollAnimations();
+
+    // برای اطمینان، بعد از لود کامل صفحه هم چک کنیم
+    setTimeout(() => {
+        if (!document.getElementById('mobileMenu')) {
+            console.log('Retrying mobile menu initialization...');
+            initMobileMenu();
         }
-    });
+    }, 1000);
 });
