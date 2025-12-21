@@ -5,7 +5,7 @@
 
 @font-face {
     font-family: 'Anjoman';
-    src: url('../../../assets/fonts/Anjoman-Regular.woff2') format('woff2');
+    src: url('/src/assets/fonts/Anjoman-Regular.woff2') format('woff2');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -13,7 +13,7 @@
 
 @font-face {
     font-family: 'Anjoman';
-    src: url('../../../assets/fonts/Anjoman-Bold.woff2') format('woff2');
+    src: url('/src/assets/fonts/Anjoman-Bold.woff2') format('woff2');
     font-weight: 700;
     font-style: normal;
     font-display: swap;
@@ -23,7 +23,7 @@
     font-family: 'Anjoman-Regular';
     font-style: normal;
     font-weight: 400;
-    src: url(../../../assets/fonts/Anjoman-Regular.woff2);
+    src: url(/src/assets/fonts/Anjoman-Regular.woff2);
 }
 
 
@@ -193,6 +193,46 @@ body {
     height: 50px;
     border-radius: 50%;
     cursor: pointer;
+}
+
+.auth-buttons-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-right: auto;
+}
+
+.auth-buttons-wrapper .u-btn-1 {
+    font-family: Anjoman-Regular !important;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 1.5rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    font-size: 0.95rem;
+}
+
+.auth-buttons-wrapper .sign-up-button .u-btn-1:hover {
+    filter: brightness(0.9);
+}
+
+.nav-item-logout-mobile {
+    display: none !important;
+}
+
+.logout-button-desktop .u-btn-1 {
+    min-width: 120px;
+    text-align: center;
+}
+
+.logout-btn {
+    padding-left: 2.3rem !important;
+    padding-right: 2.3rem !important;
+    min-width: 120px;
+    background: var(--color-primary) !important;
+    color: var(--color-white) !important;
+    text-align: center !important;
 }
 
 /* ================================================================
@@ -736,15 +776,15 @@ body {
 }
 
 .vote-btn.liked {
-    background: rgba(16, 185, 129, 0.1);
+    background: rgba(166, 178, 139, 1);
     border-color: var(--color-primary);
-    color: var(--color-accent);
+    color: var(--color-white);
 }
 
 .vote-btn.disliked {
-    background: rgba(239, 68, 68, 0.1);
+    background: rgba(245, 201, 176, 1);
     border-color: var(--color-accent);
-    color: var(--color-accent);
+    color: var(--color-white);
 }
 
 .vote-btn:hover {
@@ -756,14 +796,13 @@ body {
     font-weight: 700;
 }
 
-/* دکمه حذف مکان */
 .btn-remove-location {
     position: absolute;
     top: 1rem;
     left: 1rem;
     width: 35px;
     height: 35px;
-    background: rgba(239, 68, 68, 0.9);
+    background: var(--color-accent);
     color: white;
     border: none;
     border-radius: 50%;
@@ -781,7 +820,7 @@ body {
 }
 
 .btn-remove-location:hover {
-    background: #dc2626;
+    background: var(--color-accent);
     transform: scale(1.1) rotate(90deg);
 }
 
@@ -805,19 +844,18 @@ body {
 }
 
 .btn-visited-check:hover {
-    background: rgba(16, 185, 129, 0.1);
-    color: #10b981;
-    border-color: #10b981;
+    background: rgba(166, 178, 139, 0.1);
+    color: var(--color-primary);
+    border-color: var(--color-primary-dark);
     transform: scale(1.1);
 }
 
 .btn-visited-check.checked {
-    background: #10b981;
+    background:  var(--color-primary-dark);
     color: white;
-    border-color: #10b981;
+    border-color:  var(--color-primary-dark);
 }
 
-/* تصویر کلیکی با افکت */
 .location-image-wrapper {
     position: relative;
     width: 100%;
@@ -1073,15 +1111,15 @@ body {
 }
 
 .plan-vote-btn.liked {
-    background: rgba(16, 185, 129, 0.1);
+    background: var(--color-primary);
     border-color: var(--color-primary);
-    color: var(--color-primary);
+    color: var(--color-white);
 }
 
 .plan-vote-btn.disliked {
-    background: rgba(239, 68, 68, 0.1);
+    background: rgba(245, 201, 176, 1);
     border-color: var(--color-accent);
-    color: var(--color-accent);
+    color: var(--color-white);
 }
 
 .plan-vote-btn:hover {
@@ -1092,12 +1130,12 @@ body {
     padding: 1rem 1.5rem;
     border-top: 2px solid var(--color-border);
     display: flex;
-    justify-content: center; /* تغییر از flex-start به center */
+    justify-content: center;
 }
 
 .btn-view-plan {
-    width: 100%; /* تغییر به تمام عرض */
-    max-width: 300px; /* حداکثر عرض */
+    width: 100%;
+    max-width: 300px;
     padding: 0.9rem;
     background: var(--color-primary);
     color: white;
@@ -1187,8 +1225,7 @@ body {
 .btn-remove-from-plan {
     width: 30px;
     height: 30px;
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+    color: var(--color-accent);
     border: none;
     border-radius: 50%;
     cursor: pointer;
@@ -1200,7 +1237,7 @@ body {
 }
 
 .btn-remove-from-plan:hover {
-    background: #ef4444;
+    background: var(--color-accent);
     color: white;
     transform: scale(1.1);
 }
@@ -1238,12 +1275,12 @@ body {
 }
 
 .btn-cancel-edit {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+    background: rgba(245, 201, 175, 0.4);
+    color: var(--color-accent);
 }
 
 .btn-cancel-edit:hover {
-    background: #ef4444;
+    background: var(--color-accent);
     color: white;
 }
 
@@ -1277,12 +1314,12 @@ body {
 }
 
 .btn-delete-plan {
-    background: rgba(239, 68, 68, 0.2);
+    background: rgba(245,201,176, 0.5);
     color: white;
 }
 
 .btn-delete-plan:hover {
-    background: #ef4444;
+    background: var(--color-accent);
     transform: scale(1.1);
 }
 
@@ -1307,7 +1344,7 @@ body {
 }
 
 .day-header {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    background: var(--color-primary);
     color: white;
     padding: 1.5rem 2rem;
     border-radius: 1.5rem;
@@ -1558,35 +1595,11 @@ body {
     flex-shrink: 0;
 }
 
-.expense-category-icon.food {
-    background: rgba(251, 146, 60, 0.1);
-    color: #f97316;
+.expense-category-icon {
+    background: rgb(166, 178, 139);
+    color: var(--color-white);
 }
 
-.expense-category-icon.transport {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
-}
-
-.expense-category-icon.accommodation {
-    background: rgba(168, 85, 247, 0.1);
-    color: #a855f7;
-}
-
-.expense-category-icon.entertainment {
-    background: rgba(236, 72, 153, 0.1);
-    color: #ec4899;
-}
-
-.expense-category-icon.shopping {
-    background: rgba(34, 197, 94, 0.1);
-    color: #22c55e;
-}
-
-.expense-category-icon.other {
-    background: rgba(156, 163, 175, 0.1);
-    color: #9ca3af;
-}
 
 .expense-details {
     flex: 1;
@@ -1687,24 +1700,22 @@ body {
 }
 
 .btn-edit-expense {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
+    background: var(--color-primary);
+    color: var(--color-white);
 }
 
 .btn-edit-expense:hover {
-    background: #3b82f6;
+    background: var(--color-primary-dark);
     color: white;
     transform: scale(1.1);
 }
 
 .btn-delete-expense {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+    background: var(--color-accent);
+    color: var(--color-white);
 }
 
 .btn-delete-expense:hover {
-    background: #ef4444;
-    color: white;
     transform: scale(1.1);
 }
 
@@ -1798,30 +1809,25 @@ body {
 }
 
 .participant-badge {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    background: var(--color-primary);
     color: white;
     padding: 0.4rem 1rem;
     border-radius: 1.5rem;
     font-size: 0.85rem;
     font-weight: 700;
     display: inline-block;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .btn-remove-participant {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--color-accent);
-    border: 2px solid var(--color-accent);
-    padding: 0.7rem 1.5rem;
-    border-radius: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin: 0 auto;
+    background: rgba(245, 201, 176, 0.5);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 0.5rem;
 }
 
 .btn-remove-participant:hover {
@@ -2069,7 +2075,7 @@ body {
     position: absolute;
     top: 1rem;
     left: 1rem;
-    background: #10b981;
+    background: var(--color-primary);
     color: white;
     padding: 0.4rem 1rem;
     border-radius: 1.5rem;
@@ -2099,23 +2105,25 @@ body {
 }
 
 .btn-mark-visited:hover {
-    border-color: #10b981;
-    background: rgba(16, 185, 129, 0.1);
-    color: #10b981;
+    border-color: var(--color-primary);
+    background: rgba(166, 178, 139, 0.1);
+    color: var(--color-primary);
 }
 
 .btn-mark-visited.active {
-    background: rgba(16, 185, 129, 0.1);
-    border-color: #10b981;
-    color: #10b981;
+    background: rgba(166, 178, 139, 0.1);
+    border-color:var(--color-primary);
+    color: var(--color-primary);
 }
 
 .location-actions {
-    display: grid;
+    display: flex;
     grid-template-columns: 1fr 1fr;
     gap: 0.5rem;
     padding: 1rem 1.5rem;
     border-top: 2px solid var(--color-border);
+    align-content: center;
+    align-items: center;
 }
 
 .btn-mark-visited {
@@ -2268,7 +2276,7 @@ body {
     overflow: hidden;
     padding: 2.5rem 1rem;
     z-index: 10;
-    background-image: url('../../../assets/images/footer1.jpg');
+    background-image: url('/src/assets/images/footer1.jpg');
     background-size: cover;
     background-position: center;
 }

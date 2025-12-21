@@ -77,7 +77,7 @@ const allLocationsData = [
         description: 'برج مخابراتی تهران',
         lat: 35.7447,
         lng: 51.3753,
-        votes: { likes: 0, dislikes: 0 }
+        votes: {likes: 0, dislikes: 0}
     },
     {
         id: 2,
@@ -88,18 +88,18 @@ const allLocationsData = [
         description: 'کاخ قاجاری',
         lat: 35.6795,
         lng: 51.4209,
-        votes: { likes: 0, dislikes: 0 }
+        votes: {likes: 0, dislikes: 0}
     },
     {
         id: 3,
-        name: 'توچال',
+        name: 'دربند',
         category: 'طبیعت',
         city: 'تهران',
         image: '../src/assets/images/45677.jpg',
         description: 'تله‌کابین و پیست اسکی',
         lat: 35.8367,
         lng: 51.3897,
-        votes: { likes: 0, dislikes: 0 }
+        votes: {likes: 0, dislikes: 0}
     },
     {
         id: 4,
@@ -110,7 +110,7 @@ const allLocationsData = [
         description: 'موزه باستان‌شناسی',
         lat: 35.6892,
         lng: 51.4158,
-        votes: { likes: 0, dislikes: 0 }
+        votes: {likes: 0, dislikes: 0}
     },
     {
         id: 5,
@@ -121,7 +121,7 @@ const allLocationsData = [
         description: 'باغ موزه هنرهای معاصر',
         lat: 35.7264,
         lng: 51.4089,
-        votes: { likes: 0, dislikes: 0 }
+        votes: {likes: 0, dislikes: 0}
     }
 ];
 
@@ -220,7 +220,7 @@ function updateMapMarkers() {
     // تنظیم view به تمام مارکرها
     if (selectedLocations.length > 0) {
         const bounds = L.latLngBounds(selectedLocations.map(loc => [loc.lat, loc.lng]));
-        map.fitBounds(bounds, { padding: [50, 50] });
+        map.fitBounds(bounds, {padding: [50, 50]});
     }
 }
 
@@ -312,8 +312,8 @@ function removeLocation(locationId) {
         showCancelButton: true,
         confirmButtonText: 'بله، حذف کن',
         cancelButtonText: 'انصراف',
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#A6B28B',
+        confirmButtonColor: '#f5c9b0',
+        cancelButtonColor: '#a6b28b',
         background: '#f0f0f0',
         customClass: {
             popup: 'my-swal-popup',
@@ -403,25 +403,12 @@ function showLocationOnMap(locationId) {
 
     map.setView([location.lat, location.lng], 15);
 
-    Swal.fire({
-        icon: 'success',
-        title: location.name,
-        text: `موقعیت ${location.name} روی نقشه نمایش داده شد`,
-        confirmButtonText: 'باشه',
-        confirmButtonColor: '#A6B28B',
-        background: '#f0f0f0',
-        customClass: {
-            popup: 'my-swal-popup',
-            confirmButton: 'my-confirm-btn'
-        }
-    });
-
-    // اسکرول به بالای صفحه (به نقشه)
     window.scrollTo({
         top: document.querySelector('.locations-map').offsetTop - 150,
         behavior: 'smooth'
     });
 }
+
 /* ================================================================
    6. ADD LOCATION MODAL
    ================================================================ */
@@ -571,7 +558,7 @@ function autoGenerateLocations() {
         selectedLocations.push({
             ...location,
             userVote: null,
-            votes: { likes: Math.floor(Math.random() * 50) + 20, dislikes: Math.floor(Math.random() * 10) }
+            votes: {likes: Math.floor(Math.random() * 50) + 20, dislikes: Math.floor(Math.random() * 10)}
         });
     });
 
@@ -899,11 +886,11 @@ function getDragAfterElement(container, y) {
         const offset = y - box.top - box.height / 2;
 
         if (offset < 0 && offset > closest.offset) {
-            return { offset: offset, element: child };
+            return {offset: offset, element: child};
         } else {
             return closest;
         }
-    }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }, {offset: Number.NEGATIVE_INFINITY}).element;
 }
 
 function toggleEditPlan(planId) {
@@ -983,8 +970,8 @@ function deletePlan(planId) {
         showCancelButton: true,
         confirmButtonText: 'بله، حذف کن',
         cancelButtonText: 'انصراف',
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#A6B28B',
+        confirmButtonColor: '#f5c9b0',
+        cancelButtonColor: '#a6b28b',
         background: '#f0f0f0',
         customClass: {
             popup: 'my-swal-popup',
@@ -1050,86 +1037,62 @@ function viewPlanOnPlanMap(planId) {
     const plan = dailyPlans.find(p => p.id === planId);
     if (!plan) return;
 
-    // رفتن به تب پلن‌ها اگر در تب دیگری هستیم
-    switchTab('daily-plans');
+    if (!plansMap) {
+        initPlansMap();
+    }
 
-    setTimeout(() => {
-        if (!plansMap) {
-            initPlansMap();
+    // پاک کردن لایه‌های قبلی
+    plansMap.eachLayer((layer) => {
+        if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+            plansMap.removeLayer(layer);
         }
+    });
 
-        // پاک کردن لایه‌های قبلی
-        plansMap.eachLayer((layer) => {
-            if (layer instanceof L.Marker || layer instanceof L.Polyline) {
-                plansMap.removeLayer(layer);
-            }
-        });
+    const latlngs = plan.locations.map(loc => [loc.lat, loc.lng]);
 
-        const latlngs = plan.locations.map(loc => [loc.lat, loc.lng]);
-
-        // اضافه کردن مارکرها
-        plan.locations.forEach((loc, index) => {
-            const marker = L.marker([loc.lat, loc.lng]).addTo(plansMap);
-            marker.bindPopup(`
+    // اضافه کردن مارکرها
+    plan.locations.forEach((loc, index) => {
+        const marker = L.marker([loc.lat, loc.lng]).addTo(plansMap);
+        marker.bindPopup(`
                 <div style="text-align: center; font-family: 'Anjoman';">
                     <strong>${index + 1}. ${loc.name}</strong><br>
                     <span style="color: #666;">${loc.estimatedTime || 'زمان تخمینی: 2 ساعت'}</span>
                 </div>
             `);
-        });
+    });
 
-        // اضافه کردن خط مسیر
-        const polyline = L.polyline(latlngs, {
-            color: '#A6B28B',
-            weight: 4,
-            opacity: 0.7,
-            dashArray: '10, 10'
-        }).addTo(plansMap);
+    // اضافه کردن خط مسیر
+    const polyline = L.polyline(latlngs, {
+        color: '#A6B28B',
+        weight: 4,
+        opacity: 0.7,
+        dashArray: '10, 10'
+    }).addTo(plansMap);
 
-        // اضافه کردن فلش‌ها برای نشان دادن جهت
-        const decorator = L.polylineDecorator(polyline, {
-            patterns: [
-                {
-                    offset: 25,
-                    repeat: 100,
-                    symbol: L.Symbol.arrowHead({
-                        pixelSize: 15,
-                        pathOptions: {
-                            fillOpacity: 1,
-                            weight: 0,
-                            color: '#A6B28B'
-                        }
-                    })
-                }
-            ]
-        }).addTo(plansMap);
-
-        plansMap.fitBounds(polyline.getBounds(), { padding: [50, 50] });
-
-        Swal.fire({
-            icon: 'success',
-            title: `پلن ${plan.day}`,
-            html: `
-                <p>مسیر این پلن روی نقشه نمایش داده شد</p>
-                <p style="margin-top: 0.5rem; color: #666;">
-                    <i class="fas fa-route"></i> ${plan.locations.length} مکان
-                </p>
-            `,
-            confirmButtonText: 'باشه',
-            confirmButtonColor: '#A6B28B',
-            background: '#f0f0f0',
-            customClass: {
-                popup: 'my-swal-popup',
-                confirmButton: 'my-confirm-btn'
+    // اضافه کردن فلش‌ها برای نشان دادن جهت
+    const decorator = L.polylineDecorator(polyline, {
+        patterns: [
+            {
+                offset: 25,
+                repeat: 100,
+                symbol: L.Symbol.arrowHead({
+                    pixelSize: 15,
+                    pathOptions: {
+                        fillOpacity: 1,
+                        weight: 0,
+                        color: '#A6B28B'
+                    }
+                })
             }
-        });
+        ]
+    }).addTo(plansMap);
 
-        // اسکرول به نقشه
-        document.querySelector('.plans-map').scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-        });
-    }, 300);
+    plansMap.fitBounds(polyline.getBounds(), {padding: [50, 50]});
+
+    document.querySelector('.plans-map').scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+    });
 }
 
 // اضافه کردن به event listener تب‌ها
@@ -1147,58 +1110,6 @@ tabButtons.forEach(btn => {
     });
 });
 
-function viewPlanOnMap(planId) {
-    const plan = dailyPlans.find(p => p.id === planId);
-    if (!plan) return;
-
-    // رفتن به تب مکان‌ها
-    switchTab('locations');
-
-    // نمایش مسیر روی نقشه
-    setTimeout(() => {
-        if (map) {
-            map.eachLayer((layer) => {
-                if (layer instanceof L.Marker || layer instanceof L.Polyline) {
-                    map.removeLayer(layer);
-                }
-            });
-
-            const latlngs = plan.locations.map(loc => [loc.lat, loc.lng]);
-
-            // اضافه کردن مارکرها
-            plan.locations.forEach((loc, index) => {
-                const marker = L.marker([loc.lat, loc.lng]).addTo(map);
-                marker.bindPopup(`
-                    <div style="text-align: center; font-family: 'Anjoman';">
-                        <strong>${index + 1}. ${loc.name}</strong>
-                    </div>
-                `);
-            });
-
-            // اضافه کردن خط مسیر
-            const polyline = L.polyline(latlngs, {
-                color: '#A6B28B',
-                weight: 4,
-                opacity: 0.7
-            }).addTo(map);
-
-            map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
-
-            Swal.fire({
-                icon: 'success',
-                title: `پلن ${plan.day}`,
-                text: 'مسیر این پلن روی نقشه نمایش داده شد',
-                confirmButtonText: 'باشه',
-                confirmButtonColor: '#A6B28B',
-                background: '#f0f0f0',
-                customClass: {
-                    popup: 'my-swal-popup',
-                    confirmButton: 'my-confirm-btn'
-                }
-            });
-        }
-    }, 500);
-}
 
 /* ================================================================
    9. CREATE PLAN MODAL
@@ -1248,11 +1159,12 @@ function initPlanModal() {
     selectedPlanLocations = [];
     updatePlanLocationsList();
 }
+
 /* ================================================================
    10. PLAN LOCATION SELECTION
    ================================================================ */
 
-document.getElementById('planCitySelect').addEventListener('change', function() {
+document.getElementById('planCitySelect').addEventListener('change', function () {
     const city = this.value;
     const grid = document.getElementById('availableLocationsGrid');
 
@@ -1318,10 +1230,10 @@ document.getElementById('planCitySelect').addEventListener('change', function() 
                     <h4>${location.name}</h4>
                     <p><i class="fas fa-tag"></i> ${location.category}</p>
                     <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.85rem;">
-                        <span style="color: #10b981;">
+                        <span style="color: #a6b28b;">
                             <i class="fas fa-thumbs-up"></i> ${location.votes.likes}
                         </span>
-                        <span style="color: #ef4444;">
+                        <span style="color: #f5c9b0;">
                             <i class="fas fa-thumbs-down"></i> ${location.votes.dislikes}
                         </span>
                     </div>
@@ -1340,6 +1252,7 @@ document.getElementById('planCitySelect').addEventListener('change', function() 
     console.log('✅ HTML injected into grid');
     console.log('════════════════════════════════════\n');
 });
+
 function togglePlanLocation(locationId) {
     console.log('🔄 Toggle plan location:', locationId);
     console.log('  Current selectedPlanLocations:', selectedPlanLocations);
@@ -1392,7 +1305,7 @@ function updatePlanLocationsList() {
         return `
             <span class="plan-location-tag">
                 ${location.name}
-                <button onclick="removePlanLocation(${locId}); event.stopPropagation();" style="background: none; border: none; color: #ef4444; cursor: pointer; margin-right: 0.5rem;">
+                <button onclick="removePlanLocation(${locId}); event.stopPropagation();" style="background: none; border: none; color: #f5c9b0; cursor: pointer; margin-right: 0.5rem;">
                     <i class="fas fa-times"></i>
                 </button>
             </span>
@@ -1467,7 +1380,7 @@ document.getElementById('savePlanBtn').addEventListener('click', () => {
                 estimatedTime: 'زمان تخمینی: 2 ساعت'
             };
         }),
-        votes: { likes: 0, dislikes: 0 },
+        votes: {likes: 0, dislikes: 0},
         userVote: null
     };
 
@@ -1721,7 +1634,7 @@ function updateExpense(expenseId) {
         const pId = parseInt(cb.value);
         const share = parseInt(document.getElementById(`share-${pId}`).value) || 0;
         if (share > 0) {
-            participantsData.push({ id: pId, share: share });
+            participantsData.push({id: pId, share: share});
             totalShares += share;
         }
     });
@@ -1733,7 +1646,7 @@ function updateExpense(expenseId) {
             confirmButtonText: 'باشه',
             confirmButtonColor: '#A6B28B',
             background: '#f0f0f0',
-            customClass: { popup: 'my-swal-popup', confirmButton: 'my-confirm-btn' }
+            customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
         });
         return;
     }
@@ -1754,7 +1667,7 @@ function updateExpense(expenseId) {
         confirmButtonText: 'عالی',
         confirmButtonColor: '#A6B28B',
         background: '#f0f0f0',
-        customClass: { popup: 'my-swal-popup', confirmButton: 'my-confirm-btn' }
+        customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
     });
 
     addExpenseModal.classList.remove('active');
@@ -1777,8 +1690,8 @@ function deleteExpense(expenseId) {
         showCancelButton: true,
         confirmButtonText: 'بله، حذف کن',
         cancelButtonText: 'انصراف',
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#A6B28B',
+        confirmButtonColor: '#f5c9b0',
+        cancelButtonColor: '#a6b28b',
         background: '#f0f0f0',
         customClass: {
             popup: 'my-swal-popup',
@@ -1789,15 +1702,6 @@ function deleteExpense(expenseId) {
         if (result.isConfirmed) {
             const index = expenses.findIndex(e => e.id === expenseId);
             expenses.splice(index, 1);
-
-            Swal.fire({
-                icon: 'success',
-                title: 'هزینه حذف شد',
-                confirmButtonText: 'باشه',
-                confirmButtonColor: '#A6B28B',
-                background: '#f0f0f0',
-                customClass: { popup: 'my-swal-popup', confirmButton: 'my-confirm-btn' }
-            });
 
             renderExpenses();
         }
@@ -1841,10 +1745,10 @@ function calculateSettlement() {
     const settlements = [];
     const debtors = Object.keys(balances)
         .filter(id => balances[id] < -0.01)
-        .map(id => ({ id: parseInt(id), amount: -balances[id] }));
+        .map(id => ({id: parseInt(id), amount: -balances[id]}));
     const creditors = Object.keys(balances)
         .filter(id => balances[id] > 0.01)
-        .map(id => ({ id: parseInt(id), amount: balances[id] }));
+        .map(id => ({id: parseInt(id), amount: balances[id]}));
 
     debtors.forEach(debtor => {
         creditors.forEach(creditor => {
@@ -1880,6 +1784,7 @@ function calculateSettlement() {
         </div>
     `).join('');
 }
+
 /* ================================================================
    13. ADD EXPENSE MODAL
    ================================================================ */
@@ -1952,7 +1857,7 @@ document.getElementById('saveExpenseBtn').addEventListener('click', () => {
         const pId = parseInt(cb.value);
         const share = parseInt(document.getElementById(`share-${pId}`).value) || 0;
         if (share > 0) {
-            participantsData.push({ id: pId, share: share });
+            participantsData.push({id: pId, share: share});
             totalShares += share;
         }
     });
@@ -1964,7 +1869,7 @@ document.getElementById('saveExpenseBtn').addEventListener('click', () => {
             confirmButtonText: 'باشه',
             confirmButtonColor: '#A6B28B',
             background: '#f0f0f0',
-            customClass: { popup: 'my-swal-popup', confirmButton: 'my-confirm-btn' }
+            customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
         });
         return;
     }
@@ -1976,7 +1881,7 @@ document.getElementById('saveExpenseBtn').addEventListener('click', () => {
             confirmButtonText: 'باشه',
             confirmButtonColor: '#A6B28B',
             background: '#f0f0f0',
-            customClass: { popup: 'my-swal-popup', confirmButton: 'my-confirm-btn' }
+            customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
         });
         return;
     }
@@ -1988,7 +1893,7 @@ document.getElementById('saveExpenseBtn').addEventListener('click', () => {
             confirmButtonText: 'باشه',
             confirmButtonColor: '#A6B28B',
             background: '#f0f0f0',
-            customClass: { popup: 'my-swal-popup', confirmButton: 'my-confirm-btn' }
+            customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
         });
         return;
     }
@@ -2010,7 +1915,7 @@ document.getElementById('saveExpenseBtn').addEventListener('click', () => {
         confirmButtonText: 'عالی',
         confirmButtonColor: '#A6B28B',
         background: '#f0f0f0',
-        customClass: { popup: 'my-swal-popup', confirmButton: 'my-confirm-btn' }
+        customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
     });
 
     addExpenseModal.classList.remove('active');
@@ -2087,12 +1992,22 @@ function openInviteFriendsModal() {
 function renderFriendsList() {
     // لیست دوستان (مثل my-trips)
     const friends = [
-        { id: 101, name: 'محمد رضایی', username: '@mohammad_r', avatar: 'https://randomuser.me/api/portraits/men/10.jpg' },
-        { id: 102, name: 'فاطمه احمدی', username: '@fateme_a', avatar: 'https://randomuser.me/api/portraits/women/11.jpg' },
-        { id: 103, name: 'علی کریمی', username: '@ali_karimi', avatar: 'https://randomuser.me/api/portraits/men/12.jpg' },
-        { id: 104, name: 'زهرا محمدی', username: '@zahra_m', avatar: 'https://randomuser.me/api/portraits/women/13.jpg' },
-        { id: 105, name: 'حسین جعفری', username: '@hosein_j', avatar: 'https://randomuser.me/api/portraits/men/14.jpg' },
-        { id: 106, name: 'نرگس حسینی', username: '@narges_h', avatar: 'https://randomuser.me/api/portraits/women/15.jpg' }
+        {
+            id: 101,
+            name: 'محمد رضایی',
+            username: '@mohammad_r',
+            avatar: 'https://randomuser.me/api/portraits/men/10.jpg'
+        },
+        {
+            id: 102,
+            name: 'فاطمه احمدی',
+            username: '@fateme_a',
+            avatar: 'https://randomuser.me/api/portraits/women/11.jpg'
+        },
+        {id: 103, name: 'علی کریمی', username: '@ali_karimi', avatar: 'https://randomuser.me/api/portraits/men/12.jpg'},
+        {id: 104, name: 'زهرا محمدی', username: '@zahra_m', avatar: 'https://randomuser.me/api/portraits/women/13.jpg'},
+        {id: 105, name: 'حسین جعفری', username: '@hosein_j', avatar: 'https://randomuser.me/api/portraits/men/14.jpg'},
+        {id: 106, name: 'نرگس حسینی', username: '@narges_h', avatar: 'https://randomuser.me/api/portraits/women/15.jpg'}
     ];
 
     // فیلتر کردن کسانی که قبلاً عضو هستند
@@ -2129,12 +2044,22 @@ function renderFriendsList() {
 
 function inviteFriend(friendId) {
     const friends = [
-        { id: 101, name: 'محمد رضایی', username: '@mohammad_r', avatar: 'https://randomuser.me/api/portraits/men/10.jpg' },
-        { id: 102, name: 'فاطمه احمدی', username: '@fateme_a', avatar: 'https://randomuser.me/api/portraits/women/11.jpg' },
-        { id: 103, name: 'علی کریمی', username: '@ali_karimi', avatar: 'https://randomuser.me/api/portraits/men/12.jpg' },
-        { id: 104, name: 'زهرا محمدی', username: '@zahra_m', avatar: 'https://randomuser.me/api/portraits/women/13.jpg' },
-        { id: 105, name: 'حسین جعفری', username: '@hosein_j', avatar: 'https://randomuser.me/api/portraits/men/14.jpg' },
-        { id: 106, name: 'نرگس حسینی', username: '@narges_h', avatar: 'https://randomuser.me/api/portraits/women/15.jpg' }
+        {
+            id: 101,
+            name: 'محمد رضایی',
+            username: '@mohammad_r',
+            avatar: 'https://randomuser.me/api/portraits/men/10.jpg'
+        },
+        {
+            id: 102,
+            name: 'فاطمه احمدی',
+            username: '@fateme_a',
+            avatar: 'https://randomuser.me/api/portraits/women/11.jpg'
+        },
+        {id: 103, name: 'علی کریمی', username: '@ali_karimi', avatar: 'https://randomuser.me/api/portraits/men/12.jpg'},
+        {id: 104, name: 'زهرا محمدی', username: '@zahra_m', avatar: 'https://randomuser.me/api/portraits/women/13.jpg'},
+        {id: 105, name: 'حسین جعفری', username: '@hosein_j', avatar: 'https://randomuser.me/api/portraits/men/14.jpg'},
+        {id: 106, name: 'نرگس حسینی', username: '@narges_h', avatar: 'https://randomuser.me/api/portraits/women/15.jpg'}
     ];
 
     const friend = friends.find(f => f.id === friendId);
@@ -2175,6 +2100,7 @@ function inviteFriend(friendId) {
         openInviteFriendsModal();
     }, 2600);
 }
+
 /* ================================================================
    15. END TRIP
    ================================================================ */
@@ -2184,7 +2110,7 @@ document.getElementById('endTripBtn').addEventListener('click', () => {
         title: 'پایان سفر',
         html: `
             <p>آیا مطمئن هستید که می‌خواهید این سفر را به پایان برسانید؟</p>
-            <p style="color: #ef4444; margin-top: 1rem;">
+            <p style="color: #f5c9b0; margin-top: 1rem;">
                 <i class="fas fa-exclamation-triangle"></i>
                 پس از پایان سفر، امکان ویرایش آن وجود نخواهد داشت
             </p>
@@ -2193,8 +2119,8 @@ document.getElementById('endTripBtn').addEventListener('click', () => {
         showCancelButton: true,
         confirmButtonText: 'بله، پایان دهید',
         cancelButtonText: 'انصراف',
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#A6B28B',
+        confirmButtonColor: '#f5c9b0',
+        cancelButtonColor: '#a6b28b',
         background: '#f0f0f0',
         customClass: {
             popup: 'my-swal-popup',
@@ -2252,19 +2178,19 @@ window.addEventListener('load', () => {
         {
             ...allLocationsData[0],
             userVote: null,
-            votes: { likes: 15, dislikes: 2 },
+            votes: {likes: 15, dislikes: 2},
             visited: false
         },
         {
             ...allLocationsData[1],
             userVote: null,
-            votes: { likes: 12, dislikes: 3 },
+            votes: {likes: 12, dislikes: 3},
             visited: false
         },
         {
             ...allLocationsData[2],
             userVote: null,
-            votes: { likes: 18, dislikes: 1 },
+            votes: {likes: 18, dislikes: 1},
             visited: false
         }
     ];
@@ -2279,10 +2205,10 @@ window.addEventListener('load', () => {
             day: 'روز اول',
             city: 'تهران',
             locations: [
-                { ...selectedLocations[0], estimatedTime: 'زمان تخمینی: 3 ساعت' },
-                { ...selectedLocations[1], estimatedTime: 'زمان تخمینی: 2 ساعت' }
+                {...selectedLocations[0], estimatedTime: 'زمان تخمینی: 3 ساعت'},
+                {...selectedLocations[1], estimatedTime: 'زمان تخمینی: 2 ساعت'}
             ],
-            votes: { likes: 10, dislikes: 1 },
+            votes: {likes: 10, dislikes: 1},
             userVote: null
         }
     ];
@@ -2296,10 +2222,10 @@ window.addEventListener('load', () => {
             amount: 500000,
             payerId: 1,
             participants: [
-                { id: 1, share: 125000 },
-                { id: 2, share: 125000 },
-                { id: 3, share: 125000 },
-                { id: 4, share: 125000 }
+                {id: 1, share: 125000},
+                {id: 2, share: 125000},
+                {id: 3, share: 125000},
+                {id: 4, share: 125000}
             ]
         },
         {
@@ -2309,10 +2235,10 @@ window.addEventListener('load', () => {
             amount: 200000,
             payerId: 2,
             participants: [
-                { id: 1, share: 50000 },
-                { id: 2, share: 50000 },
-                { id: 3, share: 50000 },
-                { id: 4, share: 50000 }
+                {id: 1, share: 50000},
+                {id: 2, share: 50000},
+                {id: 3, share: 50000},
+                {id: 4, share: 50000}
             ]
         }
     ];
@@ -2470,11 +2396,11 @@ function openInviteModal() {
 
 // داده‌های فیک برای جستجوی کاربران
 const allUsers = [
-    { id: 101, name: 'محمد رضایی', username: '@mohammad_r', avatar: 'https://randomuser.me/api/portraits/men/10.jpg' },
-    { id: 102, name: 'فاطمه احمدی', username: '@fateme_a', avatar: 'https://randomuser.me/api/portraits/women/11.jpg' },
-    { id: 103, name: 'علی کریمی', username: '@ali_karimi', avatar: 'https://randomuser.me/api/portraits/men/12.jpg' },
-    { id: 104, name: 'زهرا محمدی', username: '@zahra_m', avatar: 'https://randomuser.me/api/portraits/women/13.jpg' },
-    { id: 105, name: 'حسین جعفری', username: '@hosein_j', avatar: 'https://randomuser.me/api/portraits/men/14.jpg' },
+    {id: 101, name: 'محمد رضایی', username: '@mohammad_r', avatar: 'https://randomuser.me/api/portraits/men/10.jpg'},
+    {id: 102, name: 'فاطمه احمدی', username: '@fateme_a', avatar: 'https://randomuser.me/api/portraits/women/11.jpg'},
+    {id: 103, name: 'علی کریمی', username: '@ali_karimi', avatar: 'https://randomuser.me/api/portraits/men/12.jpg'},
+    {id: 104, name: 'زهرا محمدی', username: '@zahra_m', avatar: 'https://randomuser.me/api/portraits/women/13.jpg'},
+    {id: 105, name: 'حسین جعفری', username: '@hosein_j', avatar: 'https://randomuser.me/api/portraits/men/14.jpg'},
 ];
 
 function searchUsers(query) {
@@ -2576,3 +2502,74 @@ function inviteUser(userId) {
         }
     });
 }
+
+function initMobileMenu(){
+    const mobileMenuHTML = `
+        <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-menu-header">
+                <h3 style="color: white; margin: 0;">منو</h3>
+                <button class="mobile-menu-close" id="mobileMenuClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <nav class="mobile-menu-nav">
+                <a href="/index.html" class="mobile-menu-item">خانه</a>
+                <a href="/profile.html" class="mobile-menu-item">پروفایل من</a>
+                <a href="/trips/my-trips.html" class="mobile-menu-item active">سفرهای من</a>
+                <a href="/bookmarks.html" class="mobile-menu-item">بوک‌مارک‌ها</a>
+            </nav>
+        </div>
+    `;
+
+    // Inject mobile menu into DOM
+    document.body.insertAdjacentHTML('beforeend', mobileMenuHTML);
+
+    // Get menu elements
+    const menuToggle = document.querySelector('.menu-toggle-btn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+    const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+    /**
+     * Close mobile menu
+     * Removes active classes and restores body scroll
+     */
+    const closeMenu = () => {
+        mobileMenu.classList.remove('active');
+        mobileMenuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    };
+
+    // Open menu on toggle button click
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+            mobileMenuOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scroll
+        });
+    }
+
+    // Close menu on close button click
+    if (mobileMenuClose) {
+        mobileMenuClose.addEventListener('click', closeMenu);
+    }
+
+    // Close menu on overlay click
+    if (mobileMenuOverlay) {
+        mobileMenuOverlay.addEventListener('click', closeMenu);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM fully loaded'); // برای دیباگ
+    initMobileMenu();
+    initScrollAnimations();
+
+    setTimeout(() => {
+        if (!document.getElementById('mobileMenu')) {
+            console.log('Retrying mobile menu initialization...');
+            initMobileMenu();
+        }
+    }, 1000);
+});
