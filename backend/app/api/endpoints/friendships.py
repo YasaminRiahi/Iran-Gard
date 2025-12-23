@@ -200,7 +200,7 @@ def accept_request(
     return friendship
 
 
-@router.get("/", response_model=List[FriendshipInfoWithID])
+@router.get("", response_model=List[FriendshipInfoWithID])
 def get_friends(
         current_user: User = Depends(deps.get_current_user),
         db: Session = Depends(deps.get_db)
