@@ -12,7 +12,8 @@
   <script class="u-script" type="text/javascript" src="src/scripts/app.js" defer=""></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script type="module" src="src/scripts/services/check-login.js"></script>
+  <script type="module" src="/src/scripts/services/check-login.js"></script>
+  <script type="module" src="src/scripts/services/places/popular-places.js" defer></script>
 </head>
 
 <body data-home-page="Home-Page.html" data-home-page-title="Home Page" data-path-to-root="./"
@@ -125,46 +126,51 @@
   </section>
   <section class="u-clearfix u-section-2" id="carousel_eee5">
     <div class="u-clearfix u-sheet u-valign-middle-lg u-valign-middle-md u-valign-middle-xs u-sheet-1">
-      <div class="u-expanded-width u-list u-list-1">
+      <div dir="rtl" class="u-expanded-width u-list u-list-1">
         <div class="u-repeater u-repeater-1">
+
           <div
-            class="u-align-center u-container-align-center u-container-style u-hover-feature u-list-item u-radius-22 u-repeater-item u-shading u-shape-round u-list-item-1"
+            class="u-align-center u-container-align-center u-container-style u-hover-feature u-list-item u-radius-22 u-repeater-item u-shading u-shape-round u-list-item-4"
             data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-delay="0"
-            data-href="places/religious-places.html" data-page-id="212014895" title="Religious Places">
-            <div class="u-container-layout u-similar-container u-valign-middle u-container-layout-1"><span
-                class="u-align-center u-file-icon u-icon u-text-white u-icon-1"><img
-                  src="src/assets/images/19004259-2d2ef6d2.png" alt=""></span>
-              <h4 class="u-align-center u-custom-font u-text u-text-white u-text-1">مکان‌های مذهبی</h4>
+            data-href="/places/natural-places.html?category_id=1" data-page-id="24449494" title="Natural Places">
+            <div class="u-container-layout u-similar-container u-valign-middle u-container-layout-4"><span
+                class="u-align-center u-file-icon u-icon u-text-white u-icon-4"><img
+                  src="src/assets/images/46296-64c3a47f.png" alt=""></span>
+              <h4 class="u-align-center u-custom-font u-text u-text-white u-text-4">طبیعت​‌گر​​دی </h4>
             </div>
           </div>
-          <div
-            class="u-align-center u-container-align-center u-container-style u-hover-feature u-list-item u-radius-22 u-repeater-item u-shading u-shape-round u-list-item-2"
-            data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-delay="0"
-            data-href="places/entertainment-places.html" data-page-id="666422469" title="Entertainment Places">
-            <div class="u-container-layout u-similar-container u-valign-middle u-container-layout-2"><span
-                class="u-align-center u-file-icon u-icon u-text-white u-icon-2"><img
-                  src="src/assets/images/4578915-b3706098.png" alt=""></span>
-              <h4 class="u-align-center u-custom-font u-text u-text-white u-text-2">مکان‌های تجاری و تفریحی </h4>
-            </div>
-          </div>
+
           <div
             class="u-align-center u-container-align-center u-container-style u-hover-feature u-list-item u-radius-22 u-repeater-item u-shading u-shape-round u-list-item-3"
             data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-delay="0"
-            data-href="places/historical-places.html" data-page-id="45119448" title="Historical Places">
+            data-href="/places/historical-places.html?category_id=2" data-page-id="45119448" title="Historical Places">
             <div class="u-container-layout u-similar-container u-valign-middle u-container-layout-3"><span
                 class="u-align-center u-file-icon u-icon u-text-white u-icon-3"><img
                   src="src/assets/images/1871573-975f60af.png" alt=""></span>
               <h4 class="u-align-center u-custom-font u-text u-text-white u-text-3">بناهای تاریخی</h4>
             </div>
           </div>
+
           <div
-            class="u-align-center u-container-align-center u-container-style u-hover-feature u-list-item u-radius-22 u-repeater-item u-shading u-shape-round u-list-item-4"
+            class="u-align-center u-container-align-center u-container-style u-hover-feature u-list-item u-radius-22 u-repeater-item u-shading u-shape-round u-list-item-2"
             data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-delay="0"
-            data-href="places/natural-places.html" data-page-id="24449494" title="Natural Places">
-            <div class="u-container-layout u-similar-container u-valign-middle u-container-layout-4"><span
-                class="u-align-center u-file-icon u-icon u-text-white u-icon-4"><img
-                  src="src/assets/images/46296-64c3a47f.png" alt=""></span>
-              <h4 class="u-align-center u-custom-font u-text u-text-white u-text-4">طبیعت​‌گر​​دی </h4>
+            data-href="/places/entertainment-places.html?category_id=3" data-page-id="666422469"
+            title="Entertainment Places">
+            <div class="u-container-layout u-similar-container u-valign-middle u-container-layout-2"><span
+                class="u-align-center u-file-icon u-icon u-text-white u-icon-2"><img
+                  src="src/assets/images/4578915-b3706098.png" alt=""></span>
+              <h4 class="u-align-center u-custom-font u-text u-text-white u-text-2">مکان‌های تجاری و تفریحی </h4>
+            </div>
+          </div>
+
+          <div
+            class="u-align-center u-container-align-center u-container-style u-hover-feature u-list-item u-radius-22 u-repeater-item u-shading u-shape-round u-list-item-1"
+            data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-delay="0"
+            data-href="places/religious-places.html?category_id=4" data-page-id="212014895" title="Religious Places">
+            <div class="u-container-layout u-similar-container u-valign-middle u-container-layout-1"><span
+                class="u-align-center u-file-icon u-icon u-text-white u-icon-1"><img
+                  src="src/assets/images/19004259-2d2ef6d2.png" alt=""></span>
+              <h4 class="u-align-center u-custom-font u-text u-text-white u-text-1">مکان‌های مذهبی</h4>
             </div>
           </div>
         </div>
@@ -204,49 +210,14 @@
 
 
   </section>
-  <section class="u-align-center u-clearfix u-container-align-center u-custom-color-5 u-section-3" id="sec-3d1c">
-
+  <section dir="rtl" class="u-align-center u-clearfix u-container-align-center u-custom-color-5 u-section-3"
+    id="sec-3d1c">
     <div class="u-clearfix u-sheet u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-sheet-1">
       <h2 class="u-align-center u-custom-font u-text u-text-default u-text-1" data-animation-name="customAnimationIn"
         data-animation-duration="1500" data-animation-delay="0">مکان‌های محبوب ایران‌گرد</h2>
       <div class="u-expanded-width u-list u-list-1">
         <div class="u-repeater u-repeater-1">
-          <a href="places/each-place.html"
-            class="u-align-center u-container-align-center u-container-style u-image u-image-round u-list-item u-radius u-repeater-item u-shading u-shape-rectangle u-image-1"
-            data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500"
-            data-image-width="1280" data-image-height="853">
-            <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-1">
-              <div
-                class="u-black u-container-align-center u-container-style u-expanded-width u-group u-opacity u-opacity-50 u-radius u-shape-round u-group-1"
-                data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-direction=""
-                data-animation-delay="0">
-                <div class="u-container-layout u-valign-middle u-container-layout-2">
-                  <h4 class="u-align-center u-custom-font u-text u-text-2" data-animation-name="customAnimationIn"
-                    data-animation-duration="1250" data-animation-delay="0">مکان سه</h4>
-                  <p class="u-align-center u-custom-font u-text u-text-3" data-animation-name="customAnimationIn"
-                    data-animation-duration="1250" data-animation-delay="500"> &nbsp;توضیح توضیح توضیح توضیح توضیح</p>
-                </div>
-              </div>
-            </div>
-          </a>
-          <a href="places/each-place.html"
-            class="u-align-center u-container-align-center u-container-style u-image u-image-round u-list-item u-radius u-repeater-item u-shading u-shape-rectangle u-image-2"
-            data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500"
-            data-image-width="1280" data-image-height="1280">
-            <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-3">
-              <div
-                class="u-black u-container-style u-expanded-width u-group u-opacity u-opacity-50 u-radius u-shape-round u-group-2"
-                data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-direction=""
-                data-animation-delay="0">
-                <div class="u-container-layout u-valign-middle u-container-layout-4">
-                  <h4 class="u-align-center u-custom-font u-text u-text-4" data-animation-name="customAnimationIn"
-                    data-animation-duration="1250" data-animation-delay="0">مکان دو</h4>
-                  <p class="u-align-center u-custom-font u-text u-text-5" data-animation-name="customAnimationIn"
-                    data-animation-duration="1250" data-animation-delay="500"> &nbsp;توضیح توضیح توضیح توضیح توضیح</p>
-                </div>
-              </div>
-            </div>
-          </a>
+
           <a href="places/each-place.html"
             class="u-align-center u-container-align-center u-container-style u-image u-image-round u-list-item u-radius u-repeater-item u-shading u-shape-rectangle u-image-3"
             data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500"
@@ -267,42 +238,45 @@
               </div>
             </div>
           </a>
+
           <a href="places/each-place.html"
-            class="u-align-center u-container-align-center u-container-style u-image u-image-round u-list-item u-radius u-repeater-item u-shading u-shape-rectangle u-image-4"
+            class="u-align-center u-container-align-center u-container-style u-image u-image-round u-list-item u-radius u-repeater-item u-shading u-shape-rectangle u-image-2"
             data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500"
-            data-image-width="1024" data-image-height="1280">
-            <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-7">
+            data-image-width="1280" data-image-height="1280">
+            <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-3">
               <div
-                class="u-black u-container-style u-expanded-width u-group u-opacity u-opacity-50 u-radius u-shape-round u-group-4"
+                class="u-black u-container-style u-expanded-width u-group u-opacity u-opacity-50 u-radius u-shape-round u-group-2"
                 data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-direction=""
                 data-animation-delay="0">
-                <div class="u-container-layout u-valign-middle u-container-layout-8">
-                  <h4 class="u-align-center u-custom-font u-text u-text-8" data-animation-name="customAnimationIn"
-                    data-animation-duration="1250" data-animation-delay="0">مکان شش</h4>
-                  <p class="u-align-center u-custom-font u-text u-text-9" data-animation-name="customAnimationIn"
+                <div class="u-container-layout u-valign-middle u-container-layout-4">
+                  <h4 class="u-align-center u-custom-font u-text u-text-4" data-animation-name="customAnimationIn"
+                    data-animation-duration="1250" data-animation-delay="0">مکان دو</h4>
+                  <p class="u-align-center u-custom-font u-text u-text-5" data-animation-name="customAnimationIn"
                     data-animation-duration="1250" data-animation-delay="500"> &nbsp;توضیح توضیح توضیح توضیح توضیح</p>
                 </div>
               </div>
             </div>
           </a>
+
           <a href="places/each-place.html"
-            class="u-align-center u-container-align-center u-container-style u-image u-image-round u-list-item u-radius u-repeater-item u-shading u-shape-rectangle u-image-5"
+            class="u-align-center u-container-align-center u-container-style u-image u-image-round u-list-item u-radius u-repeater-item u-shading u-shape-rectangle u-image-1"
             data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500"
-            data-image-width="910" data-image-height="1280">
-            <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-9">
+            data-image-width="1280" data-image-height="853">
+            <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-1">
               <div
-                class="u-black u-container-style u-expanded-width u-group u-opacity u-opacity-50 u-radius u-shape-round u-group-5"
+                class="u-black u-container-align-center u-container-style u-expanded-width u-group u-opacity u-opacity-50 u-radius u-shape-round u-group-1"
                 data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-direction=""
                 data-animation-delay="0">
-                <div class="u-container-layout u-valign-middle u-container-layout-10">
-                  <h4 class="u-align-center u-custom-font u-text u-text-10" data-animation-name="customAnimationIn"
-                    data-animation-duration="1250" data-animation-delay="0">مکان پنج</h4>
-                  <p class="u-align-center u-custom-font u-text u-text-11" data-animation-name="customAnimationIn"
+                <div class="u-container-layout u-valign-middle u-container-layout-2">
+                  <h4 class="u-align-center u-custom-font u-text u-text-2" data-animation-name="customAnimationIn"
+                    data-animation-duration="1250" data-animation-delay="0">مکان سه</h4>
+                  <p class="u-align-center u-custom-font u-text u-text-3" data-animation-name="customAnimationIn"
                     data-animation-duration="1250" data-animation-delay="500"> &nbsp;توضیح توضیح توضیح توضیح توضیح</p>
                 </div>
               </div>
             </div>
           </a>
+
           <a href="places/each-place.html"
             class="u-align-center u-container-align-center u-container-style u-image u-image-round u-list-item u-radius u-repeater-item u-shading u-shape-rectangle u-image-6"
             data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500"
@@ -321,11 +295,50 @@
               </div>
             </div>
           </a>
+
+          <a href="places/each-place.html"
+            class="u-align-center u-container-align-center u-container-style u-image u-image-round u-list-item u-radius u-repeater-item u-shading u-shape-rectangle u-image-5"
+            data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500"
+            data-image-width="910" data-image-height="1280">
+            <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-9">
+              <div
+                class="u-black u-container-style u-expanded-width u-group u-opacity u-opacity-50 u-radius u-shape-round u-group-5"
+                data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-direction=""
+                data-animation-delay="0">
+                <div class="u-container-layout u-valign-middle u-container-layout-10">
+                  <h4 class="u-align-center u-custom-font u-text u-text-10" data-animation-name="customAnimationIn"
+                    data-animation-duration="1250" data-animation-delay="0">مکان پنج</h4>
+                  <p class="u-align-center u-custom-font u-text u-text-11" data-animation-name="customAnimationIn"
+                    data-animation-duration="1250" data-animation-delay="500"> &nbsp;توضیح توضیح توضیح توضیح توضیح</p>
+                </div>
+              </div>
+            </div>
+          </a>
+
+          <a href="places/each-place.html"
+            class="u-align-center u-container-align-center u-container-style u-image u-image-round u-list-item u-radius u-repeater-item u-shading u-shape-rectangle u-image-4"
+            data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500"
+            data-image-width="1024" data-image-height="1280">
+            <div class="u-container-layout u-similar-container u-valign-bottom u-container-layout-7">
+              <div
+                class="u-black u-container-style u-expanded-width u-group u-opacity u-opacity-50 u-radius u-shape-round u-group-4"
+                data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-direction=""
+                data-animation-delay="0">
+                <div class="u-container-layout u-valign-middle u-container-layout-8">
+                  <h4 class="u-align-center u-custom-font u-text u-text-8" data-animation-name="customAnimationIn"
+                    data-animation-duration="1250" data-animation-delay="0">مکان شش</h4>
+                  <p class="u-align-center u-custom-font u-text u-text-9" data-animation-name="customAnimationIn"
+                    data-animation-duration="1250" data-animation-delay="500"> &nbsp;توضیح توضیح توضیح توضیح توضیح</p>
+                </div>
+              </div>
+            </div>
+          </a>
+
         </div>
       </div>
     </div>
   </section>
-  <section class="u-align-center u-clearfix u-container-align-center u-section-4" id="carousel_fe59">
+  <section dir="rtl" class="u-align-center u-clearfix u-container-align-center u-section-4" id="carousel_fe59">
     <div
       class="u-clearfix u-sheet u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-sheet-1">
       <h2 class="u-align-center u-custom-font u-text u-text-1" data-animation-name="customAnimationIn"
@@ -347,11 +360,11 @@
                   class="u-align-right u-container-align-left u-container-align-right u-container-style u-layout-cell u-size-15 u-layout-cell-2"
                   data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="0"
                   data-animation-direction="">
-                  <div class="u-container-layout u-valign-middle u-container-layout-2">
-                    <h5 class="u-custom-font u-text u-text-2">سفر جدید ایجاد کن</h5>
-                    <p class="u-custom-font u-text u-text-3">توی سفر جدید مقصد مورد نظرت، جاذبه‌های اون شهر و گروهی<span
-                        style="font-style: normal;"><span style="font-style: italic;"><span
-                            style="font-style: normal;"></span></span></span> که میخوای باهاشون سفر بری رو انتخاب کن
+                  <div class="u-container-layout u-valign-middle u-container-layout-4">
+                    <h5 class="u-custom-font u-text u-text-4">پروفایل بساز</h5>
+                    <p class="u-custom-font u-text u-text-5">مکان‌هایی که بیشتر ع<span
+                        style="font-style: normal;"></span>لاقه داری رو انتخاب کن و همینطور دوستانت رو به پروفایلت اضافه
+                      کن
                     </p>
                   </div>
                 </div>
@@ -369,11 +382,11 @@
                   class="u-align-right u-container-align-left u-container-align-right u-container-style u-layout-cell u-size-15 u-layout-cell-4"
                   data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="0"
                   data-animation-direction="">
-                  <div class="u-container-layout u-valign-middle u-container-layout-4">
-                    <h5 class="u-custom-font u-text u-text-4">پروفایل بساز</h5>
-                    <p class="u-custom-font u-text u-text-5">مکان‌هایی که بیشتر ع<span
-                        style="font-style: normal;"></span>لاقه داری رو انتخاب کن و همینطور دوستانت رو به پروفایلت اضافه
-                      کن
+                  <div class="u-container-layout u-valign-middle u-container-layout-2">
+                    <h5 class="u-custom-font u-text u-text-2">سفر جدید ایجاد کن</h5>
+                    <p class="u-custom-font u-text u-text-3">توی سفر جدید مقصد مورد نظرت، جاذبه‌های اون شهر و گروهی<span
+                        style="font-style: normal;"><span style="font-style: italic;"><span
+                            style="font-style: normal;"></span></span></span> که میخوای باهاشون سفر بری رو انتخاب کن
                     </p>
                   </div>
                 </div>
@@ -384,10 +397,10 @@
                 <div
                   class="u-align-right u-container-align-left u-container-align-right u-container-style u-layout-cell u-size-15 u-layout-cell-5"
                   data-animation-name="customAnimationIn" data-animation-duration="1500">
-                  <div class="u-container-layout u-valign-middle u-container-layout-5">
-                    <h5 class="u-custom-font u-text u-text-6">هزینه‌ها رو اضافه کن </h5>
-                    <p class="u-custom-font u-text u-text-7">هرکس توی سفر هزینه پرداخت کرد میتونه اون رو توی بخش
-                      هزینه‌ها اضافه کنه تا در آخر سفر سهم هر کس مشخص بشه</p>
+                  <div class="u-container-layout u-valign-middle u-container-layout-7">
+                    <h5 class="u-custom-font u-text u-text-8">برنامه‌های گردشگری روزانه درست کن</h5>
+                    <p class="u-custom-font u-text u-text-9"> به همراه گروه دوستات تعدادی برنامه گردشگری برای هر روز
+                      ایجاد کن و به رای گیری بذار&nbsp;</p>
                   </div>
                 </div>
                 <div
@@ -404,10 +417,10 @@
                   class="u-align-right u-container-align-left u-container-align-right u-container-style u-layout-cell u-size-15 u-layout-cell-7"
                   data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="0"
                   data-animation-direction="">
-                  <div class="u-container-layout u-valign-middle u-container-layout-7">
-                    <h5 class="u-custom-font u-text u-text-8">برنامه‌های گردشگری روزانه درست کن</h5>
-                    <p class="u-custom-font u-text u-text-9"> به همراه گروه دوستات تعدادی برنامه گردشگری برای هر روز
-                      ایجاد کن و به رای گیری بذار&nbsp;</p>
+                  <div class="u-container-layout u-valign-middle u-container-layout-5">
+                    <h5 class="u-custom-font u-text u-text-6">هزینه‌ها رو اضافه کن </h5>
+                    <p class="u-custom-font u-text u-text-7">هرکس توی سفر هزینه پرداخت کرد میتونه اون رو توی بخش
+                      هزینه‌ها اضافه کنه تا در آخر سفر سهم هر کس مشخص بشه</p>
                   </div>
                 </div>
                 <div

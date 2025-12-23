@@ -58,6 +58,12 @@ class Settings(BaseSettings):
     # API Documentation
     API_DOCS_ENABLED: bool = True
 
+    # Grok AI / LLM Configuration
+    GROQ_API_KEY: str = "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"
+    LLM_MODEL: str = "openai/gpt-oss-120b"
+    LLM_ENABLED: bool = False
+    LLM_PROXY: str = ""
+
     @property
     def DATABASE_URL(self) -> str:
         """Construct DATABASE_URL from components."""

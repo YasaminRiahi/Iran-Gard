@@ -1,0 +1,4 @@
+{base_prompt}
+
+درباره وبسایت ما:
+{context}

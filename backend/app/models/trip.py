@@ -1,57 +1,39 @@
-from sqlalchemy import Column, BigInteger, String, ForeignKey, Date, TIMESTAMP, Enum, CheckConstraint
-from sqlalchemy.sql import func
 import enum
+from sqlalchemy import Column, BigInteger, String, Date, ForeignKey, Enum, ARRAY, DateTime
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 from app.db.session import Base
 
-
 class TripStatus(str, enum.Enum):
-    planning = "planning"
-    finished = "finished"
+    ONGOING = "ongoing"
+    COMPLETED = "completed"
 
+class InvitationStatus(str, enum.Enum):
+    PENDING = "pending"
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
 
 class Trip(Base):
     __tablename__ = "trips"
-
     trip_id = Column(BigInteger, primary_key=True, index=True, autoincrement=True)
-    creator_id = Column(BigInteger, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
-    trip_title = Column(String(200), nullable=False)
-    start_date = Column(Date)
-    end_date = Column(Date)
-    status = Column(Enum(TripStatus), default=TripStatus.planning)
-    created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
+    owner_id = Column(BigInteger, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    start_date = Column(Date, nullable=False)
+    end_date = Column(Date, nullable=False)
+    status = Column(Enum(TripStatus), default=TripStatus.ONGOING)
+    cover_image = Column(String(500), nullable=True, default="/static/images/genders/Male.png")
+    city_names = Column(ARRAY(String), default=[])
+    place_ids = Column(ARRAY(BigInteger), default=[])
 
-    __table_args__ = (
-        CheckConstraint('end_date >= start_date', name='check_end_date_after_start'),
-    )
-
-
-class TripCity(Base):
-    __tablename__ = "trip_cities"
-
-    trip_id = Column(BigInteger, ForeignKey("trips.trip_id", ondelete="CASCADE"), primary_key=True)
-    city_name = Column(String(100), ForeignKey("cities.city_name", ondelete="CASCADE"), primary_key=True)
-
-
-class TripMember(Base):
-    __tablename__ = "trip_members"
-
+class TripParticipant(Base):
+    __tablename__ = "trip_participants"
     trip_id = Column(BigInteger, ForeignKey("trips.trip_id", ondelete="CASCADE"), primary_key=True)
     user_id = Column(BigInteger, ForeignKey("users.user_id", ondelete="CASCADE"), primary_key=True)
-    joined_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
-
 
 class TripInvitation(Base):
     __tablename__ = "trip_invitations"
-
-    trip_id = Column(BigInteger, ForeignKey("trips.trip_id", ondelete="CASCADE"), primary_key=True)
-    inviter_id = Column(BigInteger, ForeignKey("users.user_id"), nullable=False)
-    invitee_id = Column(BigInteger, ForeignKey("users.user_id"), primary_key=True)
-    invited_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
-
-
-class TripPlace(Base):
-    __tablename__ = "trip_places"
-
-    trip_id = Column(BigInteger, ForeignKey("trips.trip_id", ondelete="CASCADE"), primary_key=True)
-    place_id = Column(BigInteger, ForeignKey("places.place_id", ondelete="CASCADE"), primary_key=True)
-
+    invitation_id = Column(BigInteger, primary_key=True, index=True, autoincrement=True)
+    trip_id = Column(BigInteger, ForeignKey("trips.trip_id", ondelete="CASCADE"))
+    sender_id = Column(BigInteger, ForeignKey("users.user_id", ondelete="CASCADE"))
+    receiver_id = Column(BigInteger, ForeignKey("users.user_id", ondelete="CASCADE"))
+    status = Column(Enum(InvitationStatus), default=InvitationStatus.PENDING)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

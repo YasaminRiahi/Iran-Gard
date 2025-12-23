@@ -1,10 +1,11 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func as sql_func
+from sqlalchemy import func as sql_func, desc as sql_desc, asc as sql_asc
 from app.models.place import Place, PlacePhoto, PlaceReview, LikedReview, Wishlist
 from app.schemas.place import (
     PlaceCreate,
     PlaceDetailResponse,
     PlaceLocation,
+    PlaceResponse,
 )
 from typing import List, Optional
 
@@ -32,7 +33,7 @@ def get_place_detail(
 ) -> Optional[PlaceDetailResponse]:
     """
     Get detailed place information for the API response.
-    Includes avg_rating, is_bookmarked status, and photo URLs.
+    Includes all place fields, avg_rating, is_bookmarked status, and photo URLs.
     """
     place = db.query(Place).filter(Place.place_id == place_id).first()
     if not place:
@@ -63,6 +64,9 @@ def get_place_detail(
         .all()
     )
     picture_urls = [photo.url for photo in photos]
+    
+    # Get first photo URL
+    first_picture_url = picture_urls[0] if picture_urls else None
 
     # Parse location
     location = None
@@ -79,37 +83,126 @@ def get_place_detail(
         title=place.place_name,
         description=place.description,
         location=location,
+        city_name=place.city_name,
+        province_name=place.province_name,
+        category_id=place.category_id,
         avg_rating=round(float(avg_rating), 2) if avg_rating else None,
-        review_summary=None,  # Placeholder for future AI-generated summary
         is_bookmarked=is_bookmarked,
         picture_urls=picture_urls,
     )
 
+def get_places_filtered(
+    db: Session,
+    city_name: Optional[str] = None,
+    province_name: Optional[str] = None,
+    category_id: Optional[int] = None,
+    skip: int = 0,
+    limit: int = 100,
+    sort_by: str = "name",
+    sort_order: str = "asc",
+) -> List[dict]:
+    """
+    Get places with flexible filtering in a SINGLE optimized query.
+    All provided filters are applied with AND logic.
 
-def get_places_by_city(
-    db: Session, city_name: str, skip: int = 0, limit: int = 100
-) -> List[Place]:
-    """Get all places in a city."""
-    return (
-        db.query(Place)
-        .filter(Place.city_name == city_name)
-        .offset(skip)
-        .limit(limit)
-        .all()
+    Includes avg_rating and first_picture_url in a single query using:
+    - LEFT JOIN with PlaceReview for ratings aggregation
+    - LEFT JOIN with PlacePhoto (ordered by photo_num) for first photo
+
+    Args:
+        db: Database session
+        city_name: Optional city name to filter by
+        province_name: Optional province name to filter by
+        category_id: Optional category ID to filter by
+        skip: Number of records to skip (pagination)
+        limit: Maximum number of results
+        sort_by: Field to sort by ('name', 'rating', 'city')
+        sort_order: Sort order ('asc' or 'desc')
+
+    Returns:
+        List of place dictionaries with avg_rating and first_picture_url
+    """
+
+    # Build base query with JOINs for ratings and photos
+    # We use outerjoin to get all places even without reviews or photos
+    base_query = (
+        db.query(
+            Place.place_id,
+            Place.place_name,
+            Place.city_name,
+            Place.province_name,
+            Place.place_location,
+            Place.description,
+            Place.category_id,
+            sql_func.avg(PlaceReview.rating).label("avg_rating"),
+            sql_func.min(PlacePhoto.url).label(
+                "first_picture_url"
+            ),  # MIN to get consistent ordering
+        )
+        .outerjoin(PlaceReview, Place.place_id == PlaceReview.place_id)
+        .outerjoin(PlacePhoto, Place.place_id == PlacePhoto.place_id)
     )
 
+    # Apply filters (AND logic)
+    if city_name:
+        base_query = base_query.filter(Place.city_name == city_name)
+    if province_name:
+        base_query = base_query.filter(Place.province_name == province_name)
+    if category_id is not None:
+        base_query = base_query.filter(Place.category_id == category_id)
 
-def get_places_by_category(
-    db: Session, category_id: int, skip: int = 0, limit: int = 100
-) -> List[Place]:
-    """Get all places in a category."""
-    return (
-        db.query(Place)
-        .filter(Place.category_id == category_id)
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
+    # Group by place to aggregate ratings and photos
+    base_query = base_query.group_by(Place.place_id)
+
+    # Apply sorting
+    if sort_by == "name":
+        column = Place.place_name
+    elif sort_by == "city":
+        column = Place.city_name
+    elif sort_by == "rating":
+        column = sql_func.avg(PlaceReview.rating)
+    else:
+        column = Place.place_name
+
+    if sort_order == "desc":
+        base_query = base_query.order_by(sql_desc(column).nulls_last())
+    else:
+        base_query = base_query.order_by(sql_asc(column).nulls_last())
+
+    # Apply pagination
+    base_query = base_query.offset(skip).limit(limit)
+
+    # Execute query and build responses
+    results = base_query.all()
+
+    responses = []
+    for row in results:
+        avg_rating = round(float(row.avg_rating), 2) if row.avg_rating else None
+
+        # Parse location
+        location = None
+        if row.place_location:
+            try:
+                location = PlaceLocation(
+                    lat=row.place_location.get("lat"), lng=row.place_location.get("lng")
+                )
+            except (TypeError, KeyError):
+                pass
+
+        response = {
+            "place_id": row.place_id,
+            "place_name": row.place_name,
+            "city_name": row.city_name,
+            "province_name": row.province_name,
+            "place_location": location,
+            "description": row.description,
+            "category_id": row.category_id,
+            "first_picture_url": row.first_picture_url,
+            "avg_rating": avg_rating,
+        }
+        responses.append(response)
+
+    return responses
 
 
 def get_places_by_user_preferences(

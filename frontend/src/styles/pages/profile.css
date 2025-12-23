@@ -155,14 +155,14 @@ body {
 /* Main Header Container */
 .main-header {
     width: 100%;
-    height: 90px;
+    height: 95px;
     position: fixed;
     top: 1.4rem;
     left: 0;
     right: 0;
     z-index: 100;
     transition: all 0.4s ease-in-out;
-    background: rgba(153, 153, 153, 0.6);
+    background: rgba(153, 153, 153, 0.75);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
 }

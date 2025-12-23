@@ -28,6 +28,13 @@ class FriendRemovalResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class FriendCancelResponse(BaseModel):
+    """Schema for friend request response."""
+    status: bool
+
+    class Config:
+        from_attributes = True
+
 class FriendInfo(BaseModel):
     """Schema for friend information."""
     user_id: int
@@ -52,7 +59,15 @@ class FriendshipInfoWithID(BaseModel):
     class Config:
         from_attributes = True
 
+class FriendInviteDetail(BaseModel):
+    """Schema for friend information."""
+    user_id: int
+    username: str
+    full_name: Optional[str]
+    profile_url: str
 
+    class Config:
+        from_attributes = True
 
 
 
