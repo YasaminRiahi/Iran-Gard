@@ -125,6 +125,10 @@
         font-size: 2.25rem;
     }
 
+    .place-title {
+        font-size: 2rem !important;
+    }
+
     .u-section-1 .u-btn-1 {
         width: 241px;
         margin-right: 11px;
