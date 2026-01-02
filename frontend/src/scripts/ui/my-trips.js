@@ -1,185 +1,43 @@
-/* ================================================================
-   MY TRIPS PAGE - JAVASCRIPT (WITH WORKING DATE PICKER)
-   ================================================================ */
-/* ================================================================
-   1. PAGE LOAD & SCROLL MANAGEMENT
-   ================================================================ */
+import {
+    getFinishedTrips,
+    getOngoingTrips,
+    createTrip,
+    inviteFriend,
+    getMyInvitations,
+    getAvailableFriends,
+    getCitiesWithCounts,
+    getCityPlaces,
+    buildTripPayload,
+    validateTripData
+} from '/src/scripts/services/trips-service.js';
 
-/**
- * Force scroll to top before page unload
- * Prevents browser from remembering scroll position
- */
-window.addEventListener('beforeunload', function () {
-    window.scrollTo(0, 0);
-});
+// ============ Global Variables ============
+let selectedStartDate = null;
+let selectedEndDate = null;
+let selectedCities = []; // Array of city names
+let selectedLocations = []; // Array of place IDs
+let selectedFriends = []; // Array of friend IDs
+let createdTripId = null;
+let citiesData = {}; // Cache for cities and their places
+
+// ============ Page Load & Scroll Management ============
+window.addEventListener('beforeunload', () => window.scrollTo(0, 0));
 
 if (history.scrollRestoration) {
     history.scrollRestoration = 'manual';
-} else {
-    window.onbeforeunload = function () {
-        window.scrollTo(0, 0);
-    }
-}
-
-function initScrollAnimations() {
-    const animatedElements = document.querySelectorAll('[data-animate]');
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('animate-active');
-            } else {
-                entry.target.classList.remove('animate-active');
-            }
-        });
-    }, {
-        threshold: 0.1 // Trigger when 10% of element is visible
-    });
-
-    // Observe all elements with data-animate attribute
-    animatedElements.forEach(element => {
-        observer.observe(element);
-    });
 }
 
 window.addEventListener('scroll', () => {
     const header = document.querySelector('.main-header');
     const currentScroll = window.pageYOffset;
-
     if (currentScroll > 25) {
         header.classList.add('hide');
     } else {
         header.classList.remove('hide');
     }
 });
-// ============ داده‌های Fake ============
 
-const fakeCitiesData = {
-    shiraz: [
-        {
-            id: 1,
-            name: 'ارگ کریم‌خان',
-            category: 'تاریخی',
-            city: 'shiraz',
-            image: '../src/assets/images/man-walking-stone-pathway-surrou.jpg',
-            description: 'بنای تاریخی دوره زندیه'
-        },
-        {
-            id: 2,
-            name: 'باغ ارم',
-            category: 'طبیعت',
-            city: 'shiraz',
-            image: '../src/assets/images/45677.jpg',
-            description: 'باغ زیبای تاریخی'
-        },
-        {
-            id: 3,
-            name: 'حافظیه',
-            category: 'فرهنگی',
-            city: 'shiraz',
-            image: '../src/assets/images/88bfd4e9d10d431265e291bc107e47d7.jpg',
-            description: 'آرامگاه حافظ شیرازی'
-        },
-        {
-            id: 4,
-            name: 'تخت جمشید',
-            category: 'تاریخی',
-            city: 'shiraz',
-            image: '../src/assets/images/man-walking-stone-pathway-surrou.jpg',
-            description: 'پایتخت هخامنشیان'
-        }
-    ],
-    isfahan: [
-        {
-            id: 5,
-            name: 'میدان نقش جهان',
-            category: 'تاریخی',
-            city: 'isfahan',
-            image: '../src/assets/images/45677.jpg',
-            description: 'میدان تاریخی صفویه'
-        },
-        {
-            id: 6,
-            name: 'سی‌و‌سه‌پل',
-            category: 'تاریخی',
-            city: 'isfahan',
-            image: '../src/assets/images/man-walking-stone-pathway-surrou.jpg',
-            description: 'پل زیبای تاریخی'
-        },
-        {
-            id: 7,
-            name: 'کاخ چهلستون',
-            category: 'تاریخی',
-            city: 'isfahan',
-            image: '../src/assets/images/88bfd4e9d10d431265e291bc107e47d7.jpg',
-            description: 'کاخ صفویه'
-        }
-    ],
-    tehran: [
-        {
-            id: 8,
-            name: 'برج میلاد',
-            category: 'تجاری',
-            city: 'tehran',
-            image: '../src/assets/images/88bfd4e9d10d431265e291bc107e47d7.jpg',
-            description: 'برج مخابراتی تهران'
-        },
-        {
-            id: 9,
-            name: 'کاخ گلستان',
-            category: 'تاریخی',
-            city: 'tehran',
-            image: '../src/assets/images/man-walking-stone-pathway-surrou.jpg',
-            description: 'کاخ قاجاری'
-        },
-        {
-            id: 10,
-            name: 'توچال',
-            category: 'طبیعت',
-            city: 'tehran',
-            image: '../src/assets/images/45677.jpg',
-            description: 'تله‌کابین و پیست اسکی'
-        }
-    ]
-};
-
-const fakeFriendsData = [
-    {
-        id: 1,
-        name: 'حسین کاظمی',
-        username: '@hosein_k',
-        avatar: 'https://randomuser.me/api/portraits/men/1.jpg'
-    },
-    {
-        id: 2,
-        name: 'زهرا احمدی',
-        username: '@zahra_a',
-        avatar: 'https://randomuser.me/api/portraits/women/2.jpg'
-    },
-    {
-        id: 3,
-        name: 'علی رضایی',
-        username: '@ali_r',
-        avatar: 'https://randomuser.me/api/portraits/men/3.jpg'
-    },
-    {
-        id: 4,
-        name: 'مینا جعفری',
-        username: '@mina_j',
-        avatar: 'https://randomuser.me/api/portraits/women/4.jpg'
-    }
-];
-
-// ============ متغیرهای سراسری ============
-
-let selectedStartDate = null;
-let selectedEndDate = null;
-let selectedCities = [];
-let selectedLocations = [];
-let selectedFriends = [];
-
-// ============ تب‌های صفحه ============
-
+// ============ Tab Management ============
 const tabButtons = document.querySelectorAll('.tab-button');
 const tabContents = document.querySelectorAll('.tab-content');
 const indicator = document.getElementById('indicator');
@@ -188,7 +46,6 @@ function updateIndicator(button) {
     const buttonRect = button.getBoundingClientRect();
     const containerRect = button.parentElement.getBoundingClientRect();
     const left = buttonRect.left - containerRect.left;
-
     indicator.style.width = buttonRect.width + 'px';
     indicator.style.left = left + 'px';
 }
@@ -202,75 +59,242 @@ function switchTab(targetTab) {
     document.getElementById(targetTab).classList.remove('hidden');
 
     updateIndicator(activeButton);
+
+    // بارگذاری داده‌ها
+    if (targetTab === 'past-trips') loadFinishedTripsData();
+    else if (targetTab === 'current-trips') loadOngoingTripsData();
+    else if (targetTab === 'trip-requests') loadInvitationsData();
 }
 
 tabButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        switchTab(btn.dataset.tab);
-    });
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
 });
 
 window.addEventListener('load', () => {
     const activeButton = document.querySelector('.tab-button.active');
-    if (activeButton) {
-        updateIndicator(activeButton);
+    if (activeButton) updateIndicator(activeButton);
+});
+
+// ============ Helper Functions ============
+function showLoading(tabId) {
+    const tab = document.getElementById(tabId);
+    const grid = tab.querySelector('.trips-grid, .requests-grid');
+    if (grid) {
+        grid.innerHTML = `
+            <div class="loading-state" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                <div class="spinner"></div>
+                <p style="margin-top: 1rem; color: var(--color-text-medium);">در حال بارگذاری...</p>
+            </div>
+        `;
     }
-});
+}
 
-// ============ Trip Requests Actions ============
+function hideLoading(tabId) {
+    const tab = document.getElementById(tabId);
+    const loading = tab?.querySelector('.loading-state');
+    if (loading) loading.remove();
+}
 
-document.querySelectorAll('.btn-accept').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const card = this.closest('.request-card');
-        Swal.fire({
-            icon: 'success',
-            title: 'درخواست پذیرفته شد!',
-            text: 'این سفر به لیست سفرهای جاری شما اضافه شد',
-            confirmButtonText: 'باشه',
-            confirmButtonColor: '#A6B28B',
-            background: '#f0f0f0',
-            color: '#4b5563',
-            customClass: {
-                popup: 'my-swal-popup',
-                confirmButton: 'my-confirm-btn',
-                cancelButton: 'my-cancel-btn'
-            },
-        }).then(() => {
-            card.style.animation = 'slideOut 0.4s ease forwards';
-            setTimeout(() => card.remove(), 400);
+function showError(tabId, message) {
+    const tab = document.getElementById(tabId);
+    const grid = tab.querySelector('.trips-grid, .requests-grid');
+    if (grid) {
+        grid.innerHTML = `
+            <div class="error-state" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #f5c9b0; margin-bottom: 1rem;"></i>
+                <h3 style="color: var(--color-text-dark); margin-bottom: 0.5rem;">خطا در بارگذاری</h3>
+                <p style="color: var(--color-text-medium);">${message}</p>
+            </div>
+        `;
+    }
+}
+
+function convertToJalali(gregorianDate) {
+    if (!gregorianDate) return 'نامشخص';
+    try {
+        if (typeof persianDate !== 'undefined') {
+            const pDate = new persianDate(new Date(gregorianDate));
+            return pDate.format('DD MMMM YYYY');
+        }
+        return new Intl.DateTimeFormat('fa-IR').format(new Date(gregorianDate));
+    } catch (error) {
+        return gregorianDate;
+    }
+}
+
+// ============ Create Trip Card ============
+function createTripCard(trip, type = 'finished') {
+    const card = document.createElement('div');
+    card.className = 'trip-card';
+    if (type === 'current') card.classList.add('current');
+
+    const startDate = convertToJalali(trip.start_date);
+    const endDate = convertToJalali(trip.end_date);
+    const cities = trip.city_names?.join('، ') || 'نامشخص';
+    const placesCount = trip.place_ids?.length || 0;
+    const coverImage = trip.cover_image || '../src/assets/images/default-trip.jpg';
+
+    card.innerHTML = `
+        ${type === 'current' ? '<div class="current-badge">در حال انجام</div>' : ''}
+        <img src="${coverImage}" class="trip-image" alt="${cities}" 
+             onerror="this.src='../src/assets/images/default-trip.jpg'">
+        <div class="trip-details">
+            <h3 class="trip-title">سفر به ${cities}</h3>
+            <p class="trip-date"><i class="fas fa-calendar"></i> ${startDate} تا ${endDate}</p>
+            <p class="trip-locations"><i class="fas fa-map-marker-alt"></i> 
+                ${placesCount} مکان ${type === 'finished' ? 'بازدید شده' : 'انتخاب شده'}
+            </p>
+        </div>
+        <div class="trip-actions">
+            ${type === 'finished' ? `
+                <button class="btn-view" data-trip-id="${trip.trip_id}">
+                    <i class="fas fa-eye"></i>
+                </button>
+            ` : `
+                <button class="btn-edit" data-trip-id="${trip.trip_id}">
+                    <i class="fas fa-edit"></i>
+                </button>
+            `}
+        </div>
+    `;
+    return card;
+}
+
+// ============ Load Finished Trips ============
+async function loadFinishedTripsData() {
+    try {
+        showLoading('past-trips');
+        const response = await getFinishedTrips();
+        const trips = response.data || response;
+
+        const tripsGrid = document.querySelector('#past-trips .trips-grid');
+        tripsGrid.innerHTML = '';
+
+        if (!trips || trips.length === 0) {
+            tripsGrid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-suitcase-rolling"></i>
+                    <h3>هنوز سفر گذشته‌ای ندارید</h3>
+                    <p>سفرهای انجام شده شما اینجا نمایش داده می‌شود</p>
+                </div>
+            `;
+            return;
+        }
+
+        trips.forEach(trip => {
+            const card = createTripCard(trip, 'finished');
+            tripsGrid.appendChild(card);
         });
-    });
-});
 
-document.querySelectorAll('.btn-reject').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const card = this.closest('.request-card');
-        Swal.fire({
-            icon: 'question',
-            text: 'آیا مطمئن هستید که می‌خواهید این درخواست را رد کنید؟',
-            showCancelButton: true,
-            confirmButtonText: 'بله، رد کن',
-            cancelButtonText: 'انصراف',
-            confirmButtonColor: '#f5c9b0',
-            cancelButtonColor: '#a6b28b',
-            background: '#f0f0f0',
-            color: '#4b5563',
-            customClass: {
-                popup: 'my-swal-popup',
-                confirmButton: 'my-confirm-btn',
-                cancelButton: 'my-cancel-btn'
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                card.style.animation = 'slideOut 0.4s ease forwards';
-                setTimeout(() => card.remove(), 400);
-            }
+        // Event listeners
+        document.querySelectorAll('#past-trips .btn-view').forEach(btn => {
+            btn.addEventListener('click', () => viewTrip(btn.dataset.tripId));
         });
-    });
-});
 
-// ============ Modal Management ============
+        console.log(`✅ ${trips.length} finished trips loaded`);
+    } catch (error) {
+        console.error('Error loading finished trips:', error);
+        showError('past-trips', 'خطا در بارگذاری سفرها');
+    } finally {
+        hideLoading('past-trips');
+    }
+}
 
+// ============ Load Ongoing Trips ============
+async function loadOngoingTripsData() {
+    try {
+        showLoading('current-trips');
+        const response = await getOngoingTrips();
+        const trips = response.data || response;
+
+        const tripsGrid = document.querySelector('#current-trips .trips-grid');
+        tripsGrid.innerHTML = '';
+
+        if (!trips || trips.length === 0) {
+            tripsGrid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-suitcase-rolling"></i>
+                    <h3>سفر جاری دیگری ندارید</h3>
+                    <p>برای ایجاد سفر جدید به تب "ایجاد سفر" بروید</p>
+                </div>
+            `;
+            return;
+        }
+
+        trips.forEach(trip => {
+            const card = createTripCard(trip, 'current');
+            tripsGrid.appendChild(card);
+        });
+
+        // Event listeners
+        document.querySelectorAll('#current-trips .btn-edit').forEach(btn => {
+            btn.addEventListener('click', () => editTrip(btn.dataset.tripId));
+        });
+
+        console.log(`✅ ${trips.length} ongoing trips loaded`);
+    } catch (error) {
+        console.error('Error loading ongoing trips:', error);
+        showError('current-trips', 'خطا در بارگذاری سفرها');
+    } finally {
+        hideLoading('current-trips');
+    }
+}
+
+// ============ Load Invitations ============
+async function loadInvitationsData() {
+    try {
+        showLoading('trip-requests');
+        const response = await getMyInvitations();
+        const invitations = response.data || response;
+
+        const requestsGrid = document.querySelector('#trip-requests .requests-grid');
+        requestsGrid.innerHTML = '';
+
+        const pendingInvitations = invitations.filter(inv => inv.status === 'pending');
+
+        if (!pendingInvitations || pendingInvitations.length === 0) {
+            requestsGrid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-envelope-open"></i>
+                    <h3>درخواست جدیدی ندارید</h3>
+                    <p>دعوت‌های سفر شما اینجا نمایش داده می‌شود</p>
+                </div>
+            `;
+            updateInvitationsBadge(0);
+            return;
+        }
+
+        // TODO: باید اطلاعات کامل سفر از API بگیری
+        // فعلاً فقط invitation_id داریم
+
+        updateInvitationsBadge(pendingInvitations.length);
+        console.log(`✅ ${pendingInvitations.length} invitations loaded`);
+    } catch (error) {
+        console.error('Error loading invitations:', error);
+        showError('trip-requests', 'خطا در بارگذاری درخواست‌ها');
+    } finally {
+        hideLoading('trip-requests');
+    }
+}
+
+function updateInvitationsBadge(count) {
+    const badge = document.querySelector('[data-tab="trip-requests"] .badge');
+    if (badge) {
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'inline-block' : 'none';
+    }
+}
+
+// ============ Navigation Functions ============
+function viewTrip(tripId) {
+    window.location.href = `/trips/each-trip.html?id=${tripId}`;
+}
+
+function editTrip(tripId) {
+    window.location.href = `/trips/trip-management.html?id=${tripId}`;
+}
+
+// ============ Create Trip Modal ============
 const modal = document.getElementById('createTripModal');
 const openModalBtn = document.getElementById('openCreateTripModal');
 const closeModalBtn = document.getElementById('closeModal');
@@ -278,20 +302,12 @@ const closeModalBtn = document.getElementById('closeModal');
 openModalBtn.addEventListener('click', () => {
     modal.classList.add('active');
     resetModal();
-    // تاخیر کوتاه برای اطمینان از رندر شدن DOM
-    setTimeout(() => {
-        initializeDatePickers();
-    }, 100);
+    setTimeout(() => initializeDatePickers(), 100);
 });
 
-closeModalBtn.addEventListener('click', () => {
-    modal.classList.remove('active');
-});
-
+closeModalBtn.addEventListener('click', () => modal.classList.remove('active'));
 window.addEventListener('click', (e) => {
-    if (e.target === modal) {
-        modal.classList.remove('active');
-    }
+    if (e.target === modal) modal.classList.remove('active');
 });
 
 function resetModal() {
@@ -300,6 +316,7 @@ function resetModal() {
     selectedCities = [];
     selectedLocations = [];
     selectedFriends = [];
+    createdTripId = null;
     showStep(0);
 
     $('#startDate').val('');
@@ -315,8 +332,6 @@ function resetModal() {
     updateSelectedCitiesBar();
 }
 
-// ============ Step Navigation ============
-
 function showStep(stepNumber) {
     document.querySelectorAll('.step').forEach(step => {
         step.classList.remove('active');
@@ -324,10 +339,8 @@ function showStep(stepNumber) {
     document.getElementById(`step${stepNumber}`).classList.add('active');
 }
 
-// ============ Step 0: Date Picker با Persian Datepicker ============
-
+// ============ Step 0: Date Picker ============
 function initializeDatePickers() {
-    // تقویم شروع
     $('#startDate').persianDatepicker({
         format: 'YYYY/MM/DD',
         initialValue: false,
@@ -345,7 +358,6 @@ function initializeDatePickers() {
         }
     });
 
-    // تقویم پایان
     $('#endDate').persianDatepicker({
         format: 'YYYY/MM/DD',
         initialValue: false,
@@ -391,44 +403,80 @@ document.getElementById('continueToStep1').addEventListener('click', () => {
                 icon: 'warning',
                 text: 'تاریخ پایان باید بعد از تاریخ شروع باشد',
                 confirmButtonText: 'باشه',
-                confirmButtonColor: '#a6b28b',
-                background: '#f0f0f0',
-                color: '#4b5563',
-                customClass: {
-                    popup: 'my-swal-popup',
-                    confirmButton: 'my-confirm-btn',
-                    cancelButton: 'my-cancel-btn'
-                },
+                confirmButtonColor: '#a6b28b'
             });
             return;
         }
-
+        loadCitiesForSelection();
         showStep(1);
     }
 });
 
-document.getElementById('backToStep0').addEventListener('click', () => {
-    showStep(0);
-});
+document.getElementById('backToStep0').addEventListener('click', () => showStep(0));
 
-// ============ Step 1: انتخاب چند شهر ============
+/* ================================================================
+   MY TRIPS - PART 2: Steps & Create Trip Flow
+   این بخش رو به انتهای my-trips.js اضافه کن
+   ================================================================ */
 
-document.querySelectorAll('.city-card').forEach(card => {
-    card.addEventListener('click', function() {
-        const city = this.dataset.city;
+// ============ Step 1: Load and Select Cities ============
+async function loadCitiesForSelection() {
+    try {
+        const response = await getCitiesWithCounts();
+        const cities = response.data || response;
 
-        if (selectedCities.includes(city)) {
-            selectedCities = selectedCities.filter(c => c !== city);
-            this.classList.remove('selected');
-        } else {
-            selectedCities.push(city);
-            this.classList.add('selected');
+        const citiesGrid = document.querySelector('.cities-grid');
+        citiesGrid.innerHTML = '';
+
+        if (!cities || cities.length === 0) {
+            citiesGrid.innerHTML = '<p>شهری یافت نشد</p>';
+            return;
         }
 
-        updateSelectedCitiesBar();
-        updateContinueButton();
-    });
-});
+        cities.forEach(city => {
+            citiesData[city.city_name] = city; // Cache city data
+
+            const cityCard = document.createElement('div');
+            cityCard.className = 'city-card';
+            cityCard.dataset.city = city.city_name;
+
+            const imageUrl = city.city_pic_url || '../src/assets/images/default-city.jpg';
+
+            cityCard.innerHTML = `
+                <img src="${imageUrl}" alt="${city.city_name}"
+                     onerror="this.src='../src/assets/images/default-city.jpg'">
+                <h4>${city.city_name}</h4>
+                <p>${city.places_count} مکان گردشگری</p>
+            `;
+
+            cityCard.addEventListener('click', function() {
+                const cityName = this.dataset.city;
+
+                if (selectedCities.includes(cityName)) {
+                    selectedCities = selectedCities.filter(c => c !== cityName);
+                    this.classList.remove('selected');
+                } else {
+                    selectedCities.push(cityName);
+                    this.classList.add('selected');
+                }
+
+                updateSelectedCitiesBar();
+                updateContinueButton();
+            });
+
+            citiesGrid.appendChild(cityCard);
+        });
+
+        console.log(`✅ ${cities.length} cities loaded`);
+    } catch (error) {
+        console.error('Error loading cities:', error);
+        Swal.fire({
+            icon: 'error',
+            text: 'خطا در بارگذاری شهرها',
+            confirmButtonColor: '#a6b28b'
+        });
+    }
+}
 
 function updateSelectedCitiesBar() {
     const bar = document.getElementById('selectedCitiesBar');
@@ -440,15 +488,8 @@ function updateSelectedCitiesBar() {
     }
 
     bar.style.display = 'flex';
-
-    const cityNames = {
-        shiraz: 'شیراز',
-        isfahan: 'اصفهان',
-        tehran: 'تهران'
-    };
-
     list.innerHTML = selectedCities.map(city =>
-        `<span class="city-tag">${cityNames[city]}</span>`
+        `<span class="city-tag">${city}</span>`
     ).join('');
 }
 
@@ -458,56 +499,78 @@ function updateContinueButton() {
 }
 
 document.getElementById('continueToLocations').addEventListener('click', () => {
-    loadLocations();
+    loadLocationsForSelectedCities();
     showStep(2);
 });
 
-// ============ Step 2: بارگذاری مکان‌ها ============
+document.getElementById('backToStep1').addEventListener('click', () => showStep(1));
 
-function loadLocations() {
+// ============ Step 2: Load and Select Locations ============
+async function loadLocationsForSelectedCities() {
     const locationsGrid = document.getElementById('locationsGrid');
     const cityNameSpan = document.getElementById('selectedCityName');
 
-    const cityNames = {
-        shiraz: 'شیراز',
-        isfahan: 'اصفهان',
-        tehran: 'تهران'
-    };
+    cityNameSpan.textContent = selectedCities.join(' - ');
+    locationsGrid.innerHTML = '<div class="loading-state">در حال بارگذاری...</div>';
 
-    cityNameSpan.textContent = selectedCities.map(c => cityNames[c]).join(' - ');
+    try {
+        const citySections = await Promise.all(
+            selectedCities.map(async (cityName) => {
+                try {
+                    const response = await getCityPlaces(cityName);
+                    const places = response.data || response;
+                    return { cityName, places };
+                } catch (error) {
+                    console.error(`Error loading places for ${cityName}:`, error);
+                    return { cityName, places: [] };
+                }
+            })
+        );
 
-    const groupedHTML = selectedCities.map(city => {
-        const cityLocations = fakeCitiesData[city] || [];
+        locationsGrid.innerHTML = '';
 
-        return `
-            <div class="city-section">
+        citySections.forEach(({ cityName, places }) => {
+            if (!places || places.length === 0) return;
+
+            const citySection = document.createElement('div');
+            citySection.className = 'city-section';
+
+            citySection.innerHTML = `
                 <h4 class="city-section-title">
-                    <i class="fas fa-city"></i> ${cityNames[city]}
+                    <i class="fas fa-city"></i> ${cityName}
                 </h4>
                 <div class="city-locations-grid">
-                    ${cityLocations.map(location => `
-                        <div class="location-card" data-location-id="${location.id}">
-                            <img src="${location.image}" alt="${location.name}">
+                    ${places.map(place => `
+                        <div class="location-card" data-location-id="${place.place_id}">
+                            <img src="${place.image_url || '../src/assets/images/default-place.jpg'}" 
+                                 alt="${place.place_name}"
+                                 onerror="this.src='../src/assets/images/default-place.jpg'">
                             <div class="location-info">
-                                <h5>${location.name}</h5>
-                                <p><i class="fas fa-tag"></i> ${location.category}</p>
-                                <p style="font-size: 0.8rem; margin-top: 0.5rem;">${location.description}</p>
+                                <h5>${place.place_name}</h5>
+                                <p><i class="fas fa-tag"></i> ${place.category || 'گردشگری'}</p>
+                                ${place.description ? `<p style="font-size: 0.8rem; margin-top: 0.5rem;">${place.description}</p>` : ''}
                             </div>
                         </div>
                     `).join('')}
                 </div>
-            </div>
-        `;
-    }).join('');
+            `;
 
-    locationsGrid.innerHTML = groupedHTML;
-
-    document.querySelectorAll('.location-card').forEach(card => {
-        card.addEventListener('click', function() {
-            const locationId = parseInt(this.dataset.locationId);
-            toggleLocationSelection(locationId, this);
+            locationsGrid.appendChild(citySection);
         });
-    });
+
+        // Add event listeners
+        document.querySelectorAll('.location-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const locationId = parseInt(this.dataset.locationId);
+                toggleLocationSelection(locationId, this);
+            });
+        });
+
+        console.log('✅ Locations loaded for selected cities');
+    } catch (error) {
+        console.error('Error loading locations:', error);
+        locationsGrid.innerHTML = '<p>خطا در بارگذاری مکان‌ها</p>';
+    }
 }
 
 function toggleLocationSelection(locationId, cardElement) {
@@ -533,14 +596,9 @@ function updateSelectedLocationsList() {
         return;
     }
 
-    const allLocations = Object.values(fakeCitiesData).flat();
-    const selectedLocationNames = selectedLocations.map(id => {
-        const location = allLocations.find(loc => loc.id === id);
-        return location ? location.name : '';
-    }).filter(Boolean);
-
-    listContainer.innerHTML = selectedLocationNames.map(name =>
-        `<span class="location-tag">${name}</span>`
+    // TODO: نام مکان‌ها رو از DOM بگیر یا cache کن
+    listContainer.innerHTML = selectedLocations.map(id =>
+        `<span class="location-tag">مکان ${id}</span>`
     ).join('');
 }
 
@@ -549,38 +607,55 @@ function updateNextButton() {
     nextBtn.disabled = selectedLocations.length === 0;
 }
 
-document.getElementById('backToStep1').addEventListener('click', () => {
-    showStep(1);
-});
-
 document.getElementById('nextToStep3').addEventListener('click', () => {
-    loadFriends();
+    loadFriendsForInvitation();
     showStep(3);
 });
 
-document.getElementById('backToStep2').addEventListener('click', () => {
-    showStep(2);
-});
+document.getElementById('backToStep2').addEventListener('click', () => showStep(2));
 
-// ============ Step 3: بارگذاری دوستان ============
-
-function loadFriends() {
+// ============ Step 3: Load and Select Friends ============
+async function loadFriendsForInvitation() {
     const friendsGrid = document.getElementById('friendsGrid');
+    friendsGrid.innerHTML = '<div class="loading-state">در حال بارگذاری...</div>';
 
-    friendsGrid.innerHTML = fakeFriendsData.map(friend => `
-        <div class="friend-card-modal" data-friend-id="${friend.id}">
-            <img src="${friend.avatar}" alt="${friend.name}">
-            <h4>${friend.name}</h4>
-            <p>${friend.username}</p>
-        </div>
-    `).join('');
+    try {
+        const response = await getAvailableFriends();
+        const friends = response.data || response;
 
-    document.querySelectorAll('.friend-card-modal').forEach(card => {
-        card.addEventListener('click', function() {
-            const friendId = parseInt(this.dataset.friendId);
-            toggleFriendSelection(friendId, this);
+        if (!friends || friends.length === 0) {
+            friendsGrid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-user-friends"></i>
+                    <p>دوستی برای دعوت وجود ندارد</p>
+                </div>
+            `;
+            return;
+        }
+
+        friendsGrid.innerHTML = friends.map(friend => `
+            <div class="friend-card-modal" data-friend-id="${friend.user_id}">
+                <img src="${friend.profile_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(friend.full_name)}" 
+                     alt="${friend.full_name}"
+                     onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(friend.full_name)}'">
+                <h4>${friend.full_name}</h4>
+                <p>@${friend.username}</p>
+            </div>
+        `).join('');
+
+        // Add event listeners
+        document.querySelectorAll('.friend-card-modal').forEach(card => {
+            card.addEventListener('click', function() {
+                const friendId = parseInt(this.dataset.friendId);
+                toggleFriendSelection(friendId, this);
+            });
         });
-    });
+
+        console.log(`✅ ${friends.length} friends loaded`);
+    } catch (error) {
+        console.error('Error loading friends:', error);
+        friendsGrid.innerHTML = '<p>خطا در بارگذاری دوستان</p>';
+    }
 }
 
 function toggleFriendSelection(friendId, cardElement) {
@@ -595,64 +670,97 @@ function toggleFriendSelection(friendId, cardElement) {
     }
 }
 
-// ============ Finish Trip ============
-
-document.getElementById('finishTrip').addEventListener('click', () => {
+// ============ Finish Trip: Create & Invite ============
+document.getElementById('finishTrip').addEventListener('click', async () => {
     if (selectedLocations.length === 0) {
         Swal.fire({
             icon: 'warning',
             text: 'لطفاً حداقل یک مکان انتخاب کنید',
             confirmButtonText: 'باشه',
-            confirmButtonColor: '#a6b28b',
-            background: '#f0f0f0',
-            color: '#4b5563',
-            customClass: {
-                popup: 'my-swal-popup',
-                confirmButton: 'my-confirm-btn',
-                cancelButton: 'my-cancel-btn'
-            },
+            confirmButtonColor: '#a6b28b'
         });
         return;
     }
 
-    const cityNames = {
-        shiraz: 'شیراز',
-        isfahan: 'اصفهان',
-        tehran: 'تهران'
-    };
-
-    const citiesText = selectedCities.map(c => cityNames[c]).join('، ');
-
-    Swal.fire({
-        icon: 'success',
-        title: 'سفر با موفقیت ایجاد شد!',
-        html: `
-            <p>تاریخ: <strong>${$('#startDate').val()} تا ${$('#endDate').val()}</strong></p>
-            <p>شهرها: <strong>${citiesText}</strong></p>
-            <p>تعداد مکان‌ها: <strong>${selectedLocations.length}</strong></p>
-            <p>تعداد دوستان: <strong>${selectedFriends.length}</strong></p>
-        `,
-        confirmButtonText: 'عالی!',
-        confirmButtonColor: '#a6b28b',
-        background: '#f0f0f0',
-        color: '#4b5563',
-        customClass: {
-            popup: 'my-swal-popup',
-            confirmButton: 'my-confirm-btn',
-            cancelButton: 'my-cancel-btn'
-        },
-    }).then(() => {
-        modal.classList.remove('active');
-        switchTab('current-trips');
+    // ساخت payload
+    const tripPayload = buildTripPayload({
+        startDate: selectedStartDate,
+        endDate: selectedEndDate,
+        cityNames: selectedCities,
+        placeIds: selectedLocations,
+        coverImage: null // TODO: اگر عکس کاور داری اینجا اضافه کن
     });
+
+    // اعتبارسنجی
+    const validation = validateTripData(tripPayload);
+    if (!validation.valid) {
+        Swal.fire({
+            icon: 'error',
+            title: 'خطا در اطلاعات سفر',
+            html: validation.errors.map(err => `<p>• ${err}</p>`).join(''),
+            confirmButtonColor: '#a6b28b'
+        });
+        return;
+    }
+
+    // نمایش لودینگ
+    Swal.fire({
+        title: 'در حال ایجاد سفر...',
+        html: 'لطفاً صبر کنید',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
+    try {
+        // ایجاد سفر
+        const response = await createTrip(tripPayload);
+        const createdTrip = response.data || response;
+        createdTripId = createdTrip.trip_id;
+
+        console.log('✅ Trip created:', createdTrip);
+
+        // دعوت دوستان (اگر انتخاب شده باشند)
+        if (selectedFriends.length > 0) {
+            const invitationPromises = selectedFriends.map(friendId =>
+                inviteFriend(createdTripId, friendId)
+                    .catch(err => console.error(`Failed to invite friend ${friendId}:`, err))
+            );
+
+            await Promise.all(invitationPromises);
+            console.log(`✅ ${selectedFriends.length} friends invited`);
+        }
+
+        // نمایش پیام موفقیت
+        Swal.fire({
+            icon: 'success',
+            title: 'سفر با موفقیت ایجاد شد!',
+            html: `
+                <p>تاریخ: <strong>${$('#startDate').val()} تا ${$('#endDate').val()}</strong></p>
+                <p>شهرها: <strong>${selectedCities.join('، ')}</strong></p>
+                <p>تعداد مکان‌ها: <strong>${selectedLocations.length}</strong></p>
+                ${selectedFriends.length > 0 ? `<p>دعوت شده: <strong>${selectedFriends.length} نفر</strong></p>` : ''}
+            `,
+            confirmButtonText: 'عالی!',
+            confirmButtonColor: '#a6b28b'
+        }).then(() => {
+            modal.classList.remove('active');
+            switchTab('current-trips');
+        });
+
+    } catch (error) {
+        console.error('Error creating trip:', error);
+
+        Swal.fire({
+            icon: 'error',
+            title: 'خطا در ایجاد سفر',
+            text: error.response?.data?.detail || 'لطفاً دوباره تلاش کنید',
+            confirmButtonColor: '#a6b28b'
+        });
+    }
 });
 
-
-
-
-
+// ============ Mobile Menu ============
 function initMobileMenu() {
-    // Mobile menu HTML structure
     const mobileMenuHTML = `
         <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
         <div class="mobile-menu" id="mobileMenu">
@@ -671,63 +779,59 @@ function initMobileMenu() {
         </div>
     `;
 
-    // Inject mobile menu into DOM
     document.body.insertAdjacentHTML('beforeend', mobileMenuHTML);
 
-    // Get menu elements
     const menuToggle = document.querySelector('.menu-toggle-btn');
     const mobileMenu = document.getElementById('mobileMenu');
     const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
     const mobileMenuClose = document.getElementById('mobileMenuClose');
 
-    /**
-     * Close mobile menu
-     * Removes active classes and restores body scroll
-     */
     const closeMenu = () => {
         mobileMenu.classList.remove('active');
         mobileMenuOverlay.classList.remove('active');
         document.body.style.overflow = '';
     };
 
-    // Open menu on toggle button click
     if (menuToggle) {
         menuToggle.addEventListener('click', () => {
             mobileMenu.classList.add('active');
             mobileMenuOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent background scroll
+            document.body.style.overflow = 'hidden';
         });
     }
 
-    // Close menu on close button click
-    if (mobileMenuClose) {
-        mobileMenuClose.addEventListener('click', closeMenu);
+    if (mobileMenuClose) mobileMenuClose.addEventListener('click', closeMenu);
+    if (mobileMenuOverlay) mobileMenuOverlay.addEventListener('click', closeMenu);
+}
+
+// ============ CSS for Spinner ============
+const spinnerStyle = document.createElement('style');
+spinnerStyle.textContent = `
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid var(--color-border);
+        border-top-color: var(--color-primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
     }
-
-    // Close menu on overlay click
-    if (mobileMenuOverlay) {
-        mobileMenuOverlay.addEventListener('click', closeMenu);
+    @keyframes spin {
+        to { transform: rotate(360deg); }
     }
-}
+`;
+document.head.appendChild(spinnerStyle);
 
-function viewTrip(tripId) {
-    window.location.href = `/trips/each-trip.html?id=${tripId}`;
-}
-function editTrip(tripId) {
-    // انتقال به صفحه ویرایش سفر
-    window.location.href = `../trips/trip-management.html?id=${tripId}`;
-}
-
-
+// ============ Initialize on DOM Load ============
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM fully loaded'); // برای دیباگ
-    initMobileMenu();
-    initScrollAnimations();
+    console.log('✅ My Trips page loaded');
 
-    // برای اطمینان، بعد از لود کامل صفحه هم چک کنیم
+    initMobileMenu();
+    loadFinishedTripsData(); // بارگذاری اولیه تب فعال
+
+    // برای اطمینان
     setTimeout(() => {
         if (!document.getElementById('mobileMenu')) {
-            console.log('Retrying mobile menu initialization...');
             initMobileMenu();
         }
     }, 1000);

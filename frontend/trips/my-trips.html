@@ -85,179 +85,17 @@
 
     <!-- Tab 1: سفرهای گذشته -->
     <section id="past-trips" class="tab-content">
-        <div class="trips-grid">
-            <div class="trip-card">
-                <img src="../src/assets/images/man-walking-stone-pathway-surrou.jpg" class="trip-image" alt="شیراز">
-                <div class="trip-details">
-                    <h3 class="trip-title">سفر به شیراز</h3>
-                    <p class="trip-date"><i class="fas fa-calendar"></i> ۱۵ تا ۲۰ مهر ۱۴۰۲</p>
-                    <p class="trip-locations"><i class="fas fa-map-marker-alt"></i> ۵ مکان بازدید شده</p>
-                    <div class="trip-participants">
-                        <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="user">
-                        <img src="https://randomuser.me/api/portraits/women/2.jpg" alt="user">
-                        <span class="participant-count">+۳</span>
-                    </div>
-                </div>
-                <div class="trip-actions">
-                    <button class="btn-view" title="مشاهده جزئیات" onclick="viewTrip(1)">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="trip-card">
-                <img src="../src/assets/images/45677.jpg" class="trip-image" alt="اصفهان">
-                <div class="trip-details">
-                    <h3 class="trip-title">سفر به اصفهان</h3>
-                    <p class="trip-date"><i class="fas fa-calendar"></i> ۱۰ تا ۱۵ شهریور ۱۴۰۲</p>
-                    <p class="trip-locations"><i class="fas fa-map-marker-alt"></i> ۷ مکان بازدید شده</p>
-                    <div class="trip-participants">
-                        <img src="https://randomuser.me/api/portraits/men/3.jpg" alt="user">
-                        <img src="https://randomuser.me/api/portraits/women/4.jpg" alt="user">
-                        <span class="participant-count">+۲</span>
-                    </div>
-                </div>
-                <div class="trip-actions">
-                    <button class="btn-view" title="مشاهده جزئیات" onclick="viewTrip(2)">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="trip-card">
-                <img src="../src/assets/images/88bfd4e9d10d431265e291bc107e47d7.jpg" class="trip-image" alt="مشهد">
-                <div class="trip-details">
-                    <h3 class="trip-title">سفر به مشهد</h3>
-                    <p class="trip-date"><i class="fas fa-calendar"></i> ۱ تا ۵ مرداد ۱۴۰۲</p>
-                    <p class="trip-locations"><i class="fas fa-map-marker-alt"></i> ۴ مکان بازدید شده</p>
-                    <div class="trip-participants">
-                        <img src="https://randomuser.me/api/portraits/women/5.jpg" alt="user">
-                        <span class="participant-count">+۱</span>
-                    </div>
-                </div>
-                <div class="trip-actions">
-                    <button class="btn-view" title="مشاهده جزئیات" onclick="viewTrip(3)">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
+        <div class="trips-grid"></div>
     </section>
 
     <!-- Tab 2: سفرهای جاری -->
     <section id="current-trips" class="tab-content hidden">
-        <div class="trips-grid">
-            <div class="trip-card current">
-                <div class="current-badge">در حال انجام</div>
-                <img src="../src/assets/images/man-walking-stone-pathway-surrou.jpg" class="trip-image" alt="تهران">
-                <div class="trip-details">
-                    <h3 class="trip-title">سفر به تهران</h3>
-                    <p class="trip-date"><i class="fas fa-calendar"></i> ۱۰ تا ۱۵ آذر ۱۴۰۳</p>
-                    <p class="trip-locations"><i class="fas fa-map-marker-alt"></i> ۳ مکان انتخاب شده</p>
-                    <div class="trip-participants">
-                        <img src="https://randomuser.me/api/portraits/men/6.jpg" alt="user">
-                        <img src="https://randomuser.me/api/portraits/women/7.jpg" alt="user">
-                    </div>
-                </div>
-                <div class="trip-actions">
-                    <button class="btn-edit" title="ویرایش سفر" onclick="editTrip(4)">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="empty-state" style="display: none;">
-                <i class="fas fa-suitcase-rolling"></i>
-                <h3>سفر جاری دیگری ندارید</h3>
-                <p>برای ایجاد سفر جدید به تب "ایجاد سفر" بروید</p>
-            </div>
-        </div>
+        <div class="trips-grid"></div>
     </section>
 
     <!-- Tab 3: درخواست‌های سفر -->
     <section id="trip-requests" class="tab-content hidden">
-        <div class="requests-grid">
-            <!-- درخواست 1 -->
-            <div class="request-card">
-                <div class="request-header">
-                    <img src="https://randomuser.me/api/portraits/men/10.jpg" class="requester-avatar" alt="حسین کاظمی">
-                    <div class="requester-info">
-                        <h4>حسین کاظمی</h4>
-                        <p>شما را به سفر دعوت کرده است</p>
-                    </div>
-                    <span class="request-time">۲ روز پیش</span>
-                </div>
-
-                <div class="request-body">
-                    <div class="trip-info-row">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>تاریخ: ۲۰ تا ۲۵ دی ۱۴۰۳</span>
-                    </div>
-                    <div class="trip-info-row">
-                        <i class="fas fa-map-marked-alt"></i>
-                        <span>مقصد: شیراز، اصفهان</span>
-                    </div>
-                    <div class="trip-info-row">
-                        <i class="fas fa-users"></i>
-                        <span>تعداد شرکت‌کنندگان: ۴ نفر</span>
-                    </div>
-                    <div class="trip-info-row">
-                        <i class="fas fa-map-pin"></i>
-                        <span>مکان‌ها: حافظیه، ارگ کریم‌خان، میدان نقش جهان</span>
-                    </div>
-                </div>
-
-                <div class="request-actions">
-                    <button class="btn-accept">
-                        <i class="fas fa-check"></i> قبول
-                    </button>
-                    <button class="btn-reject">
-                        <i class="fas fa-times"></i> رد
-                    </button>
-                </div>
-            </div>
-
-            <!-- درخواست 2 -->
-            <div class="request-card">
-                <div class="request-header">
-                    <img src="https://randomuser.me/api/portraits/women/15.jpg" class="requester-avatar"
-                         alt="زهرا احمدی">
-                    <div class="requester-info">
-                        <h4>زهرا احمدی</h4>
-                        <p>شما را به سفر دعوت کرده است</p>
-                    </div>
-                    <span class="request-time">۵ روز پیش</span>
-                </div>
-
-                <div class="request-body">
-                    <div class="trip-info-row">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>تاریخ: ۱۵ تا ۱۸ دی ۱۴۰۳</span>
-                    </div>
-                    <div class="trip-info-row">
-                        <i class="fas fa-map-marked-alt"></i>
-                        <span>مقصد: تهران</span>
-                    </div>
-                    <div class="trip-info-row">
-                        <i class="fas fa-users"></i>
-                        <span>تعداد شرکت‌کنندگان: ۳ نفر</span>
-                    </div>
-                    <div class="trip-info-row">
-                        <i class="fas fa-map-pin"></i>
-                        <span>مکان‌ها: برج میلاد، کاخ گلستان</span>
-                    </div>
-                </div>
-
-                <div class="request-actions">
-                    <button class="btn-accept">
-                        <i class="fas fa-check"></i> قبول
-                    </button>
-                    <button class="btn-reject">
-                        <i class="fas fa-times"></i> رد
-                    </button>
-                </div>
-            </div>
-        </div>
+        <div class="requests-grid"></div>
     </section>
 
     <!-- Tab 4: ایجاد سفر جدید -->
@@ -335,23 +173,7 @@
                     <div id="selectedCitiesList"></div>
                 </div>
 
-                <div class="cities-grid">
-                    <div class="city-card" data-city="shiraz">
-                        <img src="../src/assets/images/man-walking-stone-pathway-surrou.jpg" alt="شیراز">
-                        <h4>شیراز</h4>
-                        <p>۱۵ مکان گردشگری</p>
-                    </div>
-                    <div class="city-card" data-city="isfahan">
-                        <img src="../src/assets/images/45677.jpg" alt="اصفهان">
-                        <h4>اصفهان</h4>
-                        <p>۲۰ مکان گردشگری</p>
-                    </div>
-                    <div class="city-card" data-city="tehran">
-                        <img src="../src/assets/images/88bfd4e9d10d431265e291bc107e47d7.jpg" alt="تهران">
-                        <h4>تهران</h4>
-                        <p>۲۵ مکان گردشگری</p>
-                    </div>
-                </div>
+                <div class="cities-grid"></div>
 
                 <button class="btn-next" id="continueToLocations" disabled style="margin-top: 2rem;">
                     ادامه <i class="fas fa-arrow-left"></i>
@@ -398,7 +220,6 @@
     </div>
 </div>
 
-<!-- Footer - اصلاح شده -->
 <footer class="main-footer">
     <div class="footer-content-wrapper">
         <p class="cta-text">
@@ -451,7 +272,7 @@
     </div>
 </footer>
 
-<script src="../src/scripts/ui/my-trips.js"></script>
+<script type="module" src="../src/scripts/ui/my-trips.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,199 @@
+import { apiClient } from "/src/scripts/services/api-client.js";
+
+const TRIP_ENDPOINT = "/trips";
+const CITY_ENDPOINT = "/city";
+
+// ============ Trip Management ============
+
+/**
+ * دریافت لیست سفرهای تمام شده
+ * @returns {Promise} لیست سفرهای finished
+ */
+export function getFinishedTrips() {
+    return apiClient.get(`${TRIP_ENDPOINT}/finished`);
+}
+
+/**
+ * دریافت لیست سفرهای جاری
+ * @returns {Promise} لیست سفرهای ongoing
+ */
+export function getOngoingTrips() {
+    return apiClient.get(`${TRIP_ENDPOINT}/ongoing`);
+}
+
+/**
+ * ایجاد سفر جدید
+ * @param {Object} tripData - اطلاعات سفر
+ * @param {string} tripData.start_date - تاریخ شروع (YYYY-MM-DD)
+ * @param {string} tripData.end_date - تاریخ پایان (YYYY-MM-DD)
+ * @param {Array<string>} tripData.city_names - نام شهرها
+ * @param {Array<number>} tripData.place_ids - آی‌دی مکان‌ها
+ * @param {string} [tripData.cover_image] - عکس کاور (اختیاری)
+ * @returns {Promise} اطلاعات سفر ایجاد شده
+ */
+export function createTrip(tripData) {
+    return apiClient.post(`${TRIP_ENDPOINT}/create_trip`, tripData);
+}
+
+/**
+ * دعوت دوست به سفر
+ * @param {number} tripId - آی‌دی سفر
+ * @param {number} friendId - آی‌دی دوست
+ * @returns {Promise} پیام موفقیت
+ */
+export function inviteFriend(tripId, friendId) {
+    return apiClient.post(`${TRIP_ENDPOINT}/invite/${tripId}/${friendId}`);
+}
+
+/**
+ * دریافت دعوت‌های سفر (درخواست‌های دریافتی)
+ * @returns {Promise} لیست دعوت‌ها
+ */
+export function getMyInvitations() {
+    return apiClient.get(`${TRIP_ENDPOINT}/invitations`);
+}
+
+/**
+ * دریافت لیست دوستان قابل دعوت
+ * @returns {Promise} لیست دوستان
+ */
+export function getAvailableFriends() {
+    return apiClient.get(`${TRIP_ENDPOINT}/available-friends`);
+}
+
+// ============ City & Places Management ============
+
+/**
+ * دریافت لیست شهرها با تعداد مکان‌های دیدنی
+ * @returns {Promise} لیست شهرها با تعداد مکان‌ها
+ */
+export function getCitiesWithCounts() {
+    return apiClient.get(`${CITY_ENDPOINT}/city/get-cities`);
+}
+
+/**
+ * دریافت مکان‌های دیدنی یک شهر
+ * @param {string} cityName - نام شهر
+ * @returns {Promise} لیست مکان‌های شهر
+ */
+export function getCityPlaces(cityName) {
+    return apiClient.get(`${CITY_ENDPOINT}/city/${cityName}/places`);
+}
+
+// ============ Helper Functions ============
+
+/**
+ * تبدیل تاریخ میلادی به فرمت API (YYYY-MM-DD)
+ * @param {Date} date - تاریخ
+ * @returns {string} تاریخ به فرمت YYYY-MM-DD
+ */
+export function formatDateForAPI(date) {
+    if (!date) return null;
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}
+
+/**
+ * تبدیل تاریخ شمسی به میلادی
+ * @param {string} persianDate - تاریخ شمسی (YYYY/MM/DD)
+ * @returns {string} تاریخ میلادی (YYYY-MM-DD)
+ */
+export function persianToGregorian(persianDate) {
+    if (!persianDate || typeof persianDate !== 'string') return null;
+
+    try {
+        if (typeof persianDate !== 'undefined') {
+            const pDate = new persianDate(persianDate);
+            const gDate = pDate.toDate();
+            return formatDateForAPI(gDate);
+        }
+        return persianDate;
+    } catch (error) {
+        console.error('Date conversion error:', error);
+        return null;
+    }
+}
+
+/**
+ * ساخت آبجکت سفر برای ارسال به API
+ * @param {Object} params
+ * @param {Date} params.startDate - تاریخ شروع
+ * @param {Date} params.endDate - تاریخ پایان
+ * @param {Array<string>} params.cityNames - نام شهرها
+ * @param {Array<number>} params.placeIds - آی‌دی مکان‌ها
+ * @param {string} [params.coverImage] - عکس کاور
+ * @returns {Object} آبجکت آماده برای API
+ */
+export function buildTripPayload({ startDate, endDate, cityNames, placeIds, coverImage = null }) {
+    return {
+        start_date: formatDateForAPI(startDate),
+        end_date: formatDateForAPI(endDate),
+        city_names: cityNames,
+        place_ids: placeIds,
+        ...(coverImage && { cover_image: coverImage })
+    };
+}
+
+/**
+ * اعتبارسنجی داده‌های سفر قبل از ارسال
+ * @param {Object} tripData - داده‌های سفر
+ * @returns {Object} { valid: boolean, errors: Array<string> }
+ */
+export function validateTripData(tripData) {
+    const errors = [];
+
+    if (!tripData.start_date) {
+        errors.push('تاریخ شروع الزامی است');
+    }
+
+    if (!tripData.end_date) {
+        errors.push('تاریخ پایان الزامی است');
+    }
+
+    if (tripData.start_date && tripData.end_date) {
+        const start = new Date(tripData.start_date);
+        const end = new Date(tripData.end_date);
+
+        if (start >= end) {
+            errors.push('تاریخ پایان باید بعد از تاریخ شروع باشد');
+        }
+    }
+
+    if (!tripData.city_names || tripData.city_names.length === 0) {
+        errors.push('حداقل یک شهر را انتخاب کنید');
+    }
+
+    if (!tripData.place_ids || tripData.place_ids.length === 0) {
+        errors.push('حداقل یک مکان را انتخاب کنید');
+    }
+
+    return {
+        valid: errors.length === 0,
+        errors
+    };
+}
+
+// ============ Export All ============
+export default {
+    // Trip APIs
+    getFinishedTrips,
+    getOngoingTrips,
+    createTrip,
+    inviteFriend,
+    getMyInvitations,
+    getAvailableFriends,
+
+    // City APIs
+    getCitiesWithCounts,
+    getCityPlaces,
+
+    // Helpers
+    formatDateForAPI,
+    persianToGregorian,
+    buildTripPayload,
+    validateTripData
+};
