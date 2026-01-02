@@ -177,44 +177,51 @@ def get_finished(db: Session = Depends(get_db), current_user: User = Depends(get
 @router.get("/{trip_id}/details", response_model=TripDetailsResponse)
 def get_trip_details(
         trip_id: int,
-        db: Session = Depends(get_db)
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user)
 ):
     """
     Get detailed information about a specific trip.
     
     **Flow:**
-    1. Retrieves complete trip information
-    2. Includes list of all participant user IDs
-    3. Provides total participant count
-    4. Returns complete details for all trip locations
+    1. Validates that the trip exists
+    2. Checks that you are a participant of the trip
+    3. Retrieves complete trip information
+    4. Includes list of all participant user IDs
+    5. Provides total participant count
+    6. Returns complete details for all trip locations with votes and visited status
+    
+    **Authentication:** Required (Bearer token)
     
     **Path Parameters:**
     - trip_id: ID of the trip to retrieve
     
     **Errors:**
+    - 401: Not authenticated
+    - 403: You must be a participant of this trip
     - 404: Trip not found
     
-    **Response:** Detailed trip information including participants and complete place details
+    **Response:** Detailed trip information including participants and complete trip-specific place details
     """
     trip = trip_crud.get_trip_by_id(db, trip_id=trip_id)
     if not trip:
-        raise HTTPException(status_code=404, detail="Trip not found")
+        raise HTTPException(status_code=404, detail="سفر یافت نشد")
+    
+    # Check if user is a participant
+    if not trip_crud.is_user_in_trip(db, trip_id, current_user.user_id):
+        raise HTTPException(status_code=403, detail="شما باید شرکت‌کننده این سفر باشید")
 
+    # Get participants
     participants_query = db.query(TripParticipant.user_id).filter(
         TripParticipant.trip_id == trip_id
     ).all()
-
     participant_ids = [p[0] for p in participants_query]
     
-    # Add place_ids from trip_locations
+    # Get place_ids from trip_locations
     place_ids = trip_crud.get_trip_place_ids(db, trip_id)
     
-    # Fetch complete place details
-    places = []
-    for place_id in place_ids:
-        place = place_crud.get_place(db, place_id)
-        if place:
-            places.append(place)
+    # Get all trip locations with details
+    places = trip_crud.get_all_trip_locations_with_details(db, trip_id, current_user.user_id)
 
     return {
         **trip.__dict__,

@@ -56,20 +56,6 @@ class InvitationResponse(BaseModel):
         from_attributes = True
 
 
-class TripDetailsResponse(TripResponse):
-    """
-    Detailed Trip Information Response
-    
-    Extended trip information including participant list, count, and complete place details.
-    """
-    participants: List[int] = Field(..., description="List of participant user IDs")
-    participants_count: int = Field(..., description="Total number of participants")
-    places: List[PlaceResponse] = Field(..., description="Complete details of all places in the trip")
-
-    class Config:
-        from_attributes = True
-
-
 # Schemas for trip location management
 class AddLocationRequest(BaseModel):
     """
@@ -108,6 +94,20 @@ class TripLocationResponse(BaseModel):
     votes: LocationVoteData = Field(..., description="Vote statistics")
     userVote: Optional[str] = Field(None, description="Current user's vote: 'like', 'dislike', or null")
     visited: bool = Field(..., description="Whether the location has been visited")
+
+
+class TripDetailsResponse(TripResponse):
+    """
+    Detailed Trip Information Response
+    
+    Extended trip information including participant list, count, and complete place details with trip-specific data.
+    """
+    participants: List[int] = Field(..., description="List of participant user IDs")
+    participants_count: int = Field(..., description="Total number of participants")
+    places: List[TripLocationResponse] = Field(..., description="Complete details of all trip locations including votes and visited status")
+
+    class Config:
+        from_attributes = True
 
 
 class VoteLocationRequest(BaseModel):

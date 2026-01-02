@@ -1,11 +1,10 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_, func
+from sqlalchemy import func
 from app.models.trip import (
     Trip, TripParticipant, TripInvitation, TripLocation, TripLocationVote,
     TripStatus, InvitationStatus, VoteType
 )
 from app.schemas.trip import TripCreate
-from datetime import datetime
 
 import random
 
@@ -216,3 +215,90 @@ def get_location_visited_status(db: Session, trip_id: int, place_id: int) -> boo
     ).first()
     
     return trip_location.visited if trip_location else False
+
+
+def get_all_trip_locations_with_details(db: Session, trip_id: int, user_id: int):
+    """Get all trip locations with their details, votes, and user vote in optimized queries."""
+    from app.models.place import Place
+    from sqlalchemy.orm import joinedload
+    
+    trip_locations = db.query(TripLocation, Place).join(
+        Place, TripLocation.place_id == Place.place_id
+    ).filter(
+        TripLocation.trip_id == trip_id
+    ).options(
+        joinedload(Place.photos)
+    ).all()
+    
+    if not trip_locations:
+        return []
+    
+    place_ids = [tl.place_id for tl, _ in trip_locations]
+    
+    # Get all votes for these locations in one query
+    votes_query = db.query(
+        TripLocationVote.place_id,
+        TripLocationVote.vote_type,
+        func.count(TripLocationVote.user_id).label('count')
+    ).filter(
+        TripLocationVote.trip_id == trip_id,
+        TripLocationVote.place_id.in_(place_ids)
+    ).group_by(
+        TripLocationVote.place_id,
+        TripLocationVote.vote_type
+    ).all()
+    
+    # Organize votes by place_id
+    votes_by_place = {}
+    for place_id, vote_type, count in votes_query:
+        if place_id not in votes_by_place:
+            votes_by_place[place_id] = {"likes": 0, "dislikes": 0}
+        if vote_type == VoteType.LIKE:
+            votes_by_place[place_id]["likes"] = count
+        elif vote_type == VoteType.DISLIKE:
+            votes_by_place[place_id]["dislikes"] = count
+    
+    # Get user's votes in one query
+    user_votes_query = db.query(
+        TripLocationVote.place_id,
+        TripLocationVote.vote_type
+    ).filter(
+        TripLocationVote.trip_id == trip_id,
+        TripLocationVote.user_id == user_id,
+        TripLocationVote.place_id.in_(place_ids)
+    ).all()
+    
+    user_votes = {place_id: vote_type.value for place_id, vote_type in user_votes_query}
+    
+    # Build response
+    locations = []
+    for trip_location, place in trip_locations:
+        # Parse location coordinates
+        lat = None
+        lng = None
+        if place.place_location:
+            lat = place.place_location.get("lat")
+            lng = place.place_location.get("lng")
+        
+        # Get first photo
+        first_photo = place.photos[0].url if place.photos else None
+        
+        # Get votes
+        votes = votes_by_place.get(place.place_id, {"likes": 0, "dislikes": 0})
+        user_vote = user_votes.get(place.place_id)
+        
+        locations.append({
+            "id": place.place_id,
+            "name": place.place_name,
+            "category": str(place.category_id) if place.category_id else None,
+            "city": place.city_name,
+            "image": first_photo,
+            "description": place.description,
+            "lat": lat,
+            "lng": lng,
+            "votes": votes,
+            "userVote": user_vote,
+            "visited": trip_location.visited
+        })
+    
+    return locations
