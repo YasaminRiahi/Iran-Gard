@@ -1,8 +1,9 @@
-import { apiClient } from "/src/scripts/services/api-client.js";
+import { apiClient , API_BASE} from "/src/scripts/services/api-client.js";
 
 const TRIP_ENDPOINT = "/trips";
 const CITY_ENDPOINT = "/city";
-
+const PLACE_ENDPOINT = "/places"
+const USER_ENDPOINT = "/users";
 // ============ Trip Management ============
 
 /**
@@ -77,9 +78,19 @@ export function getCitiesWithCounts() {
  * @returns {Promise} لیست مکان‌های شهر
  */
 export function getCityPlaces(cityName) {
-    return apiClient.get(`${CITY_ENDPOINT}/city/${cityName}/places`);
+    return apiClient.get(`${PLACE_ENDPOINT}/?city_name=${cityName}`);
 }
 
+export const getTripDetails = async (tripId) => {
+    return await apiClient.get(`${TRIP_ENDPOINT}/${tripId}/details`);
+};
+export const getUserFullInfo = async (userId) => {
+    return await apiClient.get(`${USER_ENDPOINT}/${userId}/full-info`);
+};
+
+export const respondToInvitation = async (invitationId, isAccepted) => {
+    return await apiClient.patch(`${TRIP_ENDPOINT}/invitations/${invitationId}/respond?accept=${isAccepted}`);
+};
 // ============ Helper Functions ============
 
 /**
@@ -177,23 +188,6 @@ export function validateTripData(tripData) {
     };
 }
 
-// ============ Export All ============
-export default {
-    // Trip APIs
-    getFinishedTrips,
-    getOngoingTrips,
-    createTrip,
-    inviteFriend,
-    getMyInvitations,
-    getAvailableFriends,
-
-    // City APIs
-    getCitiesWithCounts,
-    getCityPlaces,
-
-    // Helpers
-    formatDateForAPI,
-    persianToGregorian,
-    buildTripPayload,
-    validateTripData
-};
+export function getURL () {
+    return API_BASE;
+}

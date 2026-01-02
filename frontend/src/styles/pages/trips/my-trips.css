@@ -1246,6 +1246,8 @@ FOOTER
    TRIP REQUESTS GRID
    ================================================================ */
 
+
+
 .requests-grid {
     display: grid;
     grid-template-columns: 1fr;

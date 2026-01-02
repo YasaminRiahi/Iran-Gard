@@ -8,7 +8,11 @@ import {
     getCitiesWithCounts,
     getCityPlaces,
     buildTripPayload,
-    validateTripData
+    validateTripData,
+    getTripDetails,
+    respondToInvitation,
+    getUserFullInfo,
+    getURL
 } from '/src/scripts/services/trips-service.js';
 
 // ============ Global Variables ============
@@ -132,7 +136,7 @@ function createTripCard(trip, type = 'finished') {
     const endDate = convertToJalali(trip.end_date);
     const cities = trip.city_names?.join('، ') || 'نامشخص';
     const placesCount = trip.place_ids?.length || 0;
-    const coverImage = trip.cover_image || '../src/assets/images/default-trip.jpg';
+    const coverImage = getURL() + trip.cover_image;
 
     card.innerHTML = `
         ${type === 'current' ? '<div class="current-badge">در حال انجام</div>' : ''}
@@ -186,7 +190,6 @@ async function loadFinishedTripsData() {
             tripsGrid.appendChild(card);
         });
 
-        // Event listeners
         document.querySelectorAll('#past-trips .btn-view').forEach(btn => {
             btn.addEventListener('click', () => viewTrip(btn.dataset.tripId));
         });
@@ -206,7 +209,6 @@ async function loadOngoingTripsData() {
         showLoading('current-trips');
         const response = await getOngoingTrips();
         const trips = response.data || response;
-
         const tripsGrid = document.querySelector('#current-trips .trips-grid');
         tripsGrid.innerHTML = '';
 
@@ -226,7 +228,6 @@ async function loadOngoingTripsData() {
             tripsGrid.appendChild(card);
         });
 
-        // Event listeners
         document.querySelectorAll('#current-trips .btn-edit').forEach(btn => {
             btn.addEventListener('click', () => editTrip(btn.dataset.tripId));
         });
@@ -252,38 +253,153 @@ async function loadInvitationsData() {
 
         const pendingInvitations = invitations.filter(inv => inv.status === 'pending');
 
-        if (!pendingInvitations || pendingInvitations.length === 0) {
+        if (pendingInvitations.length === 0) {
             requestsGrid.innerHTML = `
                 <div class="empty-state">
                     <i class="fas fa-envelope-open"></i>
                     <h3>درخواست جدیدی ندارید</h3>
-                    <p>دعوت‌های سفر شما اینجا نمایش داده می‌شود</p>
-                </div>
-            `;
+                </div>`;
             updateInvitationsBadge(0);
             return;
         }
 
-        // TODO: باید اطلاعات کامل سفر از API بگیری
-        // فعلاً فقط invitation_id داریم
+        const fullDataPromises = pendingInvitations.map(async (inv) => {
+            try {
+                const [tripRes, userRes] = await Promise.all([
+                    getTripDetails(inv.trip_id),
+                    getUserFullInfo(inv.sender_id)
+                ]);
+                return { ...inv, trip: tripRes.data || tripRes, sender: userRes.data || userRes };
+            } catch (err) {
+                return null;
+            }
+        });
 
-        updateInvitationsBadge(pendingInvitations.length);
-        console.log(`✅ ${pendingInvitations.length} invitations loaded`);
+        const completedInvitations = (await Promise.all(fullDataPromises)).filter(i => i !== null);
+
+        completedInvitations.forEach(item => {
+            const { trip, sender, invitation_id } = item;
+
+            const card = document.createElement('div');
+            card.className = 'request-card';
+
+            card.innerHTML = `
+                <div class="request-header">
+                    <img src="${getURL()  + sender.profile_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(sender.full_name)}" 
+                         class="requester-avatar" alt="${sender.full_name}">
+                    <div class="requester-info">
+                        <h4>${sender.full_name}</h4>
+                        <p>شما را به سفر دعوت کرده است</p>
+                    </div>
+                    <span class="request-time">جدید</span>
+                </div>
+
+                <div class="request-body">
+                    <div class="trip-info-row">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>تاریخ: ${convertToJalali(trip.start_date)} تا ${convertToJalali(trip.end_date)}</span>
+                    </div>
+                    <div class="trip-info-row">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <span>مقصد: ${trip.city_names?.join('، ') || 'نامشخص'}</span>
+                    </div>
+                    <div class="trip-info-row">
+                        <i class="fas fa-users"></i>
+                        <span>تعداد شرکت‌کنندگان: ${trip.participants_count || 1} نفر</span>
+                    </div>
+                </div>
+
+                <div class="request-actions">
+                    <button class="btn-accept" onclick="handleInvitation(${invitation_id}, 'accept')">
+                        <i class="fas fa-check"></i> قبول
+                    </button>
+                    <button class="btn-reject" onclick="handleInvitation(${invitation_id}, 'reject')">
+                        <i class="fas fa-times"></i> رد
+                    </button>
+                </div>
+            `;
+            requestsGrid.appendChild(card);
+        });
+
+        updateInvitationsBadge(completedInvitations.length);
+
     } catch (error) {
-        console.error('Error loading invitations:', error);
+        console.error('Error:', error);
         showError('trip-requests', 'خطا در بارگذاری درخواست‌ها');
     } finally {
         hideLoading('trip-requests');
     }
 }
 
+window.handleInvitation = handleInvitation;
+
 function updateInvitationsBadge(count) {
-    const badge = document.querySelector('[data-tab="trip-requests"] .badge');
-    if (badge) {
-        badge.textContent = count;
-        badge.style.display = count > 0 ? 'inline-block' : 'none';
+    const badges = document.querySelectorAll('.badge, [data-tab="trip-requests"] .badge');
+
+    badges.forEach(badge => {
+        if (count > 0) {
+            badge.textContent = count;
+            badge.style.display = 'inline-flex';
+        } else {
+            badge.textContent = '';
+            badge.style.display = 'none';
+        }
+    });
+}
+async function refreshInvitationBadgeCount() {
+    try {
+        const response = await getMyInvitations();
+        const invitations = response.data || response;
+        const pendingCount = invitations.filter(inv => inv.status === 'pending').length;
+        updateInvitationsBadge(pendingCount);
+    } catch (error) {
+        console.error('Could not refresh badge count:', error);
     }
 }
+
+async function handleInvitation(invitationId, action) {
+    const isAccepted = action === 'accept';
+
+    try {
+        const result = await Swal.fire({
+            text: isAccepted ? 'آیا این دعوت را می‌پذیرید؟' : 'آیا این دعوت را رد می‌کنید؟',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'بله',
+            cancelButtonText: 'لغو',
+            confirmButtonColor: '#f5c9b0',
+            cancelButtonColor: '#a6b28b',
+            background: '#f0f0f0',
+            color: '#4b5563',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            },
+        });
+
+        if (!result.isConfirmed) return;
+
+        Swal.fire({ title: 'در حال ثبت پاسخ...', didOpen: () => Swal.showLoading() });
+
+        await respondToInvitation(invitationId, isAccepted);
+
+        await Swal.fire({
+            icon: 'success',
+            title: isAccepted ? 'سفر به لیست شما اضافه شد' : 'درخواست رد شد',
+            timer: 1500,
+            showConfirmButton: false
+        });
+
+        loadInvitationsData();
+        if (isAccepted) loadOngoingTripsData();
+
+    } catch (error) {
+        console.error('Action failed:', error);
+        Swal.fire({ icon: 'error', title: 'خطا در ثبت پاسخ' });
+    }
+}
+window.handleInvitation = handleInvitation;
 
 // ============ Navigation Functions ============
 function viewTrip(tripId) {
@@ -341,15 +457,15 @@ function showStep(stepNumber) {
 
 // ============ Step 0: Date Picker ============
 function initializeDatePickers() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     $('#startDate').persianDatepicker({
         format: 'YYYY/MM/DD',
         initialValue: false,
         autoClose: true,
-        calendar: {
-            persian: {
-                locale: 'fa'
-            }
-        },
+        minDate: new persianDate().unix() * 1000,
+        calendar: { persian: { locale: 'fa' } },
         onSelect: function(unix) {
             selectedStartDate = new Date(unix);
             document.getElementById('startDate').classList.add('filled');
@@ -362,11 +478,8 @@ function initializeDatePickers() {
         format: 'YYYY/MM/DD',
         initialValue: false,
         autoClose: true,
-        calendar: {
-            persian: {
-                locale: 'fa'
-            }
-        },
+        minDate: new persianDate().unix() * 1000,
+        calendar: { persian: { locale: 'fa' } },
         onSelect: function(unix) {
             selectedEndDate = new Date(unix);
             document.getElementById('endDate').classList.add('filled');
@@ -375,6 +488,27 @@ function initializeDatePickers() {
         }
     });
 }
+
+document.getElementById('continueToStep1').addEventListener('click', () => {
+    if (selectedStartDate && selectedEndDate) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (selectedStartDate < today) {
+            Swal.fire({
+                icon: 'error',
+                title: 'تاریخ نامعتبر',
+                text: 'تاریخ شروع سفر نمی‌تواند در گذشته باشد.',
+                confirmButtonText: 'اصلاح تاریخ',
+                confirmButtonColor: '#a6b28b'
+            });
+            return;
+        }
+
+        loadCitiesForSelection();
+        showStep(1);
+    }
+});
 
 function updateDateSummary() {
     const summaryDiv = document.getElementById('dateSummary');
@@ -414,11 +548,6 @@ document.getElementById('continueToStep1').addEventListener('click', () => {
 
 document.getElementById('backToStep0').addEventListener('click', () => showStep(0));
 
-/* ================================================================
-   MY TRIPS - PART 2: Steps & Create Trip Flow
-   این بخش رو به انتهای my-trips.js اضافه کن
-   ================================================================ */
-
 // ============ Step 1: Load and Select Cities ============
 async function loadCitiesForSelection() {
     try {
@@ -434,13 +563,13 @@ async function loadCitiesForSelection() {
         }
 
         cities.forEach(city => {
-            citiesData[city.city_name] = city; // Cache city data
+            citiesData[city.city_name] = city;
 
             const cityCard = document.createElement('div');
             cityCard.className = 'city-card';
             cityCard.dataset.city = city.city_name;
 
-            const imageUrl = city.city_pic_url || '../src/assets/images/default-city.jpg';
+            const imageUrl = getURL() + city.city_pic_url ;
 
             cityCard.innerHTML = `
                 <img src="${imageUrl}" alt="${city.city_name}"
@@ -542,9 +671,9 @@ async function loadLocationsForSelectedCities() {
                 <div class="city-locations-grid">
                     ${places.map(place => `
                         <div class="location-card" data-location-id="${place.place_id}">
-                            <img src="${place.image_url || '../src/assets/images/default-place.jpg'}" 
+                            <img src="${getURL() + place.image_url}" 
                                  alt="${place.place_name}"
-                                 onerror="this.src='../src/assets/images/default-place.jpg'">
+                                 onerror="this.src="">
                             <div class="location-info">
                                 <h5>${place.place_name}</h5>
                                 <p><i class="fas fa-tag"></i> ${place.category || 'گردشگری'}</p>
@@ -635,10 +764,10 @@ async function loadFriendsForInvitation() {
 
         friendsGrid.innerHTML = friends.map(friend => `
             <div class="friend-card-modal" data-friend-id="${friend.user_id}">
-                <img src="${friend.profile_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(friend.full_name)}" 
+                <img src="${getURL() + friend.profile_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(friend.full_name)}" 
                      alt="${friend.full_name}"
                      onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(friend.full_name)}'">
-                <h4>${friend.full_name}</h4>
+                <h4>${friend.full_name || 'کاربر ایران‌گرد'}</h4>
                 <p>@${friend.username}</p>
             </div>
         `).join('');
@@ -677,21 +806,26 @@ document.getElementById('finishTrip').addEventListener('click', async () => {
             icon: 'warning',
             text: 'لطفاً حداقل یک مکان انتخاب کنید',
             confirmButtonText: 'باشه',
-            confirmButtonColor: '#a6b28b'
+            confirmButtonColor: '#a6b28b',
+            background: '#f0f0f0',
+            color: '#4b5563',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            },
         });
         return;
     }
 
-    // ساخت payload
     const tripPayload = buildTripPayload({
         startDate: selectedStartDate,
         endDate: selectedEndDate,
         cityNames: selectedCities,
         placeIds: selectedLocations,
-        coverImage: null // TODO: اگر عکس کاور داری اینجا اضافه کن
+        coverImage: null
     });
 
-    // اعتبارسنجی
     const validation = validateTripData(tripPayload);
     if (!validation.valid) {
         Swal.fire({
@@ -703,23 +837,28 @@ document.getElementById('finishTrip').addEventListener('click', async () => {
         return;
     }
 
-    // نمایش لودینگ
     Swal.fire({
         title: 'در حال ایجاد سفر...',
         html: 'لطفاً صبر کنید',
         allowOutsideClick: false,
+        background: '#f0f0f0',
+        color: '#4b5563',
+        customClass: {
+            popup: 'my-swal-popup',
+            confirmButton: 'my-confirm-btn',
+            cancelButton: 'my-cancel-btn'
+        },
         didOpen: () => Swal.showLoading()
     });
 
     try {
-        // ایجاد سفر
         const response = await createTrip(tripPayload);
         const createdTrip = response.data || response;
+        console.log(createdTrip);
         createdTripId = createdTrip.trip_id;
 
         console.log('✅ Trip created:', createdTrip);
 
-        // دعوت دوستان (اگر انتخاب شده باشند)
         if (selectedFriends.length > 0) {
             const invitationPromises = selectedFriends.map(friendId =>
                 inviteFriend(createdTripId, friendId)
@@ -730,7 +869,6 @@ document.getElementById('finishTrip').addEventListener('click', async () => {
             console.log(`✅ ${selectedFriends.length} friends invited`);
         }
 
-        // نمایش پیام موفقیت
         Swal.fire({
             icon: 'success',
             title: 'سفر با موفقیت ایجاد شد!',
@@ -741,9 +879,18 @@ document.getElementById('finishTrip').addEventListener('click', async () => {
                 ${selectedFriends.length > 0 ? `<p>دعوت شده: <strong>${selectedFriends.length} نفر</strong></p>` : ''}
             `,
             confirmButtonText: 'عالی!',
-            confirmButtonColor: '#a6b28b'
+            confirmButtonColor: '#a6b28b',
+            background: '#f0f0f0',
+            color: '#4b5563',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            },
         }).then(() => {
             modal.classList.remove('active');
+            loadOngoingTripsData();
+            loadFinishedTripsData();
             switchTab('current-trips');
         });
 
@@ -827,9 +974,9 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('✅ My Trips page loaded');
 
     initMobileMenu();
-    loadFinishedTripsData(); // بارگذاری اولیه تب فعال
+    loadFinishedTripsData();
+    refreshInvitationBadgeCount();
 
-    // برای اطمینان
     setTimeout(() => {
         if (!document.getElementById('mobileMenu')) {
             initMobileMenu();
