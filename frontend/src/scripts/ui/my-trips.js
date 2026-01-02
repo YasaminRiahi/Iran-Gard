@@ -140,8 +140,7 @@ function createTripCard(trip, type = 'finished') {
 
     card.innerHTML = `
         ${type === 'current' ? '<div class="current-badge">در حال انجام</div>' : ''}
-        <img src="${coverImage}" class="trip-image" alt="${cities}" 
-             onerror="this.src='../src/assets/images/default-trip.jpg'">
+        <img src="${coverImage}" class="trip-image" alt="${cities}" >
         <div class="trip-details">
             <h3 class="trip-title">سفر به ${cities}</h3>
             <p class="trip-date"><i class="fas fa-calendar"></i> ${startDate} تا ${endDate}</p>
@@ -288,7 +287,7 @@ async function loadInvitationsData() {
                     <img src="${getURL()  + sender.profile_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(sender.full_name)}" 
                          class="requester-avatar" alt="${sender.full_name}">
                     <div class="requester-info">
-                        <h4>${sender.full_name}</h4>
+                        <h4>${sender.username}</h4>
                         <p>شما را به سفر دعوت کرده است</p>
                     </div>
                     <span class="request-time">جدید</span>
@@ -380,7 +379,14 @@ async function handleInvitation(invitationId, action) {
 
         if (!result.isConfirmed) return;
 
-        Swal.fire({ title: 'در حال ثبت پاسخ...', didOpen: () => Swal.showLoading() });
+        Swal.fire({ title: 'در حال ثبت پاسخ...',
+            background: '#f0f0f0',
+            color: '#4b5563',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            }, didOpen: () => Swal.showLoading() });
 
         await respondToInvitation(invitationId, isAccepted);
 
@@ -388,7 +394,14 @@ async function handleInvitation(invitationId, action) {
             icon: 'success',
             title: isAccepted ? 'سفر به لیست شما اضافه شد' : 'درخواست رد شد',
             timer: 1500,
-            showConfirmButton: false
+            showConfirmButton: false,
+            background: '#f0f0f0',
+            color: '#4b5563',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            },
         });
 
         loadInvitationsData();
@@ -396,7 +409,14 @@ async function handleInvitation(invitationId, action) {
 
     } catch (error) {
         console.error('Action failed:', error);
-        Swal.fire({ icon: 'error', title: 'خطا در ثبت پاسخ' });
+        Swal.fire({ icon: 'error', title: 'خطا در ثبت پاسخ',
+            background: '#f0f0f0',
+            color: '#4b5563',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            },});
     }
 }
 window.handleInvitation = handleInvitation;
@@ -500,7 +520,14 @@ document.getElementById('continueToStep1').addEventListener('click', () => {
                 title: 'تاریخ نامعتبر',
                 text: 'تاریخ شروع سفر نمی‌تواند در گذشته باشد.',
                 confirmButtonText: 'اصلاح تاریخ',
-                confirmButtonColor: '#a6b28b'
+                confirmButtonColor: '#a6b28b',
+                background: '#f0f0f0',
+                color: '#4b5563',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                    cancelButton: 'my-cancel-btn'
+                },
             });
             return;
         }
@@ -537,7 +564,14 @@ document.getElementById('continueToStep1').addEventListener('click', () => {
                 icon: 'warning',
                 text: 'تاریخ پایان باید بعد از تاریخ شروع باشد',
                 confirmButtonText: 'باشه',
-                confirmButtonColor: '#a6b28b'
+                confirmButtonColor: '#a6b28b',
+                background: '#f0f0f0',
+                color: '#4b5563',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                    cancelButton: 'my-cancel-btn'
+                },
             });
             return;
         }
@@ -602,7 +636,14 @@ async function loadCitiesForSelection() {
         Swal.fire({
             icon: 'error',
             text: 'خطا در بارگذاری شهرها',
-            confirmButtonColor: '#a6b28b'
+            confirmButtonColor: '#a6b28b',
+            background: '#f0f0f0',
+            color: '#4b5563',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            },
         });
     }
 }
@@ -844,7 +885,14 @@ document.getElementById('finishTrip').addEventListener('click', async () => {
             icon: 'error',
             title: 'خطا در اطلاعات سفر',
             html: validation.errors.map(err => `<p>• ${err}</p>`).join(''),
-            confirmButtonColor: '#a6b28b'
+            confirmButtonColor: '#a6b28b',
+            background: '#f0f0f0',
+            color: '#4b5563',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            },
         });
         return;
     }
@@ -913,7 +961,14 @@ document.getElementById('finishTrip').addEventListener('click', async () => {
             icon: 'error',
             title: 'خطا در ایجاد سفر',
             text: error.response?.data?.detail || 'لطفاً دوباره تلاش کنید',
-            confirmButtonColor: '#a6b28b'
+            confirmButtonColor: '#a6b28b',
+            background: '#f0f0f0',
+            color: '#4b5563',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            },
         });
     }
 });
