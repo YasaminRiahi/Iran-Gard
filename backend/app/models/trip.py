@@ -20,7 +20,7 @@ class Trip(Base):
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=False)
     status = Column(Enum(TripStatus), default=TripStatus.ONGOING)
-    cover_image = Column(String(500), nullable=True, default="/static/images/genders/Male.png")
+    cover_image = Column(String(500), nullable=True, default="/static/images/cities/تهران.jpg")
     city_names = Column(ARRAY(String), default=[])
     place_ids = Column(ARRAY(BigInteger), default=[])
 

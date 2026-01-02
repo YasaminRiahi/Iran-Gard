@@ -4,15 +4,30 @@ from app.models.trip import Trip, TripParticipant, TripInvitation, TripStatus, I
 from app.schemas.trip import TripCreate
 from datetime import datetime
 
+import random
+
 def create_trip(db: Session, trip_in: TripCreate, owner_id: int):
-    db_trip = Trip(**trip_in.dict(), owner_id=owner_id)
+    cover_image_city = random.choice(trip_in.city_names) if trip_in.city_names else None
+    cover_image = f"/static/images/cities/{cover_image_city}.jpg"
+    db_trip = Trip(
+        **trip_in.dict(exclude={"cover_image"}),
+        owner_id=owner_id,
+        cover_image=cover_image,
+    )
+
     db.add(db_trip)
     db.flush()
-    participant = TripParticipant(trip_id=db_trip.trip_id, user_id=owner_id)
+
+    participant = TripParticipant(
+        trip_id=db_trip.trip_id,
+        user_id=owner_id
+    )
     db.add(participant)
+
     db.commit()
     db.refresh(db_trip)
     return db_trip
+
 
 def is_user_in_trip(db: Session, trip_id: int, user_id: int) -> bool:
     """بررسی اینکه آیا کاربر عضو این سفر هست یا خیر"""
