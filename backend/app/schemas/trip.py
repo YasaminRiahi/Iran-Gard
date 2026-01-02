@@ -96,12 +96,19 @@ class TripLocationResponse(BaseModel):
     visited: bool = Field(..., description="Whether the location has been visited")
 
 
-class TripDetailsResponse(TripResponse):
+class TripDetailsResponse(BaseModel):
     """
     Detailed Trip Information Response
     
     Extended trip information including participant list, count, and complete place details with trip-specific data.
     """
+    trip_id: int = Field(..., description="Unique trip identifier")
+    owner_id: int = Field(..., description="User ID of the trip creator")
+    start_date: date = Field(..., description="Trip start date")
+    end_date: date = Field(..., description="Trip end date")
+    status: TripStatus = Field(..., description="Trip status: ONGOING or FINISHED")
+    city_names: List[str] = Field(..., description="List of cities in the trip")
+    cover_image: Optional[str] = Field(None, description="Trip cover image URL")
     participants: List[int] = Field(..., description="List of participant user IDs")
     participants_count: int = Field(..., description="Total number of participants")
     places: List[TripLocationResponse] = Field(..., description="Complete details of all trip locations including votes and visited status")

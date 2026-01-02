@@ -217,15 +217,11 @@ def get_trip_details(
     ).all()
     participant_ids = [p[0] for p in participants_query]
     
-    # Get place_ids from trip_locations
-    place_ids = trip_crud.get_trip_place_ids(db, trip_id)
-    
     # Get all trip locations with details
     places = trip_crud.get_all_trip_locations_with_details(db, trip_id, current_user.user_id)
 
     return {
         **trip.__dict__,
-        "place_ids": place_ids,
         "participants": participant_ids,
         "participants_count": len(participant_ids),
         "places": places
