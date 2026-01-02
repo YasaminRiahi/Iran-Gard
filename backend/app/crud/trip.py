@@ -66,12 +66,12 @@ def respond_invitation(db: Session, invitation_id: int, user_id: int, accept: bo
     return inv
 
 def get_trips_by_time(db: Session, user_id: int, ongoing: bool):
-    today = datetime.now().date()
+
     trip_ids = db.query(TripParticipant.trip_id).filter(TripParticipant.user_id == user_id).subquery()
     query = db.query(Trip).filter(Trip.trip_id.in_(trip_ids))
     if ongoing:
-        return query.filter(Trip.start_date <= today, Trip.end_date >= today).all()
-    return query.filter(Trip.end_date < today).all()
+        return query.filter(Trip.status==TripStatus.ONGOING).all()
+    return query.filter(Trip.status==TripStatus.COMPLETED).all()
 
 def get_trip_by_id(db: Session, trip_id: int):
     return db.query(Trip).filter(Trip.trip_id == trip_id).first()
