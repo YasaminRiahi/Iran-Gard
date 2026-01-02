@@ -1,5 +1,5 @@
 import enum
-from sqlalchemy import Column, BigInteger, String, Date, ForeignKey, Enum, ARRAY, DateTime
+from sqlalchemy import Column, BigInteger, String, Date, ForeignKey, Enum, ARRAY, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.db.session import Base
@@ -13,6 +13,10 @@ class InvitationStatus(str, enum.Enum):
     ACCEPTED = "accepted"
     REJECTED = "rejected"
 
+class VoteType(str, enum.Enum):
+    LIKE = "like"
+    DISLIKE = "dislike"
+
 class Trip(Base):
     __tablename__ = "trips"
     trip_id = Column(BigInteger, primary_key=True, index=True, autoincrement=True)
@@ -22,7 +26,6 @@ class Trip(Base):
     status = Column(Enum(TripStatus), default=TripStatus.ONGOING)
     cover_image = Column(String(500), nullable=True, default="/static/images/cities/تهران.jpg")
     city_names = Column(ARRAY(String), default=[])
-    place_ids = Column(ARRAY(BigInteger), default=[])
 
 class TripParticipant(Base):
     __tablename__ = "trip_participants"
@@ -37,3 +40,21 @@ class TripInvitation(Base):
     receiver_id = Column(BigInteger, ForeignKey("users.user_id", ondelete="CASCADE"))
     status = Column(Enum(InvitationStatus), default=InvitationStatus.PENDING)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class TripLocation(Base):
+    """Association table between trips and places with visited status."""
+    __tablename__ = "trip_locations"
+    trip_id = Column(BigInteger, ForeignKey("trips.trip_id", ondelete="CASCADE"), primary_key=True)
+    place_id = Column(BigInteger, ForeignKey("places.place_id", ondelete="CASCADE"), primary_key=True)
+    visited = Column(Boolean, default=False, nullable=False)
+    added_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class TripLocationVote(Base):
+    """User votes on trip locations - each user can vote once per location per trip."""
+    __tablename__ = "trip_location_votes"
+    trip_id = Column(BigInteger, ForeignKey("trips.trip_id", ondelete="CASCADE"), primary_key=True)
+    place_id = Column(BigInteger, ForeignKey("places.place_id", ondelete="CASCADE"), primary_key=True)
+    user_id = Column(BigInteger, ForeignKey("users.user_id", ondelete="CASCADE"), primary_key=True)
+    vote_type = Column(Enum(VoteType), nullable=False)

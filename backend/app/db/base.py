@@ -10,7 +10,7 @@ from app.models.location import City, Province
 # Place related models
 from app.models.place import Place, PlacePhoto, PlaceReview, LikedReview, Wishlist
 
-from app.models.trip import Trip,TripParticipant,TripInvitation
+from app.models.trip import Trip, TripParticipant, TripInvitation, TripLocation, TripLocationVote
 
 
 # Models below are defined but not yet implemented in the API

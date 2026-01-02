@@ -1,6 +1,9 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_
-from app.models.trip import Trip, TripParticipant, TripInvitation, TripStatus, InvitationStatus
+from sqlalchemy import and_, or_, func
+from app.models.trip import (
+    Trip, TripParticipant, TripInvitation, TripLocation, TripLocationVote,
+    TripStatus, InvitationStatus, VoteType
+)
 from app.schemas.trip import TripCreate
 from datetime import datetime
 
@@ -10,7 +13,7 @@ def create_trip(db: Session, trip_in: TripCreate, owner_id: int):
     cover_image_city = random.choice(trip_in.city_names) if trip_in.city_names else None
     cover_image = f"/static/images/cities/{cover_image_city}.jpg"
     db_trip = Trip(
-        **trip_in.dict(exclude={"cover_image"}),
+        **trip_in.dict(exclude={"cover_image", "place_ids"}),
         owner_id=owner_id,
         cover_image=cover_image,
     )
@@ -18,11 +21,22 @@ def create_trip(db: Session, trip_in: TripCreate, owner_id: int):
     db.add(db_trip)
     db.flush()
 
+    # Add owner as participant
     participant = TripParticipant(
         trip_id=db_trip.trip_id,
         user_id=owner_id
     )
     db.add(participant)
+
+    # Add places to trip_locations
+    if trip_in.place_ids:
+        for place_id in trip_in.place_ids:
+            trip_location = TripLocation(
+                trip_id=db_trip.trip_id,
+                place_id=place_id,
+                visited=False
+            )
+            db.add(trip_location)
 
     db.commit()
     db.refresh(db_trip)
@@ -75,3 +89,130 @@ def get_trips_by_time(db: Session, user_id: int, ongoing: bool):
 
 def get_trip_by_id(db: Session, trip_id: int):
     return db.query(Trip).filter(Trip.trip_id == trip_id).first()
+
+
+def get_trip_place_ids(db: Session, trip_id: int) -> list[int]:
+    """Get list of place IDs for a trip from trip_locations table."""
+    locations = db.query(TripLocation.place_id).filter(TripLocation.trip_id == trip_id).all()
+    return [loc[0] for loc in locations]
+
+
+def add_location_to_trip(db: Session, trip_id: int, place_id: int) -> TripLocation:
+    """Add a location to a trip."""
+    trip_location = TripLocation(
+        trip_id=trip_id,
+        place_id=place_id,
+        visited=False
+    )
+    db.add(trip_location)
+    db.commit()
+    db.refresh(trip_location)
+    return trip_location
+
+
+def remove_location_from_trip(db: Session, trip_id: int, place_id: int) -> bool:
+    """Remove a location from a trip. Returns True if successful, False if not found."""
+    trip_location = db.query(TripLocation).filter(
+        TripLocation.trip_id == trip_id,
+        TripLocation.place_id == place_id
+    ).first()
+    
+    if not trip_location:
+        return False
+    
+    db.delete(trip_location)
+    db.commit()
+    return True
+
+
+def is_location_in_trip(db: Session, trip_id: int, place_id: int) -> bool:
+    """Check if a location exists in a trip."""
+    return db.query(TripLocation).filter(
+        TripLocation.trip_id == trip_id,
+        TripLocation.place_id == place_id
+    ).first() is not None
+
+
+def vote_trip_location(db: Session, trip_id: int, place_id: int, user_id: int, vote_type: str):
+    """Vote on a trip location. Pass None for vote_type to remove vote."""
+    existing_vote = db.query(TripLocationVote).filter(
+        TripLocationVote.trip_id == trip_id,
+        TripLocationVote.place_id == place_id,
+        TripLocationVote.user_id == user_id
+    ).first()
+    
+    if vote_type is None:
+        # Remove vote
+        if existing_vote:
+            db.delete(existing_vote)
+            db.commit()
+        return None
+    
+    if existing_vote:
+        # Update existing vote
+        existing_vote.vote_type = VoteType(vote_type)
+    else:
+        # Create new vote
+        new_vote = TripLocationVote(
+            trip_id=trip_id,
+            place_id=place_id,
+            user_id=user_id,
+            vote_type=VoteType(vote_type)
+        )
+        db.add(new_vote)
+    
+    db.commit()
+    return vote_type
+
+
+def get_location_vote_counts(db: Session, trip_id: int, place_id: int) -> dict:
+    """Get vote counts for a location in a trip."""
+    likes = db.query(func.count(TripLocationVote.user_id)).filter(
+        TripLocationVote.trip_id == trip_id,
+        TripLocationVote.place_id == place_id,
+        TripLocationVote.vote_type == VoteType.LIKE
+    ).scalar() or 0
+    
+    dislikes = db.query(func.count(TripLocationVote.user_id)).filter(
+        TripLocationVote.trip_id == trip_id,
+        TripLocationVote.place_id == place_id,
+        TripLocationVote.vote_type == VoteType.DISLIKE
+    ).scalar() or 0
+    
+    return {"likes": likes, "dislikes": dislikes}
+
+
+def get_user_vote_on_location(db: Session, trip_id: int, place_id: int, user_id: int):
+    """Get user's vote on a location. Returns 'like', 'dislike', or None."""
+    vote = db.query(TripLocationVote).filter(
+        TripLocationVote.trip_id == trip_id,
+        TripLocationVote.place_id == place_id,
+        TripLocationVote.user_id == user_id
+    ).first()
+    
+    return vote.vote_type.value if vote else None
+
+
+def update_location_visited_status(db: Session, trip_id: int, place_id: int, visited: bool) -> bool:
+    """Update visited status for a location in a trip. Returns True if successful."""
+    trip_location = db.query(TripLocation).filter(
+        TripLocation.trip_id == trip_id,
+        TripLocation.place_id == place_id
+    ).first()
+    
+    if not trip_location:
+        return False
+    
+    trip_location.visited = visited
+    db.commit()
+    return True
+
+
+def get_location_visited_status(db: Session, trip_id: int, place_id: int) -> bool:
+    """Get visited status for a location in a trip."""
+    trip_location = db.query(TripLocation).filter(
+        TripLocation.trip_id == trip_id,
+        TripLocation.place_id == place_id
+    ).first()
+    
+    return trip_location.visited if trip_location else False

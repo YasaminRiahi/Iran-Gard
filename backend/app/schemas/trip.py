@@ -38,3 +38,43 @@ class TripDetailsResponse(TripResponse):
     class Config:
         from_attributes = True
 
+
+# Schemas for trip location management
+class AddLocationRequest(BaseModel):
+    locationId: int
+
+
+class LocationVoteData(BaseModel):
+    likes: int
+    dislikes: int
+
+
+class TripLocationResponse(BaseModel):
+    id: int
+    name: str
+    category: Optional[str] = None
+    city: Optional[str] = None
+    image: Optional[str] = None
+    description: Optional[str] = None
+    lat: Optional[float] = None
+    lng: Optional[float] = None
+    votes: LocationVoteData
+    userVote: Optional[str] = None
+    visited: bool
+
+
+class VoteLocationRequest(BaseModel):
+    voteType: Optional[str] = None
+
+
+class VoteLocationResponse(BaseModel):
+    votes: LocationVoteData
+    userVote: Optional[str] = None
+
+
+class UpdateVisitedRequest(BaseModel):
+    visited: bool
+
+
+class UpdateVisitedResponse(BaseModel):
+    visited: bool
