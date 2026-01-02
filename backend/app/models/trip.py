@@ -1,5 +1,5 @@
 import enum
-from sqlalchemy import Column, BigInteger, String, Date, ForeignKey, Enum, ARRAY, DateTime, Boolean
+from sqlalchemy import Column, BigInteger, String, Date, ForeignKey, Enum, ARRAY, DateTime, Boolean, Identity
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.db.session import Base
@@ -19,7 +19,7 @@ class VoteType(str, enum.Enum):
 
 class Trip(Base):
     __tablename__ = "trips"
-    trip_id = Column(BigInteger, primary_key=True, index=True, autoincrement=True)
+    trip_id = Column(BigInteger, Identity(always=False), primary_key=True, index=True)
     owner_id = Column(BigInteger, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=False)
@@ -34,10 +34,10 @@ class TripParticipant(Base):
 
 class TripInvitation(Base):
     __tablename__ = "trip_invitations"
-    invitation_id = Column(BigInteger, primary_key=True, index=True, autoincrement=True)
-    trip_id = Column(BigInteger, ForeignKey("trips.trip_id", ondelete="CASCADE"))
-    sender_id = Column(BigInteger, ForeignKey("users.user_id", ondelete="CASCADE"))
-    receiver_id = Column(BigInteger, ForeignKey("users.user_id", ondelete="CASCADE"))
+    invitation_id = Column(BigInteger, Identity(always=False), primary_key=True, index=True)
+    trip_id = Column(BigInteger, ForeignKey("trips.trip_id", ondelete="CASCADE"), nullable=False)
+    sender_id = Column(BigInteger, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    receiver_id = Column(BigInteger, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
     status = Column(Enum(InvitationStatus), default=InvitationStatus.PENDING)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
