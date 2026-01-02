@@ -89,7 +89,8 @@ export const getUserFullInfo = async (userId) => {
 };
 
 export const respondToInvitation = async (invitationId, isAccepted) => {
-    return await apiClient.patch(`${TRIP_ENDPOINT}/invitations/${invitationId}/respond?accept=${isAccepted}`);
+    const endpoint = `${TRIP_ENDPOINT}/invitations/${invitationId}/respond?accept=${isAccepted}`;
+    return await apiClient.patch(endpoint,{})
 };
 // ============ Helper Functions ============
 

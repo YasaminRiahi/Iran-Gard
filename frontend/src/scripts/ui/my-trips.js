@@ -367,8 +367,8 @@ async function handleInvitation(invitationId, action) {
             showCancelButton: true,
             confirmButtonText: 'بله',
             cancelButtonText: 'لغو',
-            confirmButtonColor: '#f5c9b0',
-            cancelButtonColor: '#a6b28b',
+            confirmButtonColor: '#a6b28b',
+            cancelButtonColor: '#f5c9b0',
             background: '#f0f0f0',
             color: '#4b5563',
             customClass: {
@@ -671,12 +671,12 @@ async function loadLocationsForSelectedCities() {
                 <div class="city-locations-grid">
                     ${places.map(place => `
                         <div class="location-card" data-location-id="${place.place_id}">
-                            <img src="${getURL() + place.image_url}" 
+                            <img src="${place.first_picture_url}" 
                                  alt="${place.place_name}"
                                  onerror="this.src="">
                             <div class="location-info">
                                 <h5>${place.place_name}</h5>
-                                <p><i class="fas fa-tag"></i> ${place.category || 'گردشگری'}</p>
+                                <p><i class="fas fa-tag"></i> ${getCategoryName(place.category_id) || 'گردشگری'}</p>
                                 ${place.description ? `<p style="font-size: 0.8rem; margin-top: 0.5rem;">${place.description}</p>` : ''}
                             </div>
                         </div>
@@ -699,6 +699,18 @@ async function loadLocationsForSelectedCities() {
     } catch (error) {
         console.error('Error loading locations:', error);
         locationsGrid.innerHTML = '<p>خطا در بارگذاری مکان‌ها</p>';
+    }
+}
+
+function getCategoryName(categoryId){
+    if (categoryId === 1){
+        return "طبیعت‌گردی";
+    }else if (categoryId === 2) {
+        return "تاریخی";
+    }else if (categoryId === 3){
+        return "تجاری و تفریحی";
+    }else {
+        return "مذهبی" ;
     }
 }
 

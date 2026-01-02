@@ -16,7 +16,7 @@
  * const places = await apiClient.get('/places', { includeAuth: false });
  */
 
-import { getAPIBase } from '/src/scripts/config.js';
+import {getAPIBase} from '/src/scripts/config.js';
 
 /**
  * Request options for API calls
@@ -31,6 +31,7 @@ import { getAPIBase } from '/src/scripts/config.js';
  * @property {(endpoint: string, options?: RequestOptions) => Promise<any>} get - GET request
  * @property {(endpoint: string, body: Object, options?: RequestOptions) => Promise<any>} post - POST request
  * @property {(endpoint: string, body: Object, options?: RequestOptions) => Promise<any>} put - PUT request
+ * @property {(endpoint: string, body: Object, options?: RequestOptions) => Promise<any>} patch - PATCH request
  * @property {(endpoint: string, options?: RequestOptions) => Promise<any>} delete - DELETE request
  */
 
@@ -48,23 +49,23 @@ export const API_BASE = getAPIBase();
  * @returns {string} User-friendly error message
  */
 function extractErrorMessage(data) {
-  // Validation error with array of errors (Pydantic format)
-  if (Array.isArray(data.detail)) {
-    return data.detail.map((err) => err.message || err.msg || err).join("\n");
-  }
+    // Validation error with array of errors (Pydantic format)
+    if (Array.isArray(data.detail)) {
+        return data.detail.map((err) => err.message || err.msg || err).join("\n");
+    }
 
-  // Single error object with message
-  if (data.detail && typeof data.detail === "object" && data.detail.message) {
-    return data.detail.message;
-  }
+    // Single error object with message
+    if (data.detail && typeof data.detail === "object" && data.detail.message) {
+        return data.detail.message;
+    }
 
-  // Simple string error message
-  if (typeof data.detail === "string") {
-    return data.detail;
-  }
+    // Simple string error message
+    if (typeof data.detail === "string") {
+        return data.detail;
+    }
 
-  // Fallback to alternative error fields
-  return data.message || data.error || "خطای نامشخص";
+    // Fallback to alternative error fields
+    return data.message || data.error || "خطای نامشخص";
 }
 
 /**
@@ -72,7 +73,7 @@ function extractErrorMessage(data) {
  * @returns {string|null} JWT access token or null if not found
  */
 function getAccessToken() {
-  return localStorage.getItem("access_token");
+    return localStorage.getItem("access_token");
 }
 
 /**
@@ -81,16 +82,16 @@ function getAccessToken() {
  * @returns {Object} Headers object with Content-Type and optional Authorization
  */
 function getHeaders(includeAuth = true) {
-  const headers = { "Content-Type": "application/json" };
+    const headers = {"Content-Type": "application/json"};
 
-  if (includeAuth) {
-    const token = getAccessToken();
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
+    if (includeAuth) {
+        const token = getAccessToken();
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
     }
-  }
 
-  return headers;
+    return headers;
 }
 
 /**
@@ -106,54 +107,54 @@ function getHeaders(includeAuth = true) {
  * @returns {Promise<Object>} Response data or error object with success: false
  */
 async function request(endpoint, options = {}) {
-  const {
-    method = "GET",
-    body = null,
-    includeAuth = true,
-    headers = {},
-  } = options;
+    const {
+        method = "GET",
+        body = null,
+        includeAuth = true,
+        headers = {},
+    } = options;
 
-  const url = `${API_BASE}${endpoint}`;
-  const fetchOptions = {
-    method,
-    headers: { ...getHeaders(includeAuth), ...headers },
-  };
-
-  // Add body for non-GET requests
-  if (body && method !== "GET") {
-    fetchOptions.body = JSON.stringify(body);
-  }
-
-  try {
-    const response = await fetch(url, fetchOptions);
-    const data = await response.json();
-
-    // Handle error responses (4xx, 5xx)
-    if (!response.ok) {
-      throw {
-        status: response.status,
-        error: extractErrorMessage(data),
-        data: data,
-      };
-    }
-
-    return data;
-  } catch (err) {
-    // Return standardized error format
-    if (err.error) {
-      return {
-        success: false,
-        error: err.error,
-        status: err.status,
-      };
-    }
-
-    // Network error or JSON parse error
-    return {
-      success: false,
-      error: "خطا در ارتباط با سرور",
+    const url = `${API_BASE}${endpoint}`;
+    const fetchOptions = {
+        method,
+        headers: {...getHeaders(includeAuth), ...headers},
     };
-  }
+
+    // Add body for non-GET requests
+    if (body && method !== "GET") {
+        fetchOptions.body = JSON.stringify(body);
+    }
+
+    try {
+        const response = await fetch(url, fetchOptions);
+        const data = await response.json();
+
+        // Handle error responses (4xx, 5xx)
+        if (!response.ok) {
+            throw {
+                status: response.status,
+                error: extractErrorMessage(data),
+                data: data,
+            };
+        }
+
+        return data;
+    } catch (err) {
+        // Return standardized error format
+        if (err.error) {
+            return {
+                success: false,
+                error: err.error,
+                status: err.status,
+            };
+        }
+
+        // Network error or JSON parse error
+        return {
+            success: false,
+            error: "خطا در ارتباط با سرور",
+        };
+    }
 }
 
 /**
@@ -165,43 +166,55 @@ async function request(endpoint, options = {}) {
  * @property {Function} post - POST request
  * @property {Function} put - PUT request
  * @property {Function} delete - DELETE request
+ * @property {Function} patch
  */
 export const apiClient = {
-  /**
-   * GET request
-   * @param {string} endpoint - API endpoint
-   * @param {RequestOptions} [options] - Request options
-   * @returns {Promise<any>} Response data
-   */
-  get: (endpoint, options = {}) =>
-    request(endpoint, { ...options, method: "GET" }),
+    /**
+     * GET request
+     * @param {string} endpoint - API endpoint
+     * @param {RequestOptions} [options] - Request options
+     * @returns {Promise<any>} Response data
+     */
+    get: (endpoint, options = {}) =>
+        request(endpoint, {...options, method: "GET"}),
 
-  /**
-   * POST request
-   * @param {string} endpoint - API endpoint
-   * @param {Object} body - Request body
-   * @param {RequestOptions} [options] - Request options
-   * @returns {Promise<any>} Response data
-   */
-  post: (endpoint, body, options = {}) =>
-    request(endpoint, { ...options, method: "POST", body }),
+    /**
+     * POST request
+     * @param {string} endpoint - API endpoint
+     * @param {Object} body - Request body
+     * @param {RequestOptions} [options] - Request options
+     * @returns {Promise<any>} Response data
+     */
+    post: (endpoint, body, options = {}) =>
+        request(endpoint, {...options, method: "POST", body}),
 
-  /**
-   * PUT request
-   * @param {string} endpoint - API endpoint
-   * @param {Object} body - Request body
-   * @param {RequestOptions} [options] - Request options
-   * @returns {Promise<any>} Response data
-   */
-  put: (endpoint, body, options = {}) =>
-    request(endpoint, { ...options, method: "PUT", body }),
+    /**
+     * PUT request
+     * @param {string} endpoint - API endpoint
+     * @param {Object} body - Request body
+     * @param {RequestOptions} [options] - Request options
+     * @returns {Promise<any>} Response data
+     */
+    put: (endpoint, body, options = {}) =>
+        request(endpoint, {...options, method: "PUT", body}),
 
-  /**
-   * DELETE request
-   * @param {string} endpoint - API endpoint
-   * @param {RequestOptions} [options] - Request options
-   * @returns {Promise<any>} Response data
-   */
-  delete: (endpoint, options = {}) =>
-    request(endpoint, { ...options, method: "DELETE" }),
+    /**
+     * PATCH request
+     * @param {string} endpoint - API endpoint
+     * @param {Object} body - Request body
+     * @param {RequestOptions} [options] - Request options
+     * @returns {Promise<any>} Response data
+     */
+    patch: (endpoint, body, options = {}) =>
+        request(endpoint, { ...options, method: "PATCH", body }),
+    /**
+     * DELETE request
+     * @param {string} endpoint - API endpoint
+     * @param {RequestOptions} [options] - Request options
+     * @returns {Promise<any>} Response data
+     */
+    delete: (endpoint, options = {}) =>
+        request(endpoint, {...options, method: "DELETE"}),
+
+
 };
