@@ -14,7 +14,9 @@ from app.models.user import User
 from app.schemas.trip import (
     TripResponse, TripCreate, InvitationResponse, TripDetailsResponse,
     AddLocationRequest, TripLocationResponse, LocationVoteData,
-    VoteLocationRequest, VoteLocationResponse, UpdateVisitedRequest, UpdateVisitedResponse
+    VoteLocationRequest, VoteLocationResponse, UpdateVisitedRequest, UpdateVisitedResponse,
+    SuccessResponse, AddLocationSuccessResponse, RemoveLocationSuccessResponse,
+    VoteSuccessResponse, UpdateVisitedSuccessResponse, IsOwnerResponse
 )
 from typing import List, Optional
 from app.models.trip import TripParticipant, TripInvitation, InvitationStatus
@@ -47,7 +49,7 @@ def create_trip(trip_in: TripCreate, db: Session = Depends(get_db), current_user
     return trip
 
 
-@router.post("/invite/{trip_id}/{friend_id}")
+@router.post("/invite/{trip_id}/{friend_id}", response_model=InvitationResponse)
 def invite_friend(
         trip_id: int, friend_id: int,
         db: Session = Depends(get_db),
@@ -106,7 +108,7 @@ def get_my_invitations(db: Session = Depends(get_db), current_user: User = Depen
     """
     return trip_crud.get_user_invitations(db, current_user.user_id)
 
-@router.patch("/invitations/{invitation_id}/respond")
+@router.patch("/invitations/{invitation_id}/respond", response_model=SuccessResponse)
 def respond_invite(invitation_id: int, accept: bool, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """
     Accept or reject a trip invitation.
@@ -292,7 +294,7 @@ def get_available_friends(
     return friends
 
 
-@router.post("/{trip_id}/locations")
+@router.post("/{trip_id}/locations", response_model=AddLocationSuccessResponse)
 def add_location_to_trip(
         trip_id: int,
         location_data: AddLocationRequest,
@@ -379,7 +381,7 @@ def add_location_to_trip(
     }
 
 
-@router.delete("/{trip_id}/locations/{location_id}")
+@router.delete("/{trip_id}/locations/{location_id}", response_model=RemoveLocationSuccessResponse)
 def remove_location_from_trip(
         trip_id: int,
         location_id: int,
@@ -426,7 +428,7 @@ def remove_location_from_trip(
     }
 
 
-@router.post("/{trip_id}/locations/{location_id}/vote")
+@router.post("/{trip_id}/locations/{location_id}/vote", response_model=VoteSuccessResponse)
 def vote_on_location(
         trip_id: int,
         location_id: int,
@@ -493,7 +495,7 @@ def vote_on_location(
     }
 
 
-@router.patch("/{trip_id}/locations/{location_id}/visited")
+@router.patch("/{trip_id}/locations/{location_id}/visited", response_model=UpdateVisitedSuccessResponse)
 def update_visited_status(
         trip_id: int,
         location_id: int,
@@ -553,7 +555,7 @@ def update_visited_status(
     }
 
 
-@router.get("/{trip_id}/is-owner")
+@router.get("/{trip_id}/is-owner", response_model=IsOwnerResponse)
 def check_is_owner(
         trip_id: int,
         db: Session = Depends(get_db),

@@ -145,3 +145,63 @@ class UpdateVisitedResponse(BaseModel):
     Contains the updated visited status.
     """
     visited: bool = Field(..., description="Updated visited status")
+
+
+class SuccessResponse(BaseModel):
+    """
+    Generic Success Response
+    
+    Standard success message response.
+    """
+    message: str = Field(..., description="Success message")
+
+
+class AddLocationSuccessResponse(BaseModel):
+    """
+    Add Location Success Response
+    
+    Contains success status, message, and complete location details.
+    """
+    success: bool = Field(..., description="Operation success status")
+    message: str = Field(..., description="Success message")
+    data: TripLocationResponse = Field(..., description="Added location details")
+
+
+class RemoveLocationSuccessResponse(BaseModel):
+    """
+    Remove Location Success Response
+    
+    Contains success status and confirmation message.
+    """
+    success: bool = Field(..., description="Operation success status")
+    message: str = Field(..., description="Success message")
+
+
+class VoteSuccessResponse(BaseModel):
+    """
+    Vote Success Response
+    
+    Contains success status and updated vote information.
+    """
+    success: bool = Field(..., description="Operation success status")
+    data: VoteLocationResponse = Field(..., description="Updated vote information")
+
+
+class UpdateVisitedSuccessResponse(BaseModel):
+    """
+    Update Visited Success Response
+    
+    Contains success status, message, and updated visited status.
+    """
+    success: bool = Field(..., description="Operation success status")
+    message: str = Field(..., description="Success message")
+    data: UpdateVisitedResponse = Field(..., description="Updated visited status")
+
+
+class IsOwnerResponse(BaseModel):
+    """
+    Is Owner Response
+    
+    Contains boolean indicating if user is the trip owner.
+    """
+    isOwner: bool = Field(..., description="Whether the current user is the trip owner")
