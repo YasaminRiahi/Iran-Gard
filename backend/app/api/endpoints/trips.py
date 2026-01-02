@@ -186,7 +186,7 @@ def get_trip_details(
     1. Retrieves complete trip information
     2. Includes list of all participant user IDs
     3. Provides total participant count
-    4. Returns all trip locations
+    4. Returns complete details for all trip locations
     
     **Path Parameters:**
     - trip_id: ID of the trip to retrieve
@@ -194,7 +194,7 @@ def get_trip_details(
     **Errors:**
     - 404: Trip not found
     
-    **Response:** Detailed trip information including participants and locations
+    **Response:** Detailed trip information including participants and complete place details
     """
     trip = trip_crud.get_trip_by_id(db, trip_id=trip_id)
     if not trip:
@@ -208,12 +208,20 @@ def get_trip_details(
     
     # Add place_ids from trip_locations
     place_ids = trip_crud.get_trip_place_ids(db, trip_id)
+    
+    # Fetch complete place details
+    places = []
+    for place_id in place_ids:
+        place = place_crud.get_place(db, place_id)
+        if place:
+            places.append(place)
 
     return {
         **trip.__dict__,
         "place_ids": place_ids,
         "participants": participant_ids,
-        "participants_count": len(participant_ids)
+        "participants_count": len(participant_ids),
+        "places": places
     }
 
 

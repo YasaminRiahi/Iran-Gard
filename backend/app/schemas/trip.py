@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field
 from datetime import date
 from typing import List, Optional
 from app.models.trip import TripStatus, InvitationStatus
+from app.schemas.place import PlaceResponse
 
 class TripCreate(BaseModel):
     """
@@ -59,10 +60,11 @@ class TripDetailsResponse(TripResponse):
     """
     Detailed Trip Information Response
     
-    Extended trip information including participant list and count.
+    Extended trip information including participant list, count, and complete place details.
     """
     participants: List[int] = Field(..., description="List of participant user IDs")
     participants_count: int = Field(..., description="Total number of participants")
+    places: List[PlaceResponse] = Field(..., description="Complete details of all places in the trip")
 
     class Config:
         from_attributes = True
