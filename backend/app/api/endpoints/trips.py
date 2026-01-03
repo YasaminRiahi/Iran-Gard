@@ -2,20 +2,23 @@
 Trip management endpoints for creating trips, inviting friends, and managing locations.
 """
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from app.api.deps import get_current_user
 from app.crud import trip as trip_crud
 from app.crud import place as place_crud
 from app.crud import friendship as friendship_crud
 from app.crud import user as user_crud
 from app.crud import trip_plan as plan_crud
+from app.crud import trip_places as trip_places_crud
 from app.db.session import get_db
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.schemas.trip import (
     TripResponse, TripCreate, InvitationResponse, TripDetailsResponse,
     AddLocationRequest, VoteLocationRequest, UpdateVisitedRequest, SuccessResponse, AddLocationSuccessResponse, RemoveLocationSuccessResponse,
-    VoteSuccessResponse, UpdateVisitedSuccessResponse, IsOwnerResponse
+    VoteSuccessResponse, UpdateVisitedSuccessResponse, IsOwnerResponse,
+    GetTripPlacesResponse, TripPlaceResponse, CityPlacesGroup,
+    AutoGeneratePlacesRequest, AutoGeneratePlacesResponse
 )
 from app.schemas.trip_plan import (
     CreatePlanRequest, CreatePlanSuccessResponse, UpdatePlanRequest, UpdatePlanOrderRequest,
@@ -23,7 +26,8 @@ from app.schemas.trip_plan import (
     DeleteLocationSuccessResponse, DeletePlanSuccessResponse, VotePlanRequest, VotePlanSuccessResponse,
     AutoGeneratePlansRequest, AutoGeneratePlansSuccessResponse, GetPlansResponse
 )
-from typing import List
+from typing import List, Optional
+from itertools import groupby
 from app.models.trip import TripParticipant, TripInvitation, InvitationStatus
 from app.schemas.friendship import FriendInviteDetail
 
@@ -1250,4 +1254,235 @@ def auto_generate_plans(
         "message": f"{len(created_plans)} پلن به صورت خودکار ایجاد شد",
         "data": plans_response
     }
+
+
+# === Trip Place Recommendation Endpoints ===
+
+
+@router.post("/{trip_id}/places", response_model=GetTripPlacesResponse)
+def get_places_for_trip(
+    trip_id: int,
+    city_names: Optional[List[str]] = Query(None, description="فیلتر شهرها (اختیاری)"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get available places for a trip with intelligent scoring and grouping.
+    
+    **Flow:**
+    1. Validates that the trip exists and user is a participant
+    2. Gets available places from specified cities (or all trip cities if not specified)
+    3. Excludes places already added to the trip
+    4. Scores places based on:
+       - User's personal rating (+2 points if user has rated it)
+       - User's favorite categories (+1 point if place is in favorites)
+       - Average rating from all users (0-5 points)
+    5. Groups places by city
+    6. Sorts within each city by score (highest first)
+    
+    **Authentication:** Required (Bearer token)
+    
+    **Path Parameters:**
+    - trip_id: ID of the trip
+    
+    **Query Parameters:**
+    - city_names: Optional list of city names to filter. If not provided, uses all cities in the trip.
+    
+    **Errors:**
+    - 403: کاربر عضو این سفر نیست
+    - 404: سفر پیدا نشد
+    - 400: نام شهر نامعتبر است (اگر شهری در سفر موجود نباشد)
+    
+    **Response:** List of places with scores, grouped by city
+    """
+    # Validate trip exists
+    trip = trip_crud.get_trip_by_id(db, trip_id)
+    if not trip:
+        raise HTTPException(status_code=404, detail="سفر پیدا نشد")
+    
+    # Validate user is participant
+    if not trip_crud.is_user_in_trip(db, trip_id, current_user.user_id):
+        raise HTTPException(status_code=403, detail="شما عضو این سفر نیستید")
+    
+    # Determine cities to query
+    query_cities = city_names if city_names else (trip.city_names or [])
+    
+    # Validate city_names if provided
+    if city_names:
+        # Check that all provided cities are in the trip
+        trip_cities = set(trip.city_names or [])
+        provided_cities = set(city_names)
+        invalid_cities = provided_cities - trip_cities
+        
+        if invalid_cities:
+            raise HTTPException(
+                status_code=400,
+                detail=f"شهرهای زیر در این سفر موجود نیستند: {', '.join(invalid_cities)}"
+            )
+    
+    # Get places with scoring
+    places = trip_places_crud.get_places_for_trip_with_scoring(
+        db=db,
+        user_id=current_user.user_id,
+        city_names=query_cities,
+        trip_id=trip_id
+    )
+    
+    # Convert to response schema and group by city
+    place_responses = [TripPlaceResponse(**place) for place in places]
+    
+    # Group places by city_name
+    cities_grouped = []
+    for city_name, city_places in groupby(place_responses, key=lambda p: p.city_name):
+        cities_grouped.append(CityPlacesGroup(
+            city_name=city_name,
+            places=list(city_places)
+        ))
+    
+    return GetTripPlacesResponse(
+        cities=cities_grouped,
+        total_count=len(place_responses)
+    )
+
+
+@router.post("/{trip_id}/auto-generate-places", response_model=AutoGeneratePlacesResponse)
+def auto_generate_trip_places(
+    trip_id: int,
+    request: AutoGeneratePlacesRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Automatically generate and add top places to a trip.
+    
+    **Flow:**
+    1. Validates that the trip exists and user is a participant
+    2. Gets top N places per city based on intelligent scoring
+    3. Excludes places already in the trip
+    4. Adds selected places to the trip
+    5. Returns list of added place IDs
+    
+    **Scoring Algorithm:**
+    - Places are scored the same way as in get_places_for_trip endpoint
+    - Top N places from each city are selected
+    - Places already in trip are excluded
+    
+    **Authentication:** Required (Bearer token)
+    
+    **Path Parameters:**
+    - trip_id: ID of the trip
+    
+    **Request Body:**
+    - top_n: Number of places to add per city (1-20)
+    - city_names: Optional list of cities. If not provided, generates for all trip cities.
+    
+    **Errors:**
+    - 403: کاربر عضو این سفر نیست
+    - 404: سفر پیدا نشد
+    - 400: نام شهر نامعتبر است یا تعداد مکان‌ها خارج از محدوده است
+    
+    **Response:** Success message with count and list of added place IDs
+    """
+    # Validate trip exists
+    trip = trip_crud.get_trip_by_id(db, trip_id)
+    if not trip:
+        raise HTTPException(status_code=404, detail="سفر پیدا نشد")
+    
+    # Validate user is participant
+    if not trip_crud.is_user_in_trip(db, trip_id, current_user.user_id):
+        raise HTTPException(status_code=403, detail="شما عضو این سفر نیستید")
+    
+    # Determine cities to use
+    query_cities = request.city_names if request.city_names else (trip.city_names or [])
+    
+    # Validate city_names if provided
+    if request.city_names:
+        trip_cities = set(trip.city_names or [])
+        provided_cities = set(request.city_names)
+        invalid_cities = provided_cities - trip_cities
+        
+        if invalid_cities:
+            raise HTTPException(
+                status_code=400,
+                detail=f"شهرهای زیر در این سفر موجود نیستند: {', '.join(invalid_cities)}"
+            )
+    
+    # Auto-generate places (CRUD handles filtering and database operations)
+    selected_places = trip_places_crud.auto_generate_trip_places(
+        db=db,
+        trip_id=trip_id,
+        user_id=current_user.user_id,
+        top_n=request.top_n,
+        city_names=query_cities
+    )
+    
+    # Convert to response schema
+    place_responses = [TripPlaceResponse(**place) for place in selected_places]
+    
+    return AutoGeneratePlacesResponse(
+        success=True,
+        message=f"{len(selected_places)} مکان به طور خودکار به سفر اضافه شد",
+        added_count=len(selected_places),
+        places=place_responses
+    )
+
+
+@router.post("/preview-places", response_model=GetTripPlacesResponse)
+def preview_places_for_cities(
+    city_names: List[str] = Query(..., description="لیست شهرها"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Preview available places for given cities with personalized scoring.
+    
+    **Use Case:** When creating a new trip, preview which places are available
+    in the selected cities before actually creating the trip.
+    
+    **Flow:**
+    1. Gets available places from specified cities
+    2. NO exclusion of places (no trip context)
+    3. Scores places based on:
+       - User's personal rating (+2 points if user has rated it)
+       - User's favorite categories (+1 point if place is in favorites)
+       - Average rating from all users (0-5 points)
+    4. Groups places by city
+    5. Sorts within each city by score (highest first)
+    
+    **Authentication:** Required (Bearer token)
+    
+    **Query Parameters:**
+    - city_names: Required list of city names (at least one)
+    
+    **Errors:**
+    - 400: لیست شهرها خالی است
+    
+    **Response:** List of places with scores, grouped by city
+    """
+    if not city_names:
+        raise HTTPException(status_code=400, detail="لیست شهرها نمی‌تواند خالی باشد")
+    
+    # Get places with scoring (no trip_id, so no exclusions)
+    places = trip_places_crud.get_places_for_trip_with_scoring(
+        db=db,
+        user_id=current_user.user_id,
+        city_names=city_names,
+        trip_id=None  # No trip context = no exclusions
+    )
+    
+    # Convert to response schema and group by city
+    place_responses = [TripPlaceResponse(**place) for place in places]
+    
+    # Group places by city_name
+    cities_grouped = []
+    for city_name, city_places in groupby(place_responses, key=lambda p: p.city_name):
+        cities_grouped.append(CityPlacesGroup(
+            city_name=city_name,
+            places=list(city_places)
+        ))
+    
+    return GetTripPlacesResponse(
+        cities=cities_grouped,
+        total_count=len(place_responses)
+    )
 

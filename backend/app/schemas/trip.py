@@ -214,3 +214,90 @@ class IsOwnerResponse(BaseModel):
     Contains boolean indicating if user is the trip owner.
     """
     isOwner: bool = Field(..., description="Whether the current user is the trip owner")
+
+
+# === Trip Place Recommendation Schemas ===
+
+
+class TripPlaceResponse(BaseModel):
+    """
+    Trip Place Response with Scoring
+    
+    Contains place information with personalized scoring for trip planning.
+    """
+    place_id: int = Field(..., description="Place ID")
+    place_name: str = Field(..., description="Place name")
+    city_name: str = Field(..., description="City name")
+    province_name: Optional[str] = Field(None, description="Province name")
+    description: Optional[str] = Field(None, description="Place description")
+    category_id: Optional[int] = Field(None, description="Category ID")
+    avg_rating: Optional[float] = Field(None, description="Average rating (1-5)")
+    score: float = Field(..., description="Personalized score for sorting")
+    lat: Optional[float] = Field(None, description="Latitude coordinate")
+    lng: Optional[float] = Field(None, description="Longitude coordinate")
+    first_picture_url: Optional[str] = Field(None, description="First photo URL")
+    
+    class Config:
+        from_attributes = True
+
+
+class GetTripPlacesRequest(BaseModel):
+    """
+    Get Places for Trip Request
+    
+    **Optional fields:**
+    - city_names: List of city names to filter places. If not provided, uses all cities in the trip.
+    """
+    city_names: Optional[List[str]] = Field(
+        None,
+        description="Optional list of city names to filter places. If null, uses trip's cities."
+    )
+
+
+class CityPlacesGroup(BaseModel):
+    """
+    Places grouped by city
+    
+    Contains city name and list of places in that city.
+    """
+    city_name: str = Field(..., description="City name")
+    places: List[TripPlaceResponse] = Field(..., description="List of places in this city, sorted by score")
+
+
+class GetTripPlacesResponse(BaseModel):
+    """
+    Get Places for Trip Response
+    
+    Contains places grouped by city and sorted by personalized score within each city.
+    """
+    cities: List[CityPlacesGroup] = Field(..., description="Places grouped by city")
+    total_count: int = Field(..., description="Total number of places returned")
+
+
+class AutoGeneratePlacesRequest(BaseModel):
+    """
+    Auto-Generate Trip Places Request
+    
+    **Required fields:**
+    - top_n: Number of top places to select per city (minimum 1, maximum 20)
+    
+    **Optional fields:**
+    - city_names: List of city names. If not provided, generates for all cities in the trip.
+    """
+    top_n: int = Field(..., ge=1, le=20, description="Number of top places to select per city (1-20)")
+    city_names: Optional[List[str]] = Field(
+        None,
+        description="Optional list of city names. If null, uses all trip cities."
+    )
+
+
+class AutoGeneratePlacesResponse(BaseModel):
+    """
+    Auto-Generate Places Response
+    
+    Contains information about the places that were added to the trip.
+    """
+    success: bool = Field(..., description="Operation success status")
+    message: str = Field(..., description="Success message")
+    added_count: int = Field(..., description="Number of places added")
+    places: List[TripPlaceResponse] = Field(..., description="List of places that were added with their details")
