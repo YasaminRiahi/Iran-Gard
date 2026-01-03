@@ -6,9 +6,8 @@ import {
     getMyInvitations,
     getAvailableFriends,
     getCitiesWithCounts,
-    getCityPlaces,
+    getPreviewPlaces,
     buildTripPayload,
-    validateTripData,
     getTripDetails,
     respondToInvitation,
     getUserFullInfo,
@@ -20,9 +19,11 @@ let selectedStartDate = null;
 let selectedEndDate = null;
 let selectedCities = []; // Array of city names
 let selectedLocations = []; // Array of place IDs
+let locationsNameMap = {};
 let selectedFriends = []; // Array of friend IDs
 let createdTripId = null;
 let citiesData = {}; // Cache for cities and their places
+
 
 // ============ Page Load & Scroll Management ============
 window.addEventListener('beforeunload', () => window.scrollTo(0, 0));
@@ -145,7 +146,7 @@ function createTripCard(trip, type = 'finished') {
             <h3 class="trip-title">سفر به ${cities}</h3>
             <p class="trip-date"><i class="fas fa-calendar"></i> ${startDate} تا ${endDate}</p>
             <p class="trip-locations"><i class="fas fa-map-marker-alt"></i> 
-                ${placesCount} مکان ${type === 'finished' ? 'بازدید شده' : 'انتخاب شده'}
+                ${englishToPersianNumber(placesCount)} مکان ${type === 'finished' ? 'بازدید شده' : 'انتخاب شده'}
             </p>
         </div>
         <div class="trip-actions">
@@ -545,7 +546,7 @@ function updateDateSummary() {
         const diffTime = Math.abs(selectedEndDate - selectedStartDate);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        summaryText.textContent = `مدت سفر: ${diffDays} روز (از ${$('#startDate').val()} تا ${$('#endDate').val()})`;
+        summaryText.textContent = `مدت سفر: ${englishToPersianNumber(diffDays)} روز (از ${$('#startDate').val()} تا ${$('#endDate').val()})`;
         summaryDiv.style.display = 'flex';
     } else {
         summaryDiv.style.display = 'none';
@@ -573,6 +574,7 @@ document.getElementById('continueToStep1').addEventListener('click', () => {
                     cancelButton: 'my-cancel-btn'
                 },
             });
+            resetModal();
             return;
         }
         loadCitiesForSelection();
@@ -609,7 +611,7 @@ async function loadCitiesForSelection() {
                 <img src="${imageUrl}" alt="${city.city_name}"
                      onerror="this.src='../src/assets/images/default-city.jpg'">
                 <h4>${city.city_name}</h4>
-                <p>${city.places_count} مکان گردشگری</p>
+                <p>${englishToPersianNumber(city.places_count)} مکان گردشگری</p>
             `;
 
             cityCard.addEventListener('click', function() {
@@ -684,23 +686,19 @@ async function loadLocationsForSelectedCities() {
     locationsGrid.innerHTML = '<div class="loading-state">در حال بارگذاری...</div>';
 
     try {
-        const citySections = await Promise.all(
-            selectedCities.map(async (cityName) => {
-                try {
-                    const response = await getCityPlaces(cityName);
-                    const places = response.data || response;
-                    return { cityName, places };
-                } catch (error) {
-                    console.error(`Error loading places for ${cityName}:`, error);
-                    return { cityName, places: [] };
-                }
-            })
-        );
+        const response = await getPreviewPlaces(selectedCities);
+        const data = response.data || response;
+        const citySections = data.cities || [];
 
         locationsGrid.innerHTML = '';
 
-        citySections.forEach(({ cityName, places }) => {
+        citySections.forEach((cityData) => {
+            const cityName = cityData.city_name;
+            const places = cityData.places;
             if (!places || places.length === 0) return;
+            places.forEach(place => {
+                locationsNameMap[place.place_id] = place.place_name;
+            });
 
             const citySection = document.createElement('div');
             citySection.className = 'city-section';
@@ -718,6 +716,10 @@ async function loadLocationsForSelectedCities() {
                             <div class="location-info">
                                 <h5>${place.place_name}</h5>
                                 <p><i class="fas fa-tag"></i> ${getCategoryName(place.category_id) || 'گردشگری'}</p>
+                                <div class="rating-container">
+                                    ${place.avg_rating ? generateStarRating(place.avg_rating) : ""}
+                                    <span class="rating-number">${place.avg_rating ? englishToPersianNumber(place.avg_rating.toFixed(1)) : ""}</span>
+                                </div>
                                 ${place.description ? `<p style="font-size: 0.8rem; margin-top: 0.5rem;">${place.description}</p>` : ''}
                             </div>
                         </div>
@@ -741,6 +743,41 @@ async function loadLocationsForSelectedCities() {
         console.error('Error loading locations:', error);
         locationsGrid.innerHTML = '<p>خطا در بارگذاری مکان‌ها</p>';
     }
+}
+
+function englishToPersianNumber(input) {
+    let str = String(input);
+
+    const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+    for (let i = 0; i < 10; i++) {
+        str = str.replace(new RegExp(englishNumbers[i], 'g'), persianNumbers[i]);
+    }
+    return str;
+}
+
+// ============ Generate Star Rating ============
+function generateStarRating(rating) {
+    const fullStars = Math.floor(rating || 0);
+    const hasHalfStar = (rating % 1) >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    let stars = '';
+
+    for (let i = 0; i < fullStars; i++) {
+        stars += '<i class="fas fa-star star-filled"></i>';
+    }
+
+    if (hasHalfStar) {
+        stars += '<i class="fas fa-star-half-alt star-half"></i>';
+    }
+
+    for (let i = 0; i < emptyStars; i++) {
+        stars += '<i class="far fa-star star-empty"></i>';
+    }
+
+    return stars;
 }
 
 function getCategoryName(categoryId){
@@ -778,10 +815,12 @@ function updateSelectedLocationsList() {
         return;
     }
 
-    // TODO: نام مکان‌ها رو از DOM بگیر یا cache کن
-    listContainer.innerHTML = selectedLocations.map(id =>
-        `<span class="location-tag">مکان ${id}</span>`
-    ).join('');
+    const names = selectedLocations.map(id => {
+        const name = locationsNameMap[id] || `مکان ${id}`;
+        return `<span class="location-tag">${name}</span>`;
+    });
+
+    listContainer.innerHTML = names.join(' ، ');
 }
 
 function updateNextButton() {
@@ -879,24 +918,6 @@ document.getElementById('finishTrip').addEventListener('click', async () => {
         coverImage: null
     });
 
-    const validation = validateTripData(tripPayload);
-    if (!validation.valid) {
-        Swal.fire({
-            icon: 'error',
-            title: 'خطا در اطلاعات سفر',
-            html: validation.errors.map(err => `<p>• ${err}</p>`).join(''),
-            confirmButtonColor: '#a6b28b',
-            background: '#f0f0f0',
-            color: '#4b5563',
-            customClass: {
-                popup: 'my-swal-popup',
-                confirmButton: 'my-confirm-btn',
-                cancelButton: 'my-cancel-btn'
-            },
-        });
-        return;
-    }
-
     Swal.fire({
         title: 'در حال ایجاد سفر...',
         html: 'لطفاً صبر کنید',
@@ -935,7 +956,7 @@ document.getElementById('finishTrip').addEventListener('click', async () => {
             html: `
                 <p>تاریخ: <strong>${$('#startDate').val()} تا ${$('#endDate').val()}</strong></p>
                 <p>شهرها: <strong>${selectedCities.join('، ')}</strong></p>
-                <p>تعداد مکان‌ها: <strong>${selectedLocations.length}</strong></p>
+                <p>تعداد مکان‌ها: <strong>${englishToPersianNumber(selectedLocations.length)}</strong></p>
                 ${selectedFriends.length > 0 ? `<p>دعوت شده: <strong>${selectedFriends.length} نفر</strong></p>` : ''}
             `,
             confirmButtonText: 'عالی!',

@@ -2,7 +2,6 @@ import { apiClient , API_BASE} from "/src/scripts/services/api-client.js";
 
 const TRIP_ENDPOINT = "/trips";
 const CITY_ENDPOINT = "/city";
-const PLACE_ENDPOINT = "/places"
 const USER_ENDPOINT = "/users";
 // ============ Trip Management ============
 
@@ -74,11 +73,14 @@ export function getCitiesWithCounts() {
 
 /**
  * دریافت مکان‌های دیدنی یک شهر
- * @param {string} cityName - نام شهر
+ * @param {string} cityNames - نام شهر
  * @returns {Promise} لیست مکان‌های شهر
  */
-export function getCityPlaces(cityName) {
-    return apiClient.get(`${PLACE_ENDPOINT}/?city_name=${cityName}`);
+export function getPreviewPlaces(cityNames) {
+    const params = new URLSearchParams();
+    cityNames.forEach(city => params.append('city_names', city));
+
+    return apiClient.post(`${TRIP_ENDPOINT}/preview-places?${params.toString()}`);
 }
 
 export const getTripDetails = async (tripId) => {
@@ -150,44 +152,7 @@ export function buildTripPayload({ startDate, endDate, cityNames, placeIds, cove
     };
 }
 
-/**
- * اعتبارسنجی داده‌های سفر قبل از ارسال
- * @param {Object} tripData - داده‌های سفر
- * @returns {Object} { valid: boolean, errors: Array<string> }
- */
-export function validateTripData(tripData) {
-    const errors = [];
 
-    if (!tripData.start_date) {
-        errors.push('تاریخ شروع الزامی است');
-    }
-
-    if (!tripData.end_date) {
-        errors.push('تاریخ پایان الزامی است');
-    }
-
-    if (tripData.start_date && tripData.end_date) {
-        const start = new Date(tripData.start_date);
-        const end = new Date(tripData.end_date);
-
-        if (start >= end) {
-            errors.push('تاریخ پایان باید بعد از تاریخ شروع باشد');
-        }
-    }
-
-    if (!tripData.city_names || tripData.city_names.length === 0) {
-        errors.push('حداقل یک شهر را انتخاب کنید');
-    }
-
-    if (!tripData.place_ids || tripData.place_ids.length === 0) {
-        errors.push('حداقل یک مکان را انتخاب کنید');
-    }
-
-    return {
-        valid: errors.length === 0,
-        errors
-    };
-}
 
 export function getURL () {
     return API_BASE;
