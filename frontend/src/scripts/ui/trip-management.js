@@ -9,8 +9,14 @@ import {
     voteOnLocation,
     autoGeneratePlaces,
     removeLocationFromTrip,
-    updateVisitedStatus
-} from '../services/trips-service.js';
+    updateVisitedStatus,
+    getTripPlans,
+    getTripExpenses,
+    createExpense,
+    updateExpense as updateExpenseAPI,
+    deleteExpense as deleteExpenseAPI,
+    getSettlement
+} from '/src/scripts/services/trips-service.js';
 /* ================================================================
    1. SCROLL MANAGEMENT
    ================================================================ */
@@ -110,10 +116,37 @@ async function fetchAndAssignTripData() {
             selectedLocations = [];
         }
 
-        // ۳. بروزرسانی رابط کاربری (UI)
+        try {
+            const expensesResponse = await getTripExpenses(TRIP_ID);
+            const expensesData = expensesResponse.data || expensesResponse;
+
+            expenses = expensesData.map(exp => ({
+                id: exp.expense_id,
+                category: exp.category,
+                description: exp.description,
+                amount: exp.amount,
+                payerId: exp.payer_id,
+                participants: exp.participants.map(p => ({
+                    id: p.user_id,
+                    share: p.share
+                })),
+                createdAt: exp.created_at
+            }));
+
+            console.log('✅ هزینه‌ها با موفقیت دریافت شدند:', expenses);
+        } catch (expError) {
+            console.warn('⚠️ خطا در دریافت هزینه‌ها:', expError);
+            expenses = [];
+        }
+
         updateHeroSection();
         renderLocations();
         renderParticipants();
+        renderExpenses();
+
+        if (typeof initMap === 'function') {
+            initMap();
+        }
         if (typeof initMap === 'function') {
             initMap();
         }
@@ -154,7 +187,7 @@ function updateHeroSection() {
     // بروزرسانی تعداد همسفران
     const participantsElement = document.querySelector('.meta-item-hero:nth-child(3) .meta-value');
     if (participantsElement) {
-        participantsElement.textContent = `${tripData.participants.length} نفر`;
+        participantsElement.textContent = `${englishToPersianNumber(tripData.participants.length)} نفر`;
     }
 }
 
@@ -165,63 +198,6 @@ function convertToPersianDate(dateString) {
     return new Intl.DateTimeFormat('fa-IR').format(date);
 }
 
-const allLocationsData = [
-    {
-        id: 1,
-        name: 'برج میلاد',
-        category: 'تجاری',
-        city: 'تهران',
-        image: '../src/assets/images/88bfd4e9d10d431265e291bc107e47d7.jpg',
-        description: 'برج مخابراتی تهران',
-        lat: 35.7447,
-        lng: 51.3753,
-        votes: {likes: 0, dislikes: 0}
-    },
-    {
-        id: 2,
-        name: 'کاخ گلستان',
-        category: 'تاریخی',
-        city: 'تهران',
-        image: '../src/assets/images/man-walking-stone-pathway-surrou.jpg',
-        description: 'کاخ قاجاری',
-        lat: 35.6795,
-        lng: 51.4209,
-        votes: {likes: 0, dislikes: 0}
-    },
-    {
-        id: 3,
-        name: 'دربند',
-        category: 'طبیعت',
-        city: 'تهران',
-        image: '../src/assets/images/45677.jpg',
-        description: 'تله‌کابین و پیست اسکی',
-        lat: 35.8367,
-        lng: 51.3897,
-        votes: {likes: 0, dislikes: 0}
-    },
-    {
-        id: 4,
-        name: 'موزه ملی ایران',
-        category: 'فرهنگی',
-        city: 'تهران',
-        image: '../src/assets/images/man-walking-stone-pathway-surrou.jpg',
-        description: 'موزه باستان‌شناسی',
-        lat: 35.6892,
-        lng: 51.4158,
-        votes: {likes: 0, dislikes: 0}
-    },
-    {
-        id: 5,
-        name: 'باغ موزه هنر',
-        category: 'هنری',
-        city: 'تهران',
-        image: '../src/assets/images/45677.jpg',
-        description: 'باغ موزه هنرهای معاصر',
-        lat: 35.7264,
-        lng: 51.4089,
-        votes: {likes: 0, dislikes: 0}
-    }
-];
 
 let selectedLocations = [];
 let dailyPlans = [];
@@ -350,7 +326,7 @@ function renderLocations() {
 
     locationsList.innerHTML = sortedLocations.map((location, index) => `
         <div class="location-item ${location.visited ? 'visited' : ''}">
-            <div class="location-rank">#${index + 1}</div>
+            <div class="location-rank">#${englishToPersianNumber(index + 1)}</div>
             
             <!-- دکمه حذف -->
             <button class="btn-remove-location" onclick="removeLocation(${location.id})" title="حذف مکان">
@@ -382,12 +358,12 @@ function renderLocations() {
                     <button class="vote-btn ${location.userVote === 'like' ? 'liked' : ''}" 
                             onclick="voteLocation(${location.id}, 'like')">
                         <i class="fas fa-thumbs-up"></i>
-                        <span class="vote-count">${location.votes.likes}</span>
+                        <span class="vote-count">${englishToPersianNumber(location.votes.likes)}</span>
                     </button>
                     <button class="vote-btn ${location.userVote === 'dislike' ? 'disliked' : ''}" 
                             onclick="voteLocation(${location.id}, 'dislike')">
                         <i class="fas fa-thumbs-down"></i>
-                        <span class="vote-count">${location.votes.dislikes}</span>
+                        <span class="vote-count">${englishToPersianNumber(location.votes.dislikes)}</span>
                     </button>
                 </div>
             </div>
@@ -1605,7 +1581,7 @@ function autoGeneratePlans() {
 /* ================================================================
    12. EXPENSES TAB
    ================================================================ */
-
+let editingExpenseId = null;
 function renderExpenses() {
     const expensesList = document.getElementById('expensesList');
 
@@ -1643,7 +1619,7 @@ function renderExpenses() {
         const payer = tripData.participants.find(p => p.id === expense.payerId);
         const participantNames = expense.participants.map(p => {
             const participant = tripData.participants.find(part => part.id === p.id);
-            return participant ? `${participant.name} (${p.share.toLocaleString()}تومان)` : '';
+            return participant ? `${participant.name} (${englishToPersianNumber(p.share.toLocaleString())}تومان)` : '';
         }).filter(Boolean).join('، ');
 
         return `
@@ -1658,7 +1634,7 @@ function renderExpenses() {
                             <i class="fas fa-tag"></i> ${categoryNames[expense.category]}
                         </span>
                         <span class="expense-meta-item">
-                            <i class="fas fa-user"></i> ${payer.name}
+                            <i class="fas fa-user"></i> ${payer.username}
                         </span>
                         <span class="expense-meta-item" style="max-width: 400px; white-space: normal;">
                             <i class="fas fa-users"></i> ${participantNames}
@@ -1666,7 +1642,7 @@ function renderExpenses() {
                     </div>
                 </div>
                 <div class="expense-amount">
-                    ${expense.amount.toLocaleString()} تومان
+                    ${englishToPersianNumber(expense.amount.toLocaleString())} تومان
                 </div>
                 <div class="expense-actions">
                     <button class="btn-edit-expense" onclick="editExpense(${expense.id})" title="ویرایش">
@@ -1684,9 +1660,13 @@ function renderExpenses() {
     calculateSettlement();
 }
 
+
 function editExpense(expenseId) {
     const expense = expenses.find(e => e.id === expenseId);
     if (!expense) return;
+
+    // ✅ ست کردن ID برای ویرایش
+    editingExpenseId = expenseId;
 
     addExpenseModal.classList.add('active');
     initExpenseModal();
@@ -1721,13 +1701,12 @@ function editExpense(expenseId) {
         }
     });
 
-    // تغییر دکمه ذخیره به ویرایش
+    // ✅ تغییر متن دکمه
     const saveBtn = document.getElementById('saveExpenseBtn');
-    saveBtn.textContent = 'ویرایش هزینه';
-    saveBtn.onclick = () => updateExpense(expenseId);
+    saveBtn.innerHTML = '<i class="fas fa-save"></i> ویرایش هزینه';
 }
 
-function updateExpense(expenseId) {
+document.getElementById('saveExpenseBtn').addEventListener('click', async () => {
     const category = document.getElementById('expenseCategory').value;
     const description = document.getElementById('expenseDescription').value;
     const amount = parseInt(document.getElementById('expenseAmount').value);
@@ -1741,56 +1720,137 @@ function updateExpense(expenseId) {
         const pId = parseInt(cb.value);
         const share = parseInt(document.getElementById(`share-${pId}`).value) || 0;
         if (share > 0) {
-            participantsData.push({id: pId, share: share});
+            participantsData.push({user_id: pId, share: share});
             totalShares += share;
         }
     });
 
-    if (!description || !amount || amount <= 0 || participantsData.length === 0 || totalShares !== amount) {
+    // Validation
+    if (!description || !amount || amount <= 0) {
         Swal.fire({
             icon: 'warning',
-            text: 'لطفاً تمام فیلدها را به درستی پر کنید و مجموع سهم‌ها با مبلغ کل برابر باشد',
+            text: 'لطفاً تمام فیلدها را به درستی پر کنید',
             confirmButtonText: 'باشه',
             confirmButtonColor: '#A6B28B',
-            background: '#f0f0f0',
-            customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
         });
         return;
     }
 
-    const expenseIndex = expenses.findIndex(e => e.id === expenseId);
-    expenses[expenseIndex] = {
-        id: expenseId,
-        category: category,
-        description: description,
-        amount: amount,
-        payerId: payerId,
-        participants: participantsData
-    };
+    if (participantsData.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            text: 'حداقل یک نفر با سهم مشخص باید انتخاب شود',
+            confirmButtonText: 'باشه',
+            confirmButtonColor: '#A6B28B',
+        });
+        return;
+    }
 
-    Swal.fire({
-        icon: 'success',
-        title: 'هزینه ویرایش شد!',
-        confirmButtonText: 'عالی',
-        confirmButtonColor: '#A6B28B',
-        background: '#f0f0f0',
-        customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
-    });
+    if (totalShares !== amount) {
+        Swal.fire({
+            icon: 'warning',
+            text: `مجموع سهم‌ها (${totalShares.toLocaleString()}) با مبلغ کل (${amount.toLocaleString()}) برابر نیست!`,
+            confirmButtonText: 'باشه',
+            confirmButtonColor: '#A6B28B',
+        });
+        return;
+    }
 
+    try {
+        const expensePayload = {
+            category: category,
+            description: description,
+            amount: amount,
+            payer_id: payerId,
+            participants: participantsData
+        };
+
+        // ✅ تشخیص اینکه ویرایش است یا ایجاد
+        if (editingExpenseId !== null) {
+            // ویرایش
+            const response = await updateExpenseAPI(TRIP_ID, editingExpenseId, expensePayload);
+            const updatedExpense = response.data || response;
+
+            const expenseIndex = expenses.findIndex(e => e.id === editingExpenseId);
+            expenses[expenseIndex] = {
+                id: updatedExpense.expense_id,
+                category: updatedExpense.category,
+                description: updatedExpense.description,
+                amount: updatedExpense.amount,
+                payerId: updatedExpense.payer_id,
+                participants: updatedExpense.participants.map(p => ({
+                    id: p.user_id,
+                    share: p.share
+                })),
+                createdAt: updatedExpense.created_at
+            };
+
+            Swal.fire({
+                icon: 'success',
+                title: 'هزینه ویرایش شد!',
+                confirmButtonText: 'عالی',
+                confirmButtonColor: '#A6B28B',
+                timer: 2000
+            });
+        } else {
+            // ایجاد جدید
+            const response = await createExpense(TRIP_ID, expensePayload);
+            const createdExpense = response.data || response;
+
+            expenses.push({
+                id: createdExpense.expense_id,
+                category: createdExpense.category,
+                description: createdExpense.description,
+                amount: createdExpense.amount,
+                payerId: createdExpense.payer_id,
+                participants: createdExpense.participants.map(p => ({
+                    id: p.user_id,
+                    share: p.share
+                })),
+                createdAt: createdExpense.created_at
+            });
+
+            Swal.fire({
+                icon: 'success',
+                text: `هزینه "${description}" با موفقیت ثبت شد`,
+                confirmButtonText: 'عالی',
+                confirmButtonColor: '#A6B28B',
+                timer: 2000
+            });
+        }
+
+        // ✅ ریست کردن حالت
+        editingExpenseId = null;
+        addExpenseModal.classList.remove('active');
+        renderExpenses();
+
+        // بازگردانی متن دکمه
+        const saveBtn = document.getElementById('saveExpenseBtn');
+        saveBtn.innerHTML = '<i class="fas fa-check"></i> ثبت هزینه';
+
+    } catch (error) {
+        console.error('❌ خطا در ثبت/ویرایش هزینه:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'خطا در ثبت هزینه',
+            text: error.response?.data?.detail || 'مشکلی در ارتباط با سرور پیش آمد.',
+            confirmButtonColor: '#A6B28B'
+        });
+    }
+});
+
+document.getElementById('closeExpenseModal').addEventListener('click', () => {
+    editingExpenseId = null;
     addExpenseModal.classList.remove('active');
-
-    // بازگردانی دکمه به حالت اولیه
     const saveBtn = document.getElementById('saveExpenseBtn');
     saveBtn.innerHTML = '<i class="fas fa-check"></i> ثبت هزینه';
-    saveBtn.onclick = null;
+});
 
-    renderExpenses();
-}
 
-function deleteExpense(expenseId) {
+async function deleteExpense(expenseId) {
     const expense = expenses.find(e => e.id === expenseId);
 
-    Swal.fire({
+    const result = await Swal.fire({
         text: `آیا مطمئن هستید که می‌خواهید هزینه "${expense.description}" را حذف کنید؟`,
         icon: 'warning',
         showCancelButton: true,
@@ -1804,27 +1864,52 @@ function deleteExpense(expenseId) {
             confirmButton: 'my-confirm-btn',
             cancelButton: 'my-cancel-btn'
         }
-    }).then((result) => {
-        if (result.isConfirmed) {
+    });
+
+    if (result.isConfirmed) {
+        try {
+            // 🆕 ارسال به API
+            await deleteExpenseAPI(TRIP_ID, expenseId);
+
+            // حذف از لیست محلی
             const index = expenses.findIndex(e => e.id === expenseId);
             expenses.splice(index, 1);
 
+            Swal.fire({
+                icon: 'success',
+                text: 'هزینه با موفقیت حذف شد',
+                confirmButtonText: 'باشه',
+                confirmButtonColor: '#A6B28B',
+                background: '#f0f0f0',
+                timer: 2000,
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn'
+                }
+            });
+
             renderExpenses();
+
+        } catch (error) {
+            console.error('❌ خطا در حذف هزینه:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'خطا در حذف هزینه',
+                text: error.response?.data?.detail || 'مشکلی پیش آمد.',
+                confirmButtonColor: '#A6B28B'
+            });
         }
-    });
+    }
 }
 
 function updateExpensesSummary() {
     const totalExpense = expenses.reduce((sum, exp) => sum + exp.amount, 0);
-    const perPerson = totalExpense / tripData.participants.length;
 
     document.getElementById('totalExpense').textContent =
-        `${totalExpense.toLocaleString()} تومان`;
-    document.getElementById('perPersonExpense').textContent =
-        `${Math.round(perPerson).toLocaleString()} تومان`;
+        `${englishToPersianNumber(totalExpense).toLocaleString()} تومان`;
 }
 
-function calculateSettlement() {
+async function calculateSettlement() {
     const settlementList = document.getElementById('settlementList');
 
     if (expenses.length === 0) {
@@ -1832,63 +1917,50 @@ function calculateSettlement() {
         return;
     }
 
-    const balances = {};
-    tripData.participants.forEach(p => {
-        balances[p.id] = 0;
-    });
+    try {
+        const response = await getSettlement(TRIP_ID);
+        const data = response.data || response;
 
-    expenses.forEach(expense => {
-        // پرداخت‌کننده طلبکار می‌شه
-        balances[expense.payerId] += expense.amount;
+        console.log('📊 Settlement API Response:', data);
 
-        // شرکت‌کننده‌ها بدهکار می‌شن (با سهم مشخص)
-        expense.participants.forEach(p => {
-            balances[p.id] -= p.share;
-        });
-    });
+        let settlements = [];
 
-    // بقیه کد مثل قبل...
-    const settlements = [];
-    const debtors = Object.keys(balances)
-        .filter(id => balances[id] < -0.01)
-        .map(id => ({id: parseInt(id), amount: -balances[id]}));
-    const creditors = Object.keys(balances)
-        .filter(id => balances[id] > 0.01)
-        .map(id => ({id: parseInt(id), amount: balances[id]}));
+        if (Array.isArray(data)) {
+            settlements = data;
+        } else if (data.settlements && Array.isArray(data.settlements)) {
+            settlements = data.settlements;
+        } else {
+            console.error('❌ ساختار نامعتبر settlement:', data);
+            settlementList.innerHTML = '<p style="text-align: center; color: #f87171;">خطا در دریافت تسویه</p>';
+            return;
+        }
 
-    debtors.forEach(debtor => {
-        creditors.forEach(creditor => {
-            if (debtor.amount > 0 && creditor.amount > 0) {
-                const amount = Math.min(debtor.amount, creditor.amount);
-                const debtorName = tripData.participants.find(p => p.id === debtor.id).name;
-                const creditorName = tripData.participants.find(p => p.id === creditor.id).name;
+        if (settlements.length === 0) {
+            settlementList.innerHTML = '<p style="text-align: center; color: #10b981; font-weight: 600;">✓ همه حساب‌ها تسویه است!</p>';
+            return;
+        }
 
-                settlements.push({
-                    from: debtorName,
-                    to: creditorName,
-                    amount: Math.round(amount)
-                });
+        // نمایش تسویه‌ها
+        settlementList.innerHTML = settlements.map(s => {
 
-                debtor.amount -= amount;
-                creditor.amount -= amount;
-            }
-        });
-    });
+            const fromName =  `کاربر ${s.from_name}`;
+            const toName = `کاربر ${s.to_name}`;
 
-    if (settlements.length === 0) {
-        settlementList.innerHTML = '<p style="text-align: center; color: #10b981; font-weight: 600;">✓ همه حساب‌ها تسویه است!</p>';
-        return;
+            return `
+                <div class="settlement-item">
+                    <p>
+                        <strong>${fromName}</strong> باید 
+                        <strong style="font-size: 1.2rem;">${englishToPersianNumber(s.amount).toLocaleString()} تومان</strong> 
+                        به <strong>${toName}</strong> بدهد
+                    </p>
+                </div>
+            `;
+        }).join('');
+
+    } catch (error) {
+        console.error('❌ خطا در محاسبه تسویه:', error);
+        settlementList.innerHTML = '<p style="text-align: center; color: #f87171;">خطا در محاسبه تسویه</p>';
     }
-
-    settlementList.innerHTML = settlements.map(s => `
-        <div class="settlement-item">
-            <p>
-                <strong>${s.from}</strong> باید 
-                <strong style="font-size: 1.2rem;">${s.amount.toLocaleString()} تومان</strong> 
-                به <strong>${s.to}</strong> بدهد
-            </p>
-        </div>
-    `).join('');
 }
 
 /* ================================================================
@@ -1920,7 +1992,6 @@ function initExpenseModal() {
         `<option value="${p.id}">${p.name}</option>`
     ).join('');
 
-    // تغییر: به جای چک‌باکس، اینپوت مبلغ برای هر نفر
     const participantsDiv = document.getElementById('expenseParticipants');
     participantsDiv.innerHTML = tripData.participants.map(p => `
         <div class="expense-participant-item">
@@ -1949,83 +2020,7 @@ function toggleParticipantShare(participantId) {
     }
 }
 
-document.getElementById('saveExpenseBtn').addEventListener('click', () => {
-    const category = document.getElementById('expenseCategory').value;
-    const description = document.getElementById('expenseDescription').value;
-    const amount = parseInt(document.getElementById('expenseAmount').value);
-    const payerId = parseInt(document.getElementById('expensePayer').value);
 
-    const participantCheckboxes = document.querySelectorAll('#expenseParticipants input[type="checkbox"]:checked');
-    const participantsData = [];
-    let totalShares = 0;
-
-    participantCheckboxes.forEach(cb => {
-        const pId = parseInt(cb.value);
-        const share = parseInt(document.getElementById(`share-${pId}`).value) || 0;
-        if (share > 0) {
-            participantsData.push({id: pId, share: share});
-            totalShares += share;
-        }
-    });
-
-    if (!description || !amount || amount <= 0) {
-        Swal.fire({
-            icon: 'warning',
-            text: 'لطفاً تمام فیلدها را به درستی پر کنید',
-            confirmButtonText: 'باشه',
-            confirmButtonColor: '#A6B28B',
-            background: '#f0f0f0',
-            customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
-        });
-        return;
-    }
-
-    if (participantsData.length === 0) {
-        Swal.fire({
-            icon: 'warning',
-            text: 'حداقل یک نفر با سهم مشخص باید انتخاب شود',
-            confirmButtonText: 'باشه',
-            confirmButtonColor: '#A6B28B',
-            background: '#f0f0f0',
-            customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
-        });
-        return;
-    }
-
-    if (totalShares !== amount) {
-        Swal.fire({
-            icon: 'warning',
-            text: `مجموع سهم‌ها (${totalShares.toLocaleString()}) با مبلغ کل (${amount.toLocaleString()}) برابر نیست!`,
-            confirmButtonText: 'باشه',
-            confirmButtonColor: '#A6B28B',
-            background: '#f0f0f0',
-            customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
-        });
-        return;
-    }
-
-    const newExpense = {
-        id: expenses.length + 1,
-        category: category,
-        description: description,
-        amount: amount,
-        payerId: payerId,
-        participants: participantsData // حالا شامل {id, share}
-    };
-
-    expenses.push(newExpense);
-    Swal.fire({
-        icon: 'success',
-        text: `هزینه "${description}" با موفقیت ثبت شد`,
-        confirmButtonText: 'عالی',
-        confirmButtonColor: '#A6B28B',
-        background: '#f0f0f0',
-        customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
-    });
-
-    addExpenseModal.classList.remove('active');
-    renderExpenses();
-});
 
 /* ================================================================
    14. PARTICIPANTS TAB
@@ -2251,36 +2246,6 @@ window.addEventListener('load', () => {
             ],
             votes: {likes: 10, dislikes: 1},
             userVote: null
-        }
-    ];
-
-    // اضافه کردن چند هزینه نمونه
-    expenses = [
-        {
-            id: 1,
-            category: 'food',
-            description: 'ناهار در رستوران',
-            amount: 500000,
-            payerId: 1,
-            participants: [
-                {id: 1, share: 125000},
-                {id: 2, share: 125000},
-                {id: 3, share: 125000},
-                {id: 4, share: 125000}
-            ]
-        },
-        {
-            id: 2,
-            category: 'transport',
-            description: 'بنزین و پارکینگ',
-            amount: 200000,
-            payerId: 2,
-            participants: [
-                {id: 1, share: 50000},
-                {id: 2, share: 50000},
-                {id: 3, share: 50000},
-                {id: 4, share: 50000}
-            ]
         }
     ];
 
@@ -2606,7 +2571,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM fully loaded'); // برای دیباگ
     initMobileMenu();
     fetchAndAssignTripData();
-    initScrollAnimations();
 
     setTimeout(() => {
         if (!document.getElementById('mobileMenu')) {
@@ -2681,9 +2645,23 @@ async function autoGenerateLocationsReal(topN) {
     }
 }
 
+function englishToPersianNumber(input) {
+    let str = String(input);
+
+    const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+    for (let i = 0; i < 10; i++) {
+        str = str.replace(new RegExp(englishNumbers[i], 'g'), persianNumbers[i]);
+    }
+    return str;
+}
+
 init();
 window.viewLocation = viewLocation;
 window.showLocationOnMap = showLocationOnMap;
 window.voteLocation = voteLocation;
 window.removeLocation = removeLocation;
 window.toggleVisited = toggleVisited;
+window.editExpense = editExpense;
+window.deleteExpense = deleteExpense;

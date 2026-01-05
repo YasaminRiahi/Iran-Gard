@@ -188,3 +188,35 @@ export function updateVisitedStatus(tripId, locationId, visited) {
 export function getURL () {
     return API_BASE;
 }
+
+export function getTripPlans(tripId) {
+    return apiClient.get(`${TRIP_ENDPOINT}/${tripId}/plans`);
+}
+
+// در انتهای فایل trips-service.js
+
+// ============ EXPENSES MANAGEMENT ============
+
+/**
+ * دریافت لیست هزینه‌های یک سفر
+ */
+export function getTripExpenses(tripId) {
+    return apiClient.get(`${TRIP_ENDPOINT}/${tripId}/expenses/get-expenses`);
+}
+
+export function createExpense(tripId, expenseData) {
+    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/expenses/`, expenseData);
+}
+
+export function updateExpense(tripId, expenseId, expenseData) {
+    return apiClient.put(`${TRIP_ENDPOINT}/${tripId}/expenses/${expenseId}`, expenseData);
+}
+
+
+export function deleteExpense(tripId, expenseId) {
+    return apiClient.delete(`${TRIP_ENDPOINT}/${tripId}/expenses/${expenseId}`);
+}
+
+export function getSettlement(tripId) {
+    return apiClient.get(`${TRIP_ENDPOINT}/${tripId}/expenses/settlement`);
+}
