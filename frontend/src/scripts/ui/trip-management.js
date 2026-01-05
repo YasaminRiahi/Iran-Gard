@@ -2,6 +2,15 @@
    TRIP DETAIL PAGE - JAVASCRIPT
    ================================================================ */
 
+import {
+    getTripDetails,
+    getUserFullInfo,
+    getURL,
+    voteOnLocation,
+    autoGeneratePlaces,
+    removeLocationFromTrip,
+    updateVisitedStatus
+} from '../services/trips-service.js';
 /* ================================================================
    1. SCROLL MANAGEMENT
    ================================================================ */
@@ -29,43 +38,132 @@ window.addEventListener('scroll', () => {
    2. FAKE DATA
    ================================================================ */
 
-const tripData = {
-    id: 1,
-    name: 'سفر به تهران',
-    startDate: '1403/09/10',
-    endDate: '1403/09/15',
-    cities: ['تهران'],
-    participants: [
-        {
-            id: 1,
-            name: 'علی احمدی',
-            username: '@ali_ahmadi',
-            avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
-            isCreator: true
-        },
-        {
-            id: 2,
-            name: 'سارا محمدی',
-            username: '@sara_m',
-            avatar: 'https://randomuser.me/api/portraits/women/2.jpg',
-            isCreator: false
-        },
-        {
-            id: 3,
-            name: 'رضا کریمی',
-            username: '@reza_k',
-            avatar: 'https://randomuser.me/api/portraits/men/3.jpg',
-            isCreator: false
-        },
-        {
-            id: 4,
-            name: 'مینا رضایی',
-            username: '@mina_r',
-            avatar: 'https://randomuser.me/api/portraits/women/4.jpg',
-            isCreator: false
+const urlParams = new URLSearchParams(window.location.search);
+const TRIP_ID = urlParams.get('id');
+let tripData = {};
+
+async function fetchAndAssignTripData() {
+    try {
+
+        const response = await getTripDetails(TRIP_ID);
+
+        // بر اساس اسکیمای شما، دیتا مستقیماً در response است یا اگر از Axios استفاده می‌کنی در response.data
+        const data = response.data ? response.data : response;
+
+        console.log('📦 دیتای دریافت شده از API:', data);
+
+
+        const participantIds = data.participants || [];
+
+        const participantsDetails = await Promise.all(
+            participantIds.map(async (id) => {
+                try {
+                    const userRes = await getUserFullInfo(id);
+                    const userData = userRes.data || userRes;
+                    return {
+                        id: userData.user_id,
+                        name: userData.full_name || userData.username,
+                        username: `${userData.username}`,
+                        avatar: userData.profile_url || '/src/assets/images/default-avatar.png',
+                        isCreator: userData.user_id === data.owner_id
+                    };
+                } catch (err) {
+                    console.error(`خطا در دریافت اطلاعات کاربر ${id}:`, err);
+                    return {
+                        id,
+                        name: `کاربر ${id}`,
+                        avatar: '../src/assets/images/default-avatar.png',
+                        isCreator: id === data.owner_id
+                    };
+                }
+            })
+        );
+        tripData = {
+            id: data.trip_id,
+            ownerId: data.owner_id,
+            name: data.city_names && data.city_names.length > 0
+                ? `سفر به ${data.city_names.join(' و ')}`
+                : 'جزئیات سفر',
+            startDate: convertToPersianDate(data.start_date),
+            endDate: convertToPersianDate(data.end_date),
+            cities: data.city_names || [],
+            status: data.status,
+            coverImage: data.cover_image,
+            participants: participantsDetails
+        };
+
+        if (data.places && Array.isArray(data.places)) {
+            selectedLocations = data.places.map(place => ({
+                id: place.id,
+                name: place.name,
+                category: getCategoryName(place.category),
+                city: place.city,
+                image: place.image || '../src/assets/images/default-place.jpg',
+                description: place.description,
+                lat: place.lat,
+                lng: place.lng,
+                votes: place.votes || {likes: 0, dislikes: 0},
+                userVote: place.userVote, // 'like', 'dislike' یا null
+                visited: place.visited // true یا false
+            }));
+        } else {
+            selectedLocations = [];
         }
-    ]
-};
+
+        // ۳. بروزرسانی رابط کاربری (UI)
+        updateHeroSection();
+        renderLocations();
+        renderParticipants();
+        if (typeof initMap === 'function') {
+            initMap();
+        }
+
+        console.log('✅ دیتای TripData با موفقیت آماده شد');
+
+    } catch (error) {
+        console.error('❌ خطا در fetchAndAssignTripData:', error);
+        Swal.fire({
+            icon: 'error',
+            title: `${error} خطا در دریافت اطلاعات`,
+            text: 'ساختار پاسخ سرور با کلاینت هماهنگ نیست یا سفر یافت نشد.',
+            confirmButtonColor: '#A6B28B'
+        });
+    }
+}
+
+// تابع جدید برای بروزرسانی Hero Section
+function updateHeroSection() {
+    // بروزرسانی عنوان
+    const titleElement = document.querySelector('.trip-hero-title');
+    if (titleElement) {
+        titleElement.textContent = tripData.name;
+    }
+
+    // بروزرسانی تاریخ
+    const dateElement = document.querySelector('.meta-item-hero:nth-child(1) .meta-value');
+    if (dateElement) {
+        dateElement.textContent = `${tripData.startDate} تا ${tripData.endDate}`;
+    }
+
+    // بروزرسانی مقصد
+    const destinationElement = document.querySelector('.meta-item-hero:nth-child(2) .meta-value');
+    if (destinationElement) {
+        destinationElement.textContent = tripData.cities.join('، ');
+    }
+
+    // بروزرسانی تعداد همسفران
+    const participantsElement = document.querySelector('.meta-item-hero:nth-child(3) .meta-value');
+    if (participantsElement) {
+        participantsElement.textContent = `${tripData.participants.length} نفر`;
+    }
+}
+
+function convertToPersianDate(dateString) {
+    if (!dateString) return '---';
+
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('fa-IR').format(date);
+}
 
 const allLocationsData = [
     {
@@ -302,95 +400,136 @@ function renderLocations() {
     `).join('');
 }
 
-function removeLocation(locationId) {
-    const location = selectedLocations.find(loc => loc.id === locationId);
+async function removeLocation(locationId) {
+    try {
+        const location = selectedLocations.find(loc => loc.id === locationId);
+        const locationName = location ? location.name : 'این مکان';
 
-    Swal.fire({
-        title: 'حذف مکان',
-        html: `آیا مطمئن هستید که می‌خواهید <strong>${location.name}</strong> را از سفر حذف کنید؟`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'بله، حذف کن',
-        cancelButtonText: 'انصراف',
-        confirmButtonColor: '#f5c9b0',
-        cancelButtonColor: '#a6b28b',
-        background: '#f0f0f0',
-        customClass: {
-            popup: 'my-swal-popup',
-            confirmButton: 'my-confirm-btn',
-            cancelButton: 'my-cancel-btn'
-        }
-    }).then((result) => {
+        const result = await Swal.fire({
+            title: 'حذف مکان',
+            html: `آیا مطمئن هستید که می‌خواهید <strong>${locationName}</strong> را از سفر حذف کنید؟`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'بله، حذف کن',
+            cancelButtonText: 'انصراف',
+            confirmButtonColor: '#f5c9b0',
+            cancelButtonColor: '#a6b28b',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            }
+        });
+
         if (result.isConfirmed) {
-            const index = selectedLocations.findIndex(loc => loc.id === locationId);
-            selectedLocations.splice(index, 1);
 
-            Swal.fire({
-                icon: 'success',
-                title: 'مکان حذف شد',
-                text: `${location.name} از سفر حذف شد`,
-                confirmButtonText: 'باشه',
-                confirmButtonColor: '#A6B28B',
-                background: '#f0f0f0',
-                timer: 2000,
-                customClass: {
-                    popup: 'my-swal-popup',
-                    confirmButton: 'my-confirm-btn'
-                }
-            });
+            const response = await removeLocationFromTrip(TRIP_ID, locationId);
+
+            if (response && response.success) {
+                selectedLocations = selectedLocations.filter(loc => loc.id !== locationId);
+
+                renderLocations();
+                if (typeof initMap === 'function') initMap();
+
+                Swal.fire({
+                    icon: 'success',
+                    text: 'مکان مورد نظر با موفقیت از سفر شما حذف گردید.',
+                    confirmButtonText: 'باشه',
+                    confirmButtonColor: '#A6B28B',
+                    background: '#f0f0f0',
+                    timer: 2000,
+                    customClass: {
+                        popup: 'my-swal-popup',
+                        confirmButton: 'my-confirm-btn'
+                    }
+                });
+            }
+        }
+    } catch (error) {
+        console.error(' Delete Location Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'خطا در حذف مکان',
+            text: error.response?.data?.detail || 'متأسفانه مشکلی در حذف مکان پیش آمد.',
+            confirmButtonColor: '#A6B28B',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            }
+        });
+    }
+}
+
+
+async function toggleVisited(locationId) {
+    try {
+        const location = selectedLocations.find(loc => loc.id === locationId);
+        if (!location) return;
+
+        const newStatus = !location.visited;
+
+        const response = await updateVisitedStatus(TRIP_ID, locationId, newStatus);
+
+        const result = response.data && response.data.data ? response.data.data : response.data;
+
+        if (result) {
+            location.visited = result.visited;
 
             renderLocations();
-            updateMapMarkers();
-        }
-    });
-}
-
-function toggleVisited(locationId) {
-    const location = selectedLocations.find(loc => loc.id === locationId);
-    if (!location) return;
-
-    location.visited = !location.visited;
-
-    const message = location.visited
-        ? `${location.name} به عنوان مشاهده شده علامت‌گذاری شد`
-        : `علامت مشاهده شده از ${location.name} برداشته شد`;
-
-    Swal.fire({
-        icon: 'success',
-        text: message,
-        confirmButtonText: 'باشه',
-        confirmButtonColor: '#A6B28B',
-        background: '#f0f0f0',
-        timer: 2000,
-        customClass: {
-            popup: 'my-swal-popup',
-            confirmButton: 'my-confirm-btn'
-        }
-    });
-
-    renderLocations();
-}
-
-function voteLocation(locationId, voteType) {
-    const location = selectedLocations.find(loc => loc.id === locationId);
-    if (!location) return;
-
-    // اگر قبلاً رای داده، رای قبلی رو حذف کن
-    if (location.userVote === voteType) {
-        location.votes[voteType === 'like' ? 'likes' : 'dislikes']--;
-        location.userVote = null;
-    } else {
-        // اگر رای مخالف داده بود، اون رو حذف کن
-        if (location.userVote) {
-            location.votes[location.userVote === 'like' ? 'likes' : 'dislikes']--;
         }
 
-        // رای جدید رو اضافه کن
-        location.votes[voteType === 'like' ? 'likes' : 'dislikes']++;
-        location.userVote = voteType;
+    } catch (error) {
+        console.error('Update Visited Error:', error);
+
+        Swal.fire({
+            icon: 'error',
+            title: 'خطا در بروزرسانی',
+            text: 'مشکلی در ثبت وضعیت بازدید به وجود آمد.',
+            confirmButtonColor: '#A6B28B',
+            background: '#f0f0f0',
+            timer: 2000,
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn'
+            }
+        });
     }
+}
 
-    renderLocations();
+async function voteLocation(locationId, voteType) {
+    try {
+        const location = selectedLocations.find(loc => loc.id === locationId);
+        if (!location) return;
+
+        const finalVote = location.userVote === voteType ? null : voteType;
+
+        const response = await voteOnLocation(TRIP_ID, locationId, finalVote);
+
+        const result = response.data && response.data.data ? response.data.data : response.data;
+
+        if (result) {
+            location.votes = result.votes;
+            location.userVote = result.userVote;
+            renderLocations();
+        }
+
+    } catch (error) {
+        console.error('❌ Vote Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'خطا در ثبت رای',
+            text: error.response?.data?.detail || 'مشکلی در ارتباط با سرور پیش آمد.',
+            confirmButtonColor: '#A6B28B',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn'
+            }
+        });
+    }
 }
 
 function viewLocation(locationId) {
@@ -443,7 +582,7 @@ function renderAvailableLocations() {
         grid.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-check-circle"></i>
-                <h3>همه مکان‌ها اضافه شده‌اند!</h3>
+                <h3>همه مکان‌ها اضافه شده‌اند</h3>
             </div>
         `;
         return;
@@ -503,7 +642,6 @@ function addLocationToTrip(locationId) {
 
     Swal.fire({
         icon: 'success',
-        title: 'مکان اضافه شد!',
         text: `${location.name} به لیست سفر اضافه شد`,
         confirmButtonText: 'عالی',
         confirmButtonColor: '#A6B28B',
@@ -523,61 +661,37 @@ function addLocationToTrip(locationId) {
    7. AUTO GENERATE LOCATIONS
    ================================================================ */
 
-document.getElementById('autoGenerateBtn').addEventListener('click', () => {
-    Swal.fire({
-        title: 'اتو جنریت مکان‌ها',
-        text: 'آیا می‌خواهید بهترین مکان‌های این شهر به صورت خودکار اضافه شوند؟',
-        icon: 'question',
+document.getElementById('autoGenerateBtn').addEventListener('click', async () => {
+    const {value: topN} = await Swal.fire({
+        text: 'در هر شهر چند مورد از برترین مکان‌ها اضافه شود؟ (این مکان ها بر اساس علاقه شما و دیگر کاربران به سفر افزوده میشوند)',
+        input: 'number',
+        inputAttributes: {
+            min: 1,
+            max: 20,
+            lang: 'fa',
+            dir: 'rtl',
+            style: 'border-color: #A6B28B; direction: rtl; font-family: "Vazir", "Tahoma", sans-serif;'
+        },
+        inputValue: 3,
         showCancelButton: true,
-        confirmButtonText: 'بله، اضافه کن',
+        confirmButtonText: 'تولید برنامه',
         cancelButtonText: 'انصراف',
         confirmButtonColor: '#A6B28B',
         cancelButtonColor: '#f5c9b0',
         background: '#f0f0f0',
         customClass: {
+            input: 'custom-swal-input',
             popup: 'my-swal-popup',
             confirmButton: 'my-confirm-btn',
             cancelButton: 'my-cancel-btn'
         }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            autoGenerateLocations();
-        }
+
     });
+
+    if (topN) {
+        autoGenerateLocationsReal(parseInt(topN));
+    }
 });
-
-function autoGenerateLocations() {
-    // شبیه‌سازی: اضافه کردن 3 مکان برتر که هنوز اضافه نشده‌اند
-    const availableLocations = allLocationsData.filter(
-        loc => !selectedLocations.find(selected => selected.id === loc.id)
-    );
-
-    const topLocations = availableLocations.slice(0, 3);
-
-    topLocations.forEach(location => {
-        selectedLocations.push({
-            ...location,
-            userVote: null,
-            votes: {likes: Math.floor(Math.random() * 50) + 20, dislikes: Math.floor(Math.random() * 10)}
-        });
-    });
-
-    Swal.fire({
-        icon: 'success',
-        title: 'مکان‌ها اضافه شدند!',
-        text: `${topLocations.length} مکان برتر به سفر شما اضافه شد`,
-        confirmButtonText: 'عالی',
-        confirmButtonColor: '#A6B28B',
-        background: '#f0f0f0',
-        customClass: {
-            popup: 'my-swal-popup',
-            confirmButton: 'my-confirm-btn'
-        }
-    });
-
-    renderLocations();
-    updateMapMarkers();
-}
 
 /* ================================================================
    8. DAILY PLANS TAB
@@ -814,7 +928,6 @@ function addLocationToPlan(planId, locationId) {
 
     Swal.fire({
         icon: 'success',
-        title: 'مکان اضافه شد!',
         text: `${location.name} به پلن اضافه شد`,
         confirmButtonText: 'عالی',
         confirmButtonColor: '#A6B28B',
@@ -927,7 +1040,6 @@ function savePlanOrder(planId) {
 
     Swal.fire({
         icon: 'success',
-        title: 'ترتیب ذخیره شد!',
         text: 'ترتیب مکان‌ها با موفقیت به‌روزرسانی شد',
         confirmButtonText: 'عالی',
         confirmButtonColor: '#A6B28B',
@@ -964,7 +1076,6 @@ function deletePlan(planId) {
     const plan = dailyPlans.find(p => p.id === planId);
 
     Swal.fire({
-        title: 'حذف پلن',
         text: `آیا مطمئن هستید که می‌خواهید پلن "${plan.day}" را حذف کنید؟`,
         icon: 'warning',
         showCancelButton: true,
@@ -985,7 +1096,6 @@ function deletePlan(planId) {
 
             Swal.fire({
                 icon: 'success',
-                title: 'پلن حذف شد',
                 confirmButtonText: 'باشه',
                 confirmButtonColor: '#A6B28B',
                 background: '#f0f0f0',
@@ -1388,7 +1498,6 @@ document.getElementById('savePlanBtn').addEventListener('click', () => {
 
     Swal.fire({
         icon: 'success',
-        title: 'پلن ایجاد شد!',
         text: `پلن ${day} با موفقیت ذخیره شد`,
         confirmButtonText: 'عالی',
         confirmButtonColor: '#A6B28B',
@@ -1410,7 +1519,6 @@ document.getElementById('savePlanBtn').addEventListener('click', () => {
 
 document.getElementById('autoPlanBtn').addEventListener('click', () => {
     Swal.fire({
-        title: 'اتو جنریت پلن روزانه',
         text: 'آیا می‌خواهید پلن روزانه به صورت خودکار ایجاد شود؟',
         icon: 'question',
         showCancelButton: true,
@@ -1481,7 +1589,6 @@ function autoGeneratePlans() {
 
     Swal.fire({
         icon: 'success',
-        title: 'پلن‌ها ایجاد شدند!',
         text: 'پلن‌های روزانه به صورت خودکار ایجاد شد',
         confirmButtonText: 'عالی',
         confirmButtonColor: '#A6B28B',
@@ -1684,7 +1791,6 @@ function deleteExpense(expenseId) {
     const expense = expenses.find(e => e.id === expenseId);
 
     Swal.fire({
-        title: 'حذف هزینه',
         text: `آیا مطمئن هستید که می‌خواهید هزینه "${expense.description}" را حذف کنید؟`,
         icon: 'warning',
         showCancelButton: true,
@@ -1910,7 +2016,6 @@ document.getElementById('saveExpenseBtn').addEventListener('click', () => {
     expenses.push(newExpense);
     Swal.fire({
         icon: 'success',
-        title: 'هزینه ثبت شد!',
         text: `هزینه "${description}" با موفقیت ثبت شد`,
         confirmButtonText: 'عالی',
         confirmButtonColor: '#A6B28B',
@@ -1926,45 +2031,6 @@ document.getElementById('saveExpenseBtn').addEventListener('click', () => {
    14. PARTICIPANTS TAB
    ================================================================ */
 
-function renderParticipants() {
-    const participantsGrid = document.getElementById('participantsGrid');
-
-    // ابتدا تمام اعضا
-    const participantsHTML = tripData.participants.map(participant => `
-        <div class="participant-card">
-            <img src="${participant.avatar}" alt="${participant.name}" class="participant-avatar">
-            <div class="participant-name">${participant.name}</div>
-            <div class="participant-username">${participant.username}</div>
-            ${participant.isCreator ?
-        '<div class="participant-badge"><i class="fas fa-crown"></i> سازنده سفر</div>'
-        : ''}
-            ${!participant.isCreator ?
-        `<button class="btn-remove-participant" onclick="removeParticipant(${participant.id})">
-                    <i class="fas fa-user-times"></i> حذف از سفر
-                </button>`
-        : ''}
-        </div>
-    `).join('');
-
-    // سپس کارت دعوت
-    const inviteCardHTML = `
-        <div class="invite-card">
-            <div class="invite-icon">
-                <i class="fas fa-user-plus"></i>
-            </div>
-            <h3>دعوت دوستان</h3>
-            <p>دوستان خود را به این سفر دعوت کنید</p>
-            <button class="btn-invite-link" onclick="copyInviteLink()">
-                <i class="fas fa-link"></i> کپی لینک دعوت
-            </button>
-            <button class="btn-invite-manual" onclick="openInviteFriendsModal()">
-                <i class="fas fa-users"></i> انتخاب از دوستان
-            </button>
-        </div>
-    `;
-
-    participantsGrid.innerHTML = participantsHTML + inviteCardHTML;
-}
 
 function openInviteFriendsModal() {
     Swal.fire({
@@ -2173,31 +2239,6 @@ document.getElementById('endTripBtn').addEventListener('click', () => {
 window.addEventListener('load', () => {
     console.log('=== INITIALIZING PAGE ===');
 
-    // اضافه کردن چند مکان برای شروع - با city صحیح
-    selectedLocations = [
-        {
-            ...allLocationsData[0],
-            userVote: null,
-            votes: {likes: 15, dislikes: 2},
-            visited: false
-        },
-        {
-            ...allLocationsData[1],
-            userVote: null,
-            votes: {likes: 12, dislikes: 3},
-            visited: false
-        },
-        {
-            ...allLocationsData[2],
-            userVote: null,
-            votes: {likes: 18, dislikes: 1},
-            visited: false
-        }
-    ];
-
-    console.log('Selected locations initialized:', selectedLocations);
-    console.log('Cities:', selectedLocations.map(loc => loc.city));
-
     // اضافه کردن یک پلن نمونه
     dailyPlans = [
         {
@@ -2280,7 +2321,7 @@ function renderParticipants() {
 
         ${tripData.participants.map(participant => `
             <div class="participant-card">
-                <img src="${participant.avatar}" alt="${participant.name}" class="participant-avatar">
+                <img src="${getURL() + participant.avatar}" alt="${participant.name}" class="participant-avatar">
                 <div class="participant-name">${participant.name}</div>
                 <div class="participant-username">${participant.username}</div>
                 ${participant.isCreator ?
@@ -2306,7 +2347,7 @@ function copyInviteLink() {
         navigator.clipboard.writeText(inviteLink).then(() => {
             Swal.fire({
                 icon: 'success',
-                title: 'لینک کپی شد!',
+                title: 'لینک کپی شد',
                 html: `
                     <div style="direction: rtl; text-align: center;">
                         <p>لینک دعوت با موفقیت کپی شد</p>
@@ -2479,7 +2520,7 @@ function inviteUser(userId) {
 
             Swal.fire({
                 icon: 'success',
-                title: 'دعوتنامه ارسال شد!',
+                title: 'دعوتنامه ارسال شد',
                 html: `
                     <p>${user.name} به سفر اضافه شد</p>
                     <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">
@@ -2503,7 +2544,7 @@ function inviteUser(userId) {
     });
 }
 
-function initMobileMenu(){
+function initMobileMenu() {
     const mobileMenuHTML = `
         <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
         <div class="mobile-menu" id="mobileMenu">
@@ -2564,6 +2605,7 @@ function initMobileMenu(){
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM fully loaded'); // برای دیباگ
     initMobileMenu();
+    fetchAndAssignTripData();
     initScrollAnimations();
 
     setTimeout(() => {
@@ -2573,3 +2615,75 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 1000);
 });
+
+function getCategoryName(categoryId) {
+    if (categoryId === "1") {
+        return "طبیعت‌گردی";
+    } else if (categoryId === "2") {
+        return "تاریخی";
+    } else if (categoryId === "3") {
+        return "تجاری و تفریحی";
+    } else {
+        return "مذهبی";
+    }
+}
+
+async function init() {
+    console.log("Initializing app with Trip ID:", TRIP_ID);
+    initMobileMenu();
+
+    if (TRIP_ID) {
+        await fetchAndAssignTripData();
+    } else {
+        console.error("No Trip ID found in URL. Use ?id=1");
+    }
+}
+
+async function autoGenerateLocationsReal(topN) {
+    try {
+
+        const response = await autoGeneratePlaces(TRIP_ID, {top_n: topN});
+
+        console.log('API Response:', response);
+
+        if (response.status === 200 || response.status === 201 || response.success) {
+
+            try {
+                await fetchAndAssignTripData();
+            } catch (renderError) {
+                console.warn('دیتای جدید اضافه شد ولی در بازسازی صفحه خطایی رخ داد:', renderError);
+                window.location.reload();
+                return;
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'با موفقیت اضافه شد',
+                text: `مکان‌های جدید به برنامه سفر شما اضافه گردید.`,
+                confirmButtonText: 'باشه',
+                confirmButtonColor: '#A6B28B',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn'
+                }
+            });
+        }
+
+    } catch (error) {
+        console.error('❌ Error in Auto-Generate API call:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'خطا در عملیات',
+            text: error.message,
+            confirmButtonColor: '#f5c9b0'
+        });
+    }
+}
+
+init();
+window.viewLocation = viewLocation;
+window.showLocationOnMap = showLocationOnMap;
+window.voteLocation = voteLocation;
+window.removeLocation = removeLocation;
+window.toggleVisited = toggleVisited;
