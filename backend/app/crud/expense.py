@@ -100,3 +100,6 @@ def calculate_settlement(db: Session, trip_id: int):
             j += 1
 
     return settlements
+
+def get_expenses_by_trip(db: Session, trip_id: int):
+    return db.query(Expense).filter(Expense.trip_id == trip_id).all()

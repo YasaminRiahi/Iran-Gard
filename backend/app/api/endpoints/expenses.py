@@ -78,3 +78,11 @@ def settlement(
             "settlements": settlements
         }
     }
+
+@router.get("/get-expenses", response_model=List[ExpenseResponse])
+def list_expenses(
+    trip_id: int,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    return crud_expense.get_expenses_by_trip(db, trip_id)
