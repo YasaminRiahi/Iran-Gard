@@ -1,59 +1,59 @@
-from pydantic import BaseModel
-from typing import Optional, List
-from datetime import date, datetime
-from decimal import Decimal
+from pydantic import BaseModel, field_validator
+from typing import List, Optional
+from datetime import datetime
+
+class ExpenseParticipantCreate(BaseModel):
+    user_id: int
+    share: int
 
 
 class ExpenseCreate(BaseModel):
+    category: str
+    description: Optional[str] = None
+    amount: int
     payer_id: int
-    amount: Decimal
-    category: Optional[str] = None
-    expense_date: Optional[date] = None
-    description: Optional[str] = None
-    shared_with: List[int] = []  # List of user_ids to split expense
+    participants: List[ExpenseParticipantCreate]
+
+    @field_validator("participants")
+    @classmethod
+    def validate_shares(cls, participants, info):
+        amount = info.data.get("amount")
+        if amount and sum(p.share for p in participants) != amount:
+            raise ValueError("مجموع سهم‌ها باید برابر amount باشد")
+        return participants
 
 
-class ExpenseUpdate(BaseModel):
-    amount: Optional[Decimal] = None
-    category: Optional[str] = None
-    expense_date: Optional[date] = None
-    description: Optional[str] = None
+class ExpenseUpdate(ExpenseCreate):
+    pass
+
+
+class ExpenseParticipantResponse(BaseModel):
+    user_id: int
+    share: int
+
+    class Config:
+        from_attributes = True
 
 
 class ExpenseResponse(BaseModel):
-    expense_num: int
-    trip_id: int
+    expense_id: int
+    category: str
+    description: Optional[str]
+    amount: int
     payer_id: int
-    amount: Decimal
-    category: Optional[str] = None
-    expense_date: date
-    description: Optional[str] = None
-    created_at: datetime
+    participants: List[ExpenseParticipantResponse]
+    created_at: Optional[datetime]
+
 
     class Config:
         from_attributes = True
 
 
-class ExpenseShareResponse(BaseModel):
-    expense_num: int
-    user_id: int
-    trip_id: int
-    share_amount: Decimal
+class SettlementItem(BaseModel):
+    from_id: int
+    to_id: int
+    from_name: str
+    to_name: str
+    amount: int
 
-    class Config:
-        from_attributes = True
-
-
-class SettlementSummary(BaseModel):
-    """Summary of who owes whom"""
-    from_user_id: int
-    to_user_id: int
-    amount: Decimal
-
-
-class TripExpenseSummary(BaseModel):
-    """Overall expense summary for a trip"""
-    total_expenses: Decimal
-    user_balances: dict[int, Decimal]  # user_id -> balance (positive = owed, negative = owes)
-    settlements: List[SettlementSummary]
 
