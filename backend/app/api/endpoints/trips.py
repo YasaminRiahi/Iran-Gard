@@ -216,9 +216,6 @@ def get_trip_details(
     if not trip:
         raise HTTPException(status_code=404, detail="سفر یافت نشد")
     
-    # Check if user is a participant
-    if not trip_crud.is_user_in_trip(db, trip_id, current_user.user_id):
-        raise HTTPException(status_code=403, detail="شما باید شرکت‌کننده این سفر باشید")
 
     # Get participants
     participants_query = db.query(TripParticipant.user_id).filter(
