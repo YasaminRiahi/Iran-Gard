@@ -115,16 +115,10 @@ function showError(tabId, message) {
 }
 
 function convertToJalali(gregorianDate) {
-    if (!gregorianDate) return 'نامشخص';
-    try {
-        if (typeof persianDate !== 'undefined') {
-            const pDate = new persianDate(new Date(gregorianDate));
-            return pDate.format('DD MMMM YYYY');
-        }
-        return new Intl.DateTimeFormat('fa-IR').format(new Date(gregorianDate));
-    } catch (error) {
-        return gregorianDate;
-    }
+    if (!gregorianDate) return '---';
+
+    const date = new Date(gregorianDate);
+    return new Intl.DateTimeFormat('fa-IR').format(date);
 }
 
 // ============ Create Trip Card ============

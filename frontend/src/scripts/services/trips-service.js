@@ -153,6 +153,37 @@ export function buildTripPayload({ startDate, endDate, cityNames, placeIds, cove
 }
 
 
+// ============ TRIP OWNERSHIP ============
+export function checkIsOwner(tripId) {
+    return apiClient.get(`${TRIP_ENDPOINT}/${tripId}/is-owner`);
+}
+
+// ============ TRIP LOCATIONS (TAB 1) ============
+
+export function getPlacesForTrip(tripId, cityNames = null) {
+    const params = cityNames ? { city_names: cityNames } : {};
+    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/places`, params);
+}
+
+export function autoGeneratePlaces(tripId, data) {
+    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/auto-generate-places`, data);
+}
+
+export function addLocationToTrip(tripId, locationId) {
+    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/locations`, { locationId });
+}
+
+export function removeLocationFromTrip(tripId, locationId) {
+    return apiClient.delete(`${TRIP_ENDPOINT}/${tripId}/locations/${locationId}`);
+}
+
+export function voteOnLocation(tripId, locationId, voteType) {
+    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/locations/${locationId}/vote`, { voteType });
+}
+
+export function updateVisitedStatus(tripId, locationId, visited) {
+    return apiClient.patch(`${TRIP_ENDPOINT}/${tripId}/locations/${locationId}/visited`, { visited });
+}
 
 export function getURL () {
     return API_BASE;
