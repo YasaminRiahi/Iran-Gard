@@ -1,106 +1,102 @@
 from sqlalchemy.orm import Session
-from app.models.expense import Expense, ExpenseShare
+from app.models.expense import Expense, ExpenseParticipant
 from app.schemas.expense import ExpenseCreate, ExpenseUpdate
-from typing import List, Optional
-from decimal import Decimal
+from app.crud import user as user_crud
 
-
-def create_expense(db: Session, trip_id: int, expense: ExpenseCreate) -> Expense:
-    """Create a new expense."""
-    db_expense = Expense(
+def create_expense(db: Session, trip_id: int, expense_in: ExpenseCreate):
+    expense = Expense(
         trip_id=trip_id,
-        payer_id=expense.payer_id,
-        amount=expense.amount,
-        category=expense.category,
-        expense_date=expense.expense_date,
-        description=expense.description
+        category=expense_in.category,
+        description=expense_in.description,
+        amount=expense_in.amount,
+        payer_id=expense_in.payer_id
     )
-    db.add(db_expense)
+    db.add(expense)
     db.flush()
 
-    # Create expense shares
-    if expense.shared_with:
-        share_amount = expense.amount / len(expense.shared_with)
-        for user_id in expense.shared_with:
-            share = ExpenseShare(
-                expense_num=db_expense.expense_num,
-                trip_id=trip_id,
-                user_id=user_id,
-                share_amount=share_amount
+    for p in expense_in.participants:
+        db.add(
+            ExpenseParticipant(
+                expense_id=expense.expense_id,
+                user_id=p.user_id,
+                share=p.share
             )
-            db.add(share)
+        )
 
     db.commit()
-    db.refresh(db_expense)
-    return db_expense
+    db.refresh(expense)
+    return expense
 
 
-def get_trip_expenses(db: Session, trip_id: int) -> List[Expense]:
-    """Get all expenses for a trip."""
-    return db.query(Expense).filter(Expense.trip_id == trip_id).all()
+def update_expense(db: Session, expense: Expense, expense_in: ExpenseUpdate):
+    expense.category = expense_in.category
+    expense.description = expense_in.description
+    expense.amount = expense_in.amount
+    expense.payer_id = expense_in.payer_id
 
+    db.query(ExpenseParticipant).filter(
+        ExpenseParticipant.expense_id == expense.expense_id
+    ).delete()
 
-def get_expense(db: Session, trip_id: int, expense_num: int) -> Optional[Expense]:
-    """Get a specific expense."""
-    return db.query(Expense).filter(
-        Expense.trip_id == trip_id,
-        Expense.expense_num == expense_num
-    ).first()
-
-
-def update_expense(db: Session, trip_id: int, expense_num: int, expense_update: ExpenseUpdate) -> Optional[Expense]:
-    """Update an expense."""
-    db_expense = get_expense(db, trip_id, expense_num)
-    if not db_expense:
-        return None
-
-    update_data = expense_update.model_dump(exclude_unset=True)
-    for field, value in update_data.items():
-        setattr(db_expense, field, value)
+    for p in expense_in.participants:
+        db.add(
+            ExpenseParticipant(
+                expense_id=expense.expense_id,
+                user_id=p.user_id,
+                share=p.share
+            )
+        )
 
     db.commit()
-    db.refresh(db_expense)
-    return db_expense
+    db.refresh(expense)
+    return expense
 
 
-def delete_expense(db: Session, trip_id: int, expense_num: int) -> bool:
-    """Delete an expense."""
-    db_expense = get_expense(db, trip_id, expense_num)
-    if db_expense:
-        db.delete(db_expense)
-        db.commit()
-        return True
-    return False
+def delete_expense(db: Session, expense: Expense):
+    db.delete(expense)
+    db.commit()
 
+def calculate_settlement(db: Session, trip_id: int):
+    expenses = db.query(Expense).filter(Expense.trip_id == trip_id).all()
 
-def get_expense_shares(db: Session, trip_id: int, expense_num: int) -> List[ExpenseShare]:
-    """Get all shares for an expense."""
-    return db.query(ExpenseShare).filter(
-        ExpenseShare.trip_id == trip_id,
-        ExpenseShare.expense_num == expense_num
-    ).all()
+    paid = {}
+    owed = {}
 
+    for exp in expenses:
+        paid[exp.payer_id] = paid.get(exp.payer_id, 0) + exp.amount
+        for p in exp.participants:
+            owed[p.user_id] = owed.get(p.user_id, 0) + p.share
 
-def calculate_user_balances(db: Session, trip_id: int) -> dict[int, Decimal]:
-    """
-    Calculate balance for each user in the trip.
-    Positive balance = user is owed money
-    Negative balance = user owes money
-    """
-    balances = {}
+    balances = {
+        user_id: paid.get(user_id, 0) - owed.get(user_id, 0)
+        for user_id in set(paid) | set(owed)
+    }
 
-    # Get all expenses
-    expenses = get_trip_expenses(db, trip_id)
+    debtors = [(u, -b) for u, b in balances.items() if b < 0]
+    creditors = [(u, b) for u, b in balances.items() if b > 0]
 
-    for expense in expenses:
-        # Payer gets positive balance (they paid)
-        balances[expense.payer_id] = balances.get(expense.payer_id, Decimal(0)) + expense.amount
+    settlements = []
+    i = j = 0
 
-        # Get shares for this expense
-        shares = get_expense_shares(db, trip_id, expense.expense_num)
-        for share in shares:
-            # Each person who shares the expense gets negative balance (they owe)
-            balances[share.user_id] = balances.get(share.user_id, Decimal(0)) - share.share_amount
+    while i < len(debtors) and j < len(creditors):
+        d_user, d_amt = debtors[i]
+        c_user, c_amt = creditors[j]
 
-    return balances
+        pay = min(d_amt, c_amt)
+        settlements.append({
+            "from_id": d_user,
+            "from_name": user_crud.get_user_by_id(db,d_user).username,
+            "to_name": user_crud.get_user_by_id(db,c_user).username,
+            "to_id": c_user,
+            "amount": pay
+        })
 
+        debtors[i] = (d_user, d_amt - pay)
+        creditors[j] = (c_user, c_amt - pay)
+
+        if debtors[i][1] == 0:
+            i += 1
+        if creditors[j][1] == 0:
+            j += 1
+
+    return settlements
