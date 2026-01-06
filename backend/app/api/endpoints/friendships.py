@@ -15,6 +15,7 @@ from app.schemas.friendship import (
 FriendCancelResponse
 )
 from app.crud import friendship as crud_friendship
+from app.crud import trip as trip_crud
 
 router = APIRouter(prefix="/friendships", tags=["friendships"])
 
@@ -208,18 +209,33 @@ def get_friends(
     """Get all accepted friends."""
 
     friends = crud_friendship.get_friends(db, current_user.user_id)
+    cur_user_ongoing = trip_crud.get_trips_by_time(db,current_user.user_id,True)
+    cur_user_finished =trip_crud.get_trips_by_time(db,current_user.user_id,False)
+    cur_user_all = cur_user_ongoing + cur_user_finished
 
-    return [
-        {
-            "friendship_id":crud_friendship.get_friendship(db,current_user.user_id,friend.user_id).friendship_id,
-            "user_id": friend.user_id,
-            "username": friend.username,
-            "full_name": friend.full_name,
-            "profile_url": friend.profile_url,
-            "about_me": friend.about_me,
-            "common_number_of_trips":0 # TODO: user trips crud to get number of trips between (user_id1 and user_id2)
-        }
-        for friend in friends
-    ]
+    list_to_return = []
+
+    for friend in friends:
+        common = 0
+        friend_user_ongoing = trip_crud.get_trips_by_time(db, friend.user_id, True)
+        friend_user_finished = trip_crud.get_trips_by_time(db, friend.user_id, False)
+        friend_user_all = friend_user_ongoing + friend_user_finished
+
+        for trip in friend_user_all:
+            if trip in cur_user_all:
+                common +=1
+
+        list_to_return.append(
+            {
+                "friendship_id":crud_friendship.get_friendship(db,current_user.user_id,friend.user_id).friendship_id,
+                "user_id": friend.user_id,
+                "username": friend.username,
+                "full_name": friend.full_name,
+                "profile_url": friend.profile_url,
+                "about_me": friend.about_me,
+                "common_number_of_trips":common
+            }
+        )
+    return list_to_return
 
 #

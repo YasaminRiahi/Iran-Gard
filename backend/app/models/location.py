@@ -7,7 +7,6 @@ class City(Base):
     __tablename__ = "cities"
 
     city_name = Column(String(100), primary_key=True)
-    city_pic_url = Column(String(500), nullable=True, default="static/images/cities/city1.jpg")
 
 
 

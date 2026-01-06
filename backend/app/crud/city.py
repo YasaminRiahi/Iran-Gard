@@ -9,16 +9,15 @@ def get_cities_with_place_counts(db: Session):
     """
     results = db.query(
         City.city_name,
-        City.city_pic_url,
         func.count(Place.place_id).label("places_count")
     ).outerjoin(Place, City.city_name == Place.city_name) \
-        .group_by(City.city_name, City.city_pic_url) \
+        .group_by(City.city_name) \
         .all()
 
     return [
         {
             "city_name": r[0],
-            "city_pic_url": r[1],
-            "places_count": r[2]
+            "city_pic_url": f"/static/images/cities/{r[0]}.jpg",
+            "places_count": r[1]
         } for r in results
     ]

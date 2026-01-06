@@ -7,7 +7,7 @@ from app.models.user import User, GenderType
 from app.schemas.user import UserResponse, SearchUserResponse, UserUpdateInformation,UserEditResponse
 from app.crud import user as user_crud
 from app.crud import friendship as friendship_crud
-
+from app.crud import trip as trip_crud
 router = APIRouter(prefix="/users", tags=["users"])
 
 
@@ -28,6 +28,14 @@ def get_current_user_info(
     if cur_gen == "Other":
         cur_profile = "/static/images/genders/Other.png"
 
+
+
+    ongoing_trip_count = len(trip_crud.get_trips_by_time(db,current_user.user_id,True))
+    finished_trip_count = len(trip_crud.get_trips_by_time(db,current_user.user_id,False))
+
+    print(finished_trip_count)
+
+
     user_response = {
         "user_id": current_user.user_id,
         "username": current_user.username,
@@ -36,7 +44,7 @@ def get_current_user_info(
         "full_name": current_user.full_name,
         "about_me": current_user.about_me,
         "profile_url":cur_profile,
-        "number_of_trips":0,
+        "number_of_trips":finished_trip_count + ongoing_trip_count,
         "number_of_friends":friendship_crud.get_number_of_friends(db, current_user.user_id),
         "favorite_categories": current_user.favorite_categories,
     }
@@ -136,6 +144,8 @@ def get_user_full_info(
     if not current_user:
         raise HTTPException(status_code=404, detail="User not found")
 
+    ongoing_trip_count = len(trip_crud.get_trips_by_time(db,current_user.user_id,True))
+    finished_trip_count = len(trip_crud.get_trips_by_time(db,current_user.user_id,False))
 
     user_response = {
         "user_id": current_user.user_id,
@@ -145,7 +155,7 @@ def get_user_full_info(
         "full_name": current_user.full_name,
         "about_me": current_user.about_me,
         "profile_url":current_user.profile_url,
-        "number_of_trips":0,
+        "number_of_trips":finished_trip_count + ongoing_trip_count,
         "number_of_friends":friendship_crud.get_number_of_friends(db, current_user.user_id),
         "favorite_categories": current_user.favorite_categories,
     }

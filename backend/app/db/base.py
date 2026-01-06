@@ -10,18 +10,5 @@ from app.models.location import City, Province
 # Place related models
 from app.models.place import Place, PlacePhoto, PlaceReview, LikedReview, Wishlist
 
-from app.models.trip import Trip,TripParticipant,TripInvitation
-
-
-# Models below are defined but not yet implemented in the API
-# Uncomment them as you implement the corresponding endpoints
-# from app.models.category import Category, FavoriteCategory
-# from app.models.friend import Friend, FriendRequest
-# from app.models.trip import Trip, TripCity, TripMember, TripInvitation, TripPlace
-# from app.models.trip_package import (
-#     TripPackage,
-#     TripPackagePlaces,
-#     TripPackageReact,
-#     TripPlaceReact,
-# )
-# from app.models.expense import Expense, ExpenseShare
+from app.models.trip import Trip, TripParticipant, TripInvitation, TripLocation, TripLocationVote
+from app.models.trip_plan import TripPlan, TripPlanLocation, TripPlanVote

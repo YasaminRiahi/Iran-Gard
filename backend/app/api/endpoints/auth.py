@@ -4,6 +4,7 @@ Authentication endpoints for user signup, login, and password management.
 
 from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.core.security import (
@@ -33,6 +34,31 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 # ============================================================================
 # LOGIN ENDPOINT
 # ============================================================================
+
+
+@router.post("/token", response_model=Token, include_in_schema=False)
+def login_for_swagger(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    """
+    OAuth2 compatible token login for Swagger UI authentication.
+    Use /auth/login for JSON-based login.
+    """
+    username = form_data.username.strip()
+    user = user_crud.get_user_by_username(db, username=username)
+
+    if not user or not verify_password(form_data.password, user.user_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="نام کاربری یا رمز عبور اشتباه است",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # Create JWT access token
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": str(user.user_id)}, expires_delta=access_token_expires
+    )
+
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
 @router.post("/login", response_model=Token)

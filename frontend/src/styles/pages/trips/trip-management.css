@@ -1413,7 +1413,6 @@ body {
     opacity: 0.9;
 }
 
-/* تغییر plans-grid از grid به block */
 #plansGrid {
     display: block;
 }
@@ -2019,55 +2018,276 @@ body {
 /* ================================================================
    17. AVAILABLE LOCATIONS GRID
    ================================================================ */
+/* ================================================================
+   MODAL STYLING
+   ================================================================ */
 
-.available-locations-grid {
+.modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 1.5rem;
+}
+
+
+.modal-selected-header {
+    background: linear-gradient(135deg, #A6B28B 0%, #8fa377 100%);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(166, 178, 139, 0.3);
+}
+
+#selectedCount {
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#selectedCount i {
+    font-size: 1.3rem;
+}
+
+
+.city-locations-section {
+    margin-bottom: 2rem;
+}
+
+.city-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 0.8rem;
+    margin-bottom: 1rem;
+    color: var(--color-text-dark);
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.city-section-title i {
+    color: var(--color-primary);
+    font-size: 1.3rem;
+}
+
+.city-count {
+    background: white;
+    color: var(--color-primary);
+    padding: 0.3rem 0.8rem;
+    border-radius: 1.5rem;
+    font-size: 0.85rem;
+    margin-right: auto;
+    font-weight: 600;
+    border: 2px solid var(--color-primary);
+}
+
+
+.city-locations-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
 }
 
+
 .available-location-card {
+    position: relative;
     background: white;
-    border: 2px solid var(--color-border);
+    border: 2px solid #e5e7eb;
     border-radius: 1rem;
     overflow: hidden;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .available-location-card:hover {
     border-color: var(--color-primary);
-    transform: scale(1.03);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(166, 178, 139, 0.2);
 }
 
 .available-location-card.selected {
     border-color: var(--color-primary);
-    background: rgba(166, 178, 139, 0.1);
+    border-width: 3px;
+    background: linear-gradient(to bottom, rgba(166, 178, 139, 0.08), white);
 }
+
 
 .available-location-card img {
     width: 100%;
-    height: 150px;
+    height: 200px;
     object-fit: cover;
+    transition: transform 0.3s ease;
 }
 
+.available-location-card:hover img {
+    transform: scale(1.05);
+}
+
+/* ================================================================
+   CARD INFO
+   ================================================================ */
+
 .available-location-info {
-    padding: 1rem;
+    padding: 1.25rem;
 }
 
 .available-location-info h4 {
     color: var(--color-text-dark);
     margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.5;
+    min-height: 2.5rem;
 }
 
-.available-location-info p {
+.available-location-info > p:first-of-type {
+    color: var(--color-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.available-location-info > p:first-of-type i {
+    font-size: 1rem;
+}
+
+.available-location-info > p:nth-of-type(2) {
     color: var(--color-text-medium);
     font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Rating and Score Section */
+.available-location-info > div {
+    display: flex;
+    gap: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.available-location-info > div span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.available-location-info > div span:first-child {
+    color: #fbbf24;
+}
+
+.available-location-info > div span:first-child i {
+    color: #fbbf24;
+}
+
+.available-location-info > div span:last-child {
+    color: var(--color-primary);
+}
+
+/* ================================================================
+   ADD BUTTON AT BOTTOM
+   ================================================================ */
+
+.modal-footer-actions {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 1.5rem;
+    border-top: 2px solid #e5e7eb;
+    margin: 2rem -1.5rem -1.5rem -1.5rem;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.btn-add-selected {
+    width: 100%;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--color-primary) 0%, #8fa377 100%);
+    color: white;
+    border: none;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-family: 'Anjoman', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(166, 178, 139, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-add-selected:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(166, 178, 139, 0.4);
+}
+
+.btn-add-selected:active {
+    transform: translateY(0);
+}
+
+.btn-add-selected i {
+    font-size: 1.2rem;
+}
+
+/* ================================================================
+   HIDE SELECTION OVERLAY (چون نمیخوای تیک باشه)
+   ================================================================ */
+
+.selection-overlay {
+    display: none !important;
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+
+@media (max-width: 768px) {
+    .city-locations-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .available-location-card img {
+        height: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .city-section-title {
+        font-size: 1rem;
+        padding: 0.75rem;
+    }
+
+    .btn-add-selected {
+        font-size: 1rem;
+        padding: 0.85rem 1.5rem;
+    }
 }
 
 
 .location-item.visited {
-    opacity: 0.7;
+    opacity: 0.6;
     background: #f9fafb;
 }
 
@@ -2640,4 +2860,88 @@ body {
 .btn-invite-friend:hover {
     background: var(--color-primary-dark);
     transform: scale(1.05);
+}
+
+.custom-swal-input {
+    border: 2px solid #A6B28B !important;
+    border-radius: 8px !important;
+    color: #4b5563 !important;
+    font-feature-settings: "ss01" !important;
+    text-align: center !important;
+    font-size: 1.2rem !important;
+}
+.custom-swal-input:focus {
+    box-shadow: 0 0 0 3px rgba(166, 178, 139, 0.3) !important;
+    border-color: #A6B28B !important;
+}
+
+
+
+.rating-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+}
+
+.rating-container i {
+    font-size: 0.9rem;
+}
+
+.star-filled {
+    color: var(--color-accent);
+}
+
+.star-half {
+    display: inline-block;
+    color: var(--color-accent);
+    transform: scaleX(-1);
+}
+
+.star-empty {
+    color: #ddd;
+}
+
+.rating-number {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-dark);
+    margin-right: 0.3rem;
+}
+
+.place-description {
+    font-size: 0.8rem;
+    color: var(--color-text-medium);
+    margin-top: 0.5rem;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+
+@keyframes starPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+@media (max-width: 767px) {
+    .score-badge {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.75rem;
+    }
+
+    .rating-container i {
+        font-size: 0.85rem;
+    }
+
+    .rating-number {
+        font-size: 0.8rem;
+    }
 }

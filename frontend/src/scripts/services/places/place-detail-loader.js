@@ -41,6 +41,11 @@ async function loadPlaceDetails() {
             includeAuth: true,
         });
 
+        const addReviewLink = document.querySelector('.add-rate-review');
+        if (addReviewLink) {
+            addReviewLink.href = `/add-rate-review.html?id=${placeId}`;
+        }
+
         const titles = document.querySelectorAll('.u-section-1 .u-text-1, .u-section-2 .u-text-1');
         titles.forEach(el => el.textContent = place.title);
 
