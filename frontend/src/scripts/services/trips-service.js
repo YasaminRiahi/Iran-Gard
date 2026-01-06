@@ -160,17 +160,13 @@ export function checkIsOwner(tripId) {
 
 // ============ TRIP LOCATIONS (TAB 1) ============
 
-export function getPlacesForTrip(tripId, cityNames = null) {
-    const params = cityNames ? { city_names: cityNames } : {};
-    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/places`, params);
-}
 
 export function autoGeneratePlaces(tripId, data) {
     return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/auto-generate-places`, data);
 }
 
 export function addLocationToTrip(tripId, locationId) {
-    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/locations`, { locationId });
+    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/locations`, { locationId : locationId });
 }
 
 export function removeLocationFromTrip(tripId, locationId) {
@@ -187,4 +183,91 @@ export function updateVisitedStatus(tripId, locationId, visited) {
 
 export function getURL () {
     return API_BASE;
+}
+
+
+
+// ============ EXPENSES MANAGEMENT ============
+
+/**
+ * دریافت لیست هزینه‌های یک سفر
+ */
+export function getTripExpenses(tripId) {
+    return apiClient.get(`${TRIP_ENDPOINT}/${tripId}/expenses/get-expenses`);
+}
+
+export function createExpense(tripId, expenseData) {
+    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/expenses/`, expenseData);
+}
+
+export function updateExpense(tripId, expenseId, expenseData) {
+    return apiClient.put(`${TRIP_ENDPOINT}/${tripId}/expenses/${expenseId}`, expenseData);
+}
+
+
+export function deleteExpense(tripId, expenseId) {
+    return apiClient.delete(`${TRIP_ENDPOINT}/${tripId}/expenses/${expenseId}`);
+}
+
+export function getSettlement(tripId) {
+    return apiClient.get(`${TRIP_ENDPOINT}/${tripId}/expenses/settlement`);
+}
+
+
+export function getPlacesForTrip(tripId, cityNames = null) {
+    const params = new URLSearchParams();
+    if (cityNames && cityNames.length > 0) {
+        cityNames.forEach(city => params.append('city_names', city));
+    }
+
+    const queryString = params.toString();
+    const endpoint = queryString
+        ? `${TRIP_ENDPOINT}/${tripId}/places?${queryString}`
+        : `${TRIP_ENDPOINT}/${tripId}/places`;
+
+    return apiClient.post(endpoint, {});
+}
+
+
+export function inviteFriendToTrip(tripId, friendId) {
+    return apiClient.post(`${TRIP_ENDPOINT}/invite/${tripId}/${friendId}`);
+}
+
+
+
+// ============ DAILY PLANS MANAGEMENT ============
+export function getTripPlans(tripId) {
+    return apiClient.get(`${TRIP_ENDPOINT}/${tripId}/plans`);
+}
+
+export function createTripPlan(tripId, planData) {
+    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/plans`, planData);
+}
+
+export function updatePlan(tripId, planId, planData) {
+    return apiClient.put(`${TRIP_ENDPOINT}/${tripId}/plans/${planId}`, planData);
+}
+
+export function deletePlan(tripId, planId) {
+    return apiClient.delete(`${TRIP_ENDPOINT}/${tripId}/plans/${planId}`);
+}
+
+export function updatePlanOrder(tripId, planId, locationIds) {
+    return apiClient.put(`${TRIP_ENDPOINT}/${tripId}/plans/${planId}/order`, { locationIds });
+}
+
+export function addLocationToPlan(tripId, planId, locationId) {
+    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/plans/${planId}/locations`, { locationId });
+}
+
+export function removeLocationFromPlan(tripId, planId, locationId) {
+    return apiClient.delete(`${TRIP_ENDPOINT}/${tripId}/plans/${planId}/locations/${locationId}`);
+}
+
+export function votePlan(tripId, planId, voteType) {
+    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/plans/${planId}/vote`, { voteType });
+}
+
+export function autoGeneratePlans(tripId, locationsPerDay) {
+    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/plans/auto-generate`, { locationsPerDay });
 }

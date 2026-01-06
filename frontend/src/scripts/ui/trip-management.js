@@ -9,8 +9,18 @@ import {
     voteOnLocation,
     autoGeneratePlaces,
     removeLocationFromTrip,
-    updateVisitedStatus
-} from '../services/trips-service.js';
+    updateVisitedStatus,
+    getTripPlans,
+    getTripExpenses,
+    createExpense,
+    updateExpense as updateExpenseAPI,
+    deleteExpense as deleteExpenseAPI,
+    getSettlement,
+    addLocationToTrip,
+    getPlacesForTrip,
+    getAvailableFriends,
+    inviteFriendToTrip
+} from '/src/scripts/services/trips-service.js';
 /* ================================================================
    1. SCROLL MANAGEMENT
    ================================================================ */
@@ -98,7 +108,7 @@ async function fetchAndAssignTripData() {
                 name: place.name,
                 category: getCategoryName(place.category),
                 city: place.city,
-                image: place.image || '../src/assets/images/default-place.jpg',
+                image: place.image || '',
                 description: place.description,
                 lat: place.lat,
                 lng: place.lng,
@@ -110,10 +120,37 @@ async function fetchAndAssignTripData() {
             selectedLocations = [];
         }
 
-        // ۳. بروزرسانی رابط کاربری (UI)
+        try {
+            const expensesResponse = await getTripExpenses(TRIP_ID);
+            const expensesData = expensesResponse.data || expensesResponse;
+
+            expenses = expensesData.map(exp => ({
+                id: exp.expense_id,
+                category: exp.category,
+                description: exp.description,
+                amount: exp.amount,
+                payerId: exp.payer_id,
+                participants: exp.participants.map(p => ({
+                    id: p.user_id,
+                    share: p.share
+                })),
+                createdAt: exp.created_at
+            }));
+
+            console.log('✅ هزینه‌ها با موفقیت دریافت شدند:', expenses);
+        } catch (expError) {
+            console.warn('⚠️ خطا در دریافت هزینه‌ها:', expError);
+            expenses = [];
+        }
+
         updateHeroSection();
         renderLocations();
         renderParticipants();
+        renderExpenses();
+
+        if (typeof initMap === 'function') {
+            initMap();
+        }
         if (typeof initMap === 'function') {
             initMap();
         }
@@ -154,7 +191,7 @@ function updateHeroSection() {
     // بروزرسانی تعداد همسفران
     const participantsElement = document.querySelector('.meta-item-hero:nth-child(3) .meta-value');
     if (participantsElement) {
-        participantsElement.textContent = `${tripData.participants.length} نفر`;
+        participantsElement.textContent = `${englishToPersianNumber(tripData.participants.length)} نفر`;
     }
 }
 
@@ -165,64 +202,8 @@ function convertToPersianDate(dateString) {
     return new Intl.DateTimeFormat('fa-IR').format(date);
 }
 
-const allLocationsData = [
-    {
-        id: 1,
-        name: 'برج میلاد',
-        category: 'تجاری',
-        city: 'تهران',
-        image: '../src/assets/images/88bfd4e9d10d431265e291bc107e47d7.jpg',
-        description: 'برج مخابراتی تهران',
-        lat: 35.7447,
-        lng: 51.3753,
-        votes: {likes: 0, dislikes: 0}
-    },
-    {
-        id: 2,
-        name: 'کاخ گلستان',
-        category: 'تاریخی',
-        city: 'تهران',
-        image: '../src/assets/images/man-walking-stone-pathway-surrou.jpg',
-        description: 'کاخ قاجاری',
-        lat: 35.6795,
-        lng: 51.4209,
-        votes: {likes: 0, dislikes: 0}
-    },
-    {
-        id: 3,
-        name: 'دربند',
-        category: 'طبیعت',
-        city: 'تهران',
-        image: '../src/assets/images/45677.jpg',
-        description: 'تله‌کابین و پیست اسکی',
-        lat: 35.8367,
-        lng: 51.3897,
-        votes: {likes: 0, dislikes: 0}
-    },
-    {
-        id: 4,
-        name: 'موزه ملی ایران',
-        category: 'فرهنگی',
-        city: 'تهران',
-        image: '../src/assets/images/man-walking-stone-pathway-surrou.jpg',
-        description: 'موزه باستان‌شناسی',
-        lat: 35.6892,
-        lng: 51.4158,
-        votes: {likes: 0, dislikes: 0}
-    },
-    {
-        id: 5,
-        name: 'باغ موزه هنر',
-        category: 'هنری',
-        city: 'تهران',
-        image: '../src/assets/images/45677.jpg',
-        description: 'باغ موزه هنرهای معاصر',
-        lat: 35.7264,
-        lng: 51.4089,
-        votes: {likes: 0, dislikes: 0}
-    }
-];
 
+let allLocationsData = [];
 let selectedLocations = [];
 let dailyPlans = [];
 let expenses = [];
@@ -350,7 +331,7 @@ function renderLocations() {
 
     locationsList.innerHTML = sortedLocations.map((location, index) => `
         <div class="location-item ${location.visited ? 'visited' : ''}">
-            <div class="location-rank">#${index + 1}</div>
+            <div class="location-rank">#${englishToPersianNumber(index + 1)}</div>
             
             <!-- دکمه حذف -->
             <button class="btn-remove-location" onclick="removeLocation(${location.id})" title="حذف مکان">
@@ -382,12 +363,12 @@ function renderLocations() {
                     <button class="vote-btn ${location.userVote === 'like' ? 'liked' : ''}" 
                             onclick="voteLocation(${location.id}, 'like')">
                         <i class="fas fa-thumbs-up"></i>
-                        <span class="vote-count">${location.votes.likes}</span>
+                        <span class="vote-count">${englishToPersianNumber(location.votes.likes)}</span>
                     </button>
                     <button class="vote-btn ${location.userVote === 'dislike' ? 'disliked' : ''}" 
                             onclick="voteLocation(${location.id}, 'dislike')">
                         <i class="fas fa-thumbs-down"></i>
-                        <span class="vote-count">${location.votes.dislikes}</span>
+                        <span class="vote-count">${englishToPersianNumber(location.votes.dislikes)}</span>
                     </button>
                 </div>
             </div>
@@ -571,91 +552,287 @@ window.addEventListener('click', (e) => {
     }
 });
 
-function renderAvailableLocations() {
+async function renderAvailableLocations() {
     const grid = document.getElementById('availableLocationsGrid');
 
-    const availableLocations = allLocationsData.filter(
-        loc => !selectedLocations.find(selected => selected.id === loc.id)
-    );
+    grid.innerHTML = `
+        <div style="text-align: center; padding: 3rem;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #A6B28B;"></i>
+            <p style="margin-top: 1rem; color: #666;">در حال بارگذاری مکان‌ها...</p>
+        </div>
+    `;
 
-    if (availableLocations.length === 0) {
-        grid.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-check-circle"></i>
-                <h3>همه مکان‌ها اضافه شده‌اند</h3>
+    try {
+        const response = await getPlacesForTrip(TRIP_ID);
+        const data = response.data || response;
+
+        if (!data.cities || data.cities.length === 0) {
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>همه مکان‌ها اضافه شده‌اند</h3>
+                    <p>در شهرهای ${tripData.cities.join('، ')} مکان دیگری برای افزودن وجود ندارد</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = `
+            <div class="modal-selected-header" style="${selectedLocationIds.length === 0 ? 'display: none;' : ''}">
+                <span id="selectedCount">
+                    <i class="fas fa-check-circle"></i>
+                    ${englishToPersianNumber(selectedLocationIds.length)} مکان انتخاب شده
+                </span>
             </div>
         `;
+
+        html += data.cities.map(cityData => {
+            const cityPlaces = cityData.places;
+
+            return `
+                <div class="city-locations-section">
+                    <h3 class="city-section-title">
+                        <i class="fas fa-city"></i>
+                        ${cityData.city_name}
+                        <span class="city-count">${englishToPersianNumber(cityPlaces.length)} مکان</span>
+                    </h3>
+                    <div class="city-locations-grid">
+                        ${cityPlaces.map(place => `
+                            <div class="available-location-card ${selectedLocationIds.includes(place.place_id) ? 'selected' : ''}" 
+                                 data-place-id="${place.place_id}" 
+                                 onclick="toggleLocationSelection(${place.place_id})">
+                                <img src="${place.first_picture_url}" 
+                                     alt="${place.place_name}"
+                                     onerror="this.src='../src/assets/images/default-place.jpg'">
+                                <div class="available-location-info">
+                                    <h5>${place.place_name}</h5>
+                                    <p><i class="fas fa-tag"></i> ${getCategoryName(place.category_id.toString()) || 'گردشگری'}</p>
+                                    <div class="rating-container">
+                                        ${place.avg_rating ? generateStarRating(place.avg_rating) : ""}
+                                    <span class="rating-number">${place.avg_rating ? englishToPersianNumber(place.avg_rating.toFixed(1)) : ""}</span>
+                                    </div>
+                                    ${place.description ? `<p style="font-size: 0.8rem; margin-top: 0.5rem;">${place.description}</p>` : ''}
+                                </div>
+                            </div>
+                            
+                                
+                            </div>
+                        </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // ✅ دکمه افزودن در پایین
+        html += `
+            <div class="modal-footer-actions" style="${selectedLocationIds.length === 0 ? 'display: none;' : ''}">
+                <button id="addSelectedLocationsBtn" class="btn-add-selected">
+                    <i class="fas fa-plus-circle"></i>
+                    افزودن ${englishToPersianNumber(selectedLocationIds.length)} مکان به سفر
+                </button>
+            </div>
+        `;
+
+        grid.innerHTML = html;
+
+        document.getElementById('addSelectedLocationsBtn')?.addEventListener('click', addSelectedLocationsToTrip);
+
+    } catch (error) {
+        console.error('❌ خطا در دریافت مکان‌ها:', error);
+        grid.innerHTML = `
+            <div style="text-align: center; padding: 3rem; color: #f87171;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                <h3>خطا در دریافت مکان‌ها</h3>
+                <p style="margin-top: 0.5rem; color: #666;">
+                    ${error.response?.data?.detail || error.message}
+                </p>
+                <button onclick="renderAvailableLocations()" 
+                        style="margin-top: 1rem; padding: 0.5rem 1.5rem; background: #A6B28B; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-family: Anjoman;">
+                    <i class="fas fa-redo"></i> تلاش مجدد
+                </button>
+            </div>
+        `;
+    }
+}
+
+function generateStarRating(rating) {
+    console.log("ااهه")
+    const fullStars = Math.floor(rating || 0);
+    const hasHalfStar = (rating % 1) >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    let stars = '';
+
+    for (let i = 0; i < fullStars; i++) {
+        stars += '<i class="fas fa-star star-filled"></i>';
+    }
+
+    if (hasHalfStar) {
+        stars += '<i class="fas fa-star-half-alt star-half"></i>';
+    }
+
+    for (let i = 0; i < emptyStars; i++) {
+        stars += '<i class="far fa-star star-empty"></i>';
+    }
+
+    return stars;
+}
+
+function toggleLocationSelection(placeId) {
+    const card = document.querySelector(`.available-location-card[data-place-id="${placeId}"]`);
+
+    if (selectedLocationIds.includes(placeId)) {
+        selectedLocationIds = selectedLocationIds.filter(id => id !== placeId);
+        card.classList.remove('selected');
+    } else {
+        selectedLocationIds.push(placeId);
+        card.classList.add('selected');
+    }
+
+    updateSelectionUI();
+}
+
+// ✅ آپدیت UI
+function updateSelectionUI() {
+    const selectedHeader = document.querySelector('.modal-selected-header');
+    const footer = document.querySelector('.modal-footer-actions');
+    const countText = document.getElementById('selectedCount');
+    const addBtn = document.getElementById('addSelectedLocationsBtn');
+
+    if (selectedLocationIds.length > 0) {
+        if (selectedHeader) selectedHeader.style.display = 'flex';
+        if (footer) footer.style.display = 'block';
+        if (countText) {
+            countText.innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                ${englishToPersianNumber(selectedLocationIds.length)} مکان انتخاب شده
+            `;
+        }
+        if (addBtn) {
+            addBtn.innerHTML = `
+                <i class="fas fa-plus-circle"></i>
+                افزودن ${englishToPersianNumber(selectedLocationIds.length)} مکان به سفر
+            `;
+        }
+    } else {
+        if (selectedHeader) selectedHeader.style.display = 'none';
+        if (footer) footer.style.display = 'none';
+    }
+}
+
+let selectedLocationIds = [];
+
+
+async function addSelectedLocationsToTrip() {
+    if (selectedLocationIds.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            text: 'لطفاً حداقل یک مکان انتخاب کنید',
+            confirmButtonColor: '#A6B28B',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn'
+            }
+        });
         return;
     }
 
-    // گروه‌بندی بر اساس شهر
-    const locationsByCity = {};
-    tripData.cities.forEach(city => {
-        locationsByCity[city] = availableLocations.filter(loc => loc.city === city);
-    });
+    try {
+        Swal.fire({
+            title: 'در حال افزودن...',
+            text: `${englishToPersianNumber(selectedLocationIds.length)} مکان در حال افزودن`,
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+            confirmButtonColor: '#A6B28B',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn'
+            }
+        });
 
-    const cityNames = {
-        'تهران': 'تهران',
-        'شیراز': 'شیراز',
-        'اصفهان': 'اصفهان'
-    };
+        let successCount = 0;
+        let failCount = 0;
+        const errors = [];
 
-    grid.innerHTML = Object.keys(locationsByCity).map(city => {
-        const cityLocs = locationsByCity[city];
-        if (cityLocs.length === 0) return '';
-
-        return `
-            <div class="city-locations-section">
-                <h3 class="city-section-title">
-                    <i class="fas fa-city"></i> ${cityNames[city] || city}
-                    <span class="city-count">${cityLocs.length} مکان</span>
-                </h3>
-                <div class="city-locations-grid">
-                    ${cityLocs.map(location => `
-                        <div class="available-location-card" onclick="addLocationToTrip(${location.id})">
-                            <img src="${location.image}" alt="${location.name}">
-                            <div class="available-location-info">
-                                <h4>${location.name}</h4>
-                                <p><i class="fas fa-tag"></i> ${location.category}</p>
-                                <p style="font-size: 0.85rem; margin-top: 0.5rem;">${location.description}</p>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function addLocationToTrip(locationId) {
-    const location = allLocationsData.find(loc => loc.id === locationId);
-    if (!location) return;
-
-    // مطمئن شوید city کپی می‌شود
-    selectedLocations.push({
-        ...location, // این تمام property ها از جمله city را کپی می‌کند
-        userVote: null
-    });
-
-    console.log('Location added:', location.name, 'City:', location.city);
-    console.log('Current selectedLocations:', selectedLocations);
-
-    Swal.fire({
-        icon: 'success',
-        text: `${location.name} به لیست سفر اضافه شد`,
-        confirmButtonText: 'عالی',
-        confirmButtonColor: '#A6B28B',
-        background: '#f0f0f0',
-        customClass: {
-            popup: 'my-swal-popup',
-            confirmButton: 'my-confirm-btn'
+        for (const locationId of selectedLocationIds) {
+            try {
+                const response = await addLocationToTrip(TRIP_ID, locationId);
+                const result = response.data || response;
+                if (result) {
+                    const newLocation = {
+                        id: result.id,
+                        name: result.name,
+                        category: result.category,
+                        city: result.city,
+                        image: result.image,
+                        description: result.description,
+                        lat: result.lat,
+                        lng: result.lng,
+                        votes: result.votes,
+                        userVote: result.userVote,
+                        visited: result.visited
+                    };
+                    selectedLocations.push(newLocation);
+                    successCount++;
+                }
+            } catch (err) {
+                failCount++;
+                errors.push(err.response?.data?.detail || 'خطای نامشخص');
+                console.error('خطا در افزودن مکان:', locationId, err);
+            }
         }
-    });
 
-    renderLocations();
-    updateMapMarkers();
-    addLocationModal.classList.remove('active');
+        if (successCount > 0) {
+            Swal.fire({
+                icon: successCount === selectedLocationIds.length ? 'success' : 'warning',
+                title: `  اضافه شد`,
+                html: failCount > 0
+                    ? `<p style="color: #f87171; margin-top: 0.5rem;">${englishToPersianNumber(failCount)} مکان اضافه نشد</p>`
+                    : '',
+                confirmButtonText: 'عالی',
+                timer: 2000,
+                confirmButtonColor: '#A6B28B',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn'
+                }
+            });
+
+            selectedLocationIds = [];
+            renderLocations();
+            updateMapMarkers();
+            addLocationModal.classList.remove('active');
+        } else {
+            throw new Error('هیچ مکانی اضافه نشد');
+        }
+
+    } catch (error) {
+        console.error('❌ خطا در افزودن مکان‌ها:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'خطا در افزودن مکان‌ها',
+            text: error.message,
+            confirmButtonText: 'عالی',
+            confirmButtonColor: '#A6B28B',
+            cancelButtonColor: '#f5c9b0',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            }
+        });
+    }
 }
+window.toggleLocationSelection = toggleLocationSelection;
+
+
 
 /* ================================================================
    7. AUTO GENERATE LOCATIONS
@@ -1605,7 +1782,7 @@ function autoGeneratePlans() {
 /* ================================================================
    12. EXPENSES TAB
    ================================================================ */
-
+let editingExpenseId = null;
 function renderExpenses() {
     const expensesList = document.getElementById('expensesList');
 
@@ -1643,7 +1820,7 @@ function renderExpenses() {
         const payer = tripData.participants.find(p => p.id === expense.payerId);
         const participantNames = expense.participants.map(p => {
             const participant = tripData.participants.find(part => part.id === p.id);
-            return participant ? `${participant.name} (${p.share.toLocaleString()}تومان)` : '';
+            return participant ? `${participant.username} (${englishToPersianNumber(p.share.toLocaleString())}تومان)` : '';
         }).filter(Boolean).join('، ');
 
         return `
@@ -1658,7 +1835,7 @@ function renderExpenses() {
                             <i class="fas fa-tag"></i> ${categoryNames[expense.category]}
                         </span>
                         <span class="expense-meta-item">
-                            <i class="fas fa-user"></i> ${payer.name}
+                            <i class="fas fa-user"></i> ${payer.username}
                         </span>
                         <span class="expense-meta-item" style="max-width: 400px; white-space: normal;">
                             <i class="fas fa-users"></i> ${participantNames}
@@ -1666,7 +1843,7 @@ function renderExpenses() {
                     </div>
                 </div>
                 <div class="expense-amount">
-                    ${expense.amount.toLocaleString()} تومان
+                    ${englishToPersianNumber(expense.amount.toLocaleString())} تومان
                 </div>
                 <div class="expense-actions">
                     <button class="btn-edit-expense" onclick="editExpense(${expense.id})" title="ویرایش">
@@ -1684,9 +1861,13 @@ function renderExpenses() {
     calculateSettlement();
 }
 
+
 function editExpense(expenseId) {
     const expense = expenses.find(e => e.id === expenseId);
     if (!expense) return;
+
+    // ✅ ست کردن ID برای ویرایش
+    editingExpenseId = expenseId;
 
     addExpenseModal.classList.add('active');
     initExpenseModal();
@@ -1721,13 +1902,12 @@ function editExpense(expenseId) {
         }
     });
 
-    // تغییر دکمه ذخیره به ویرایش
+    // ✅ تغییر متن دکمه
     const saveBtn = document.getElementById('saveExpenseBtn');
-    saveBtn.textContent = 'ویرایش هزینه';
-    saveBtn.onclick = () => updateExpense(expenseId);
+    saveBtn.innerHTML = '<i class="fas fa-save"></i> ویرایش هزینه';
 }
 
-function updateExpense(expenseId) {
+document.getElementById('saveExpenseBtn').addEventListener('click', async () => {
     const category = document.getElementById('expenseCategory').value;
     const description = document.getElementById('expenseDescription').value;
     const amount = parseInt(document.getElementById('expenseAmount').value);
@@ -1741,56 +1921,158 @@ function updateExpense(expenseId) {
         const pId = parseInt(cb.value);
         const share = parseInt(document.getElementById(`share-${pId}`).value) || 0;
         if (share > 0) {
-            participantsData.push({id: pId, share: share});
+            participantsData.push({user_id: pId, share: share});
             totalShares += share;
         }
     });
 
-    if (!description || !amount || amount <= 0 || participantsData.length === 0 || totalShares !== amount) {
+    // Validation
+    if (!description || !amount || amount <= 0) {
         Swal.fire({
             icon: 'warning',
-            text: 'لطفاً تمام فیلدها را به درستی پر کنید و مجموع سهم‌ها با مبلغ کل برابر باشد',
+            text: 'لطفاً تمام فیلدها را به درستی پر کنید',
             confirmButtonText: 'باشه',
             confirmButtonColor: '#A6B28B',
-            background: '#f0f0f0',
-            customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
         });
         return;
     }
 
-    const expenseIndex = expenses.findIndex(e => e.id === expenseId);
-    expenses[expenseIndex] = {
-        id: expenseId,
-        category: category,
-        description: description,
-        amount: amount,
-        payerId: payerId,
-        participants: participantsData
-    };
+    if (participantsData.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            text: 'حداقل یک نفر با سهم مشخص باید انتخاب شود',
+            confirmButtonText: 'باشه',
+            confirmButtonColor: '#A6B28B',
+        });
+        return;
+    }
 
-    Swal.fire({
-        icon: 'success',
-        title: 'هزینه ویرایش شد!',
-        confirmButtonText: 'عالی',
-        confirmButtonColor: '#A6B28B',
-        background: '#f0f0f0',
-        customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
-    });
+    if (totalShares !== amount) {
+        Swal.fire({
+            icon: 'warning',
+            text: `مجموع سهم‌ها (${totalShares.toLocaleString()}) با مبلغ کل (${amount.toLocaleString()}) برابر نیست!`,
+            confirmButtonText: 'باشه',
+            confirmButtonColor: '#A6B28B',
+        });
+        return;
+    }
 
+    try {
+        const expensePayload = {
+            category: category,
+            description: description,
+            amount: amount,
+            payer_id: payerId,
+            participants: participantsData
+        };
+
+        // ✅ تشخیص اینکه ویرایش است یا ایجاد
+        if (editingExpenseId !== null) {
+            // ویرایش
+            const response = await updateExpenseAPI(TRIP_ID, editingExpenseId, expensePayload);
+            const updatedExpense = response.data || response;
+
+            const expenseIndex = expenses.findIndex(e => e.id === editingExpenseId);
+            expenses[expenseIndex] = {
+                id: updatedExpense.expense_id,
+                category: updatedExpense.category,
+                description: updatedExpense.description,
+                amount: updatedExpense.amount,
+                payerId: updatedExpense.payer_id,
+                participants: updatedExpense.participants.map(p => ({
+                    id: p.user_id,
+                    share: p.share
+                })),
+                createdAt: updatedExpense.created_at
+            };
+
+            Swal.fire({
+                icon: 'success',
+                title: 'هزینه ویرایش شد!',
+                confirmButtonText: 'عالی',
+                confirmButtonColor: '#A6B28B',
+                timer: 2000,
+                cancelButtonColor: '#f5c9b0',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                    cancelButton: 'my-cancel-btn'
+                }
+            });
+        } else {
+            // ایجاد جدید
+            const response = await createExpense(TRIP_ID, expensePayload);
+            const createdExpense = response.data || response;
+
+            expenses.push({
+                id: createdExpense.expense_id,
+                category: createdExpense.category,
+                description: createdExpense.description,
+                amount: createdExpense.amount,
+                payerId: createdExpense.payer_id,
+                participants: createdExpense.participants.map(p => ({
+                    id: p.user_id,
+                    share: p.share
+                })),
+                createdAt: createdExpense.created_at
+            });
+
+            Swal.fire({
+                icon: 'success',
+                text: `هزینه "${description}" با موفقیت ثبت شد`,
+                confirmButtonText: 'عالی',
+                confirmButtonColor: '#A6B28B',
+                timer: 2000,
+                cancelButtonColor: '#f5c9b0',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                    cancelButton: 'my-cancel-btn'
+                }
+            });
+        }
+
+        // ✅ ریست کردن حالت
+        editingExpenseId = null;
+        addExpenseModal.classList.remove('active');
+        renderExpenses();
+
+        // بازگردانی متن دکمه
+        const saveBtn = document.getElementById('saveExpenseBtn');
+        saveBtn.innerHTML = '<i class="fas fa-check"></i> ثبت هزینه';
+
+    } catch (error) {
+        console.error('❌ خطا در ثبت/ویرایش هزینه:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'خطا در ثبت هزینه',
+            text: error.response?.data?.detail || 'مشکلی در ارتباط با سرور پیش آمد.',
+            confirmButtonColor: '#A6B28B',
+            cancelButtonColor: '#f5c9b0',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            }
+        });
+    }
+});
+
+document.getElementById('closeExpenseModal').addEventListener('click', () => {
+    editingExpenseId = null;
     addExpenseModal.classList.remove('active');
-
-    // بازگردانی دکمه به حالت اولیه
     const saveBtn = document.getElementById('saveExpenseBtn');
     saveBtn.innerHTML = '<i class="fas fa-check"></i> ثبت هزینه';
-    saveBtn.onclick = null;
+});
 
-    renderExpenses();
-}
 
-function deleteExpense(expenseId) {
+async function deleteExpense(expenseId) {
     const expense = expenses.find(e => e.id === expenseId);
 
-    Swal.fire({
+    const result = await Swal.fire({
         text: `آیا مطمئن هستید که می‌خواهید هزینه "${expense.description}" را حذف کنید؟`,
         icon: 'warning',
         showCancelButton: true,
@@ -1804,27 +2086,59 @@ function deleteExpense(expenseId) {
             confirmButton: 'my-confirm-btn',
             cancelButton: 'my-cancel-btn'
         }
-    }).then((result) => {
-        if (result.isConfirmed) {
+    });
+
+    if (result.isConfirmed) {
+        try {
+            // 🆕 ارسال به API
+            await deleteExpenseAPI(TRIP_ID, expenseId);
+
+            // حذف از لیست محلی
             const index = expenses.findIndex(e => e.id === expenseId);
             expenses.splice(index, 1);
 
+            Swal.fire({
+                icon: 'success',
+                text: 'هزینه با موفقیت حذف شد',
+                confirmButtonText: 'باشه',
+                confirmButtonColor: '#A6B28B',
+                background: '#f0f0f0',
+                timer: 2000,
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn'
+                }
+            });
+
             renderExpenses();
+
+        } catch (error) {
+            console.error('❌ خطا در حذف هزینه:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'خطا در حذف هزینه',
+                text: error.response?.data?.detail || 'مشکلی پیش آمد.',
+                confirmButtonColor: '#A6B28B',
+                cancelButtonColor: '#f5c9b0',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                    cancelButton: 'my-cancel-btn'
+                }
+            });
         }
-    });
+    }
 }
 
 function updateExpensesSummary() {
     const totalExpense = expenses.reduce((sum, exp) => sum + exp.amount, 0);
-    const perPerson = totalExpense / tripData.participants.length;
 
     document.getElementById('totalExpense').textContent =
-        `${totalExpense.toLocaleString()} تومان`;
-    document.getElementById('perPersonExpense').textContent =
-        `${Math.round(perPerson).toLocaleString()} تومان`;
+        `${englishToPersianNumber(totalExpense).toLocaleString()} تومان`;
 }
 
-function calculateSettlement() {
+async function calculateSettlement() {
     const settlementList = document.getElementById('settlementList');
 
     if (expenses.length === 0) {
@@ -1832,63 +2146,50 @@ function calculateSettlement() {
         return;
     }
 
-    const balances = {};
-    tripData.participants.forEach(p => {
-        balances[p.id] = 0;
-    });
+    try {
+        const response = await getSettlement(TRIP_ID);
+        const data = response.data || response;
 
-    expenses.forEach(expense => {
-        // پرداخت‌کننده طلبکار می‌شه
-        balances[expense.payerId] += expense.amount;
+        console.log('📊 Settlement API Response:', data);
 
-        // شرکت‌کننده‌ها بدهکار می‌شن (با سهم مشخص)
-        expense.participants.forEach(p => {
-            balances[p.id] -= p.share;
-        });
-    });
+        let settlements = [];
 
-    // بقیه کد مثل قبل...
-    const settlements = [];
-    const debtors = Object.keys(balances)
-        .filter(id => balances[id] < -0.01)
-        .map(id => ({id: parseInt(id), amount: -balances[id]}));
-    const creditors = Object.keys(balances)
-        .filter(id => balances[id] > 0.01)
-        .map(id => ({id: parseInt(id), amount: balances[id]}));
+        if (Array.isArray(data)) {
+            settlements = data;
+        } else if (data.settlements && Array.isArray(data.settlements)) {
+            settlements = data.settlements;
+        } else {
+            console.error('❌ ساختار نامعتبر settlement:', data);
+            settlementList.innerHTML = '<p style="text-align: center; color: #f87171;">خطا در دریافت تسویه</p>';
+            return;
+        }
 
-    debtors.forEach(debtor => {
-        creditors.forEach(creditor => {
-            if (debtor.amount > 0 && creditor.amount > 0) {
-                const amount = Math.min(debtor.amount, creditor.amount);
-                const debtorName = tripData.participants.find(p => p.id === debtor.id).name;
-                const creditorName = tripData.participants.find(p => p.id === creditor.id).name;
+        if (settlements.length === 0) {
+            settlementList.innerHTML = '<p style="text-align: center; color: #10b981; font-weight: 600;">✓ همه حساب‌ها تسویه است!</p>';
+            return;
+        }
 
-                settlements.push({
-                    from: debtorName,
-                    to: creditorName,
-                    amount: Math.round(amount)
-                });
+        // نمایش تسویه‌ها
+        settlementList.innerHTML = settlements.map(s => {
 
-                debtor.amount -= amount;
-                creditor.amount -= amount;
-            }
-        });
-    });
+            const fromName =  `کاربر ${s.from_name}`;
+            const toName = `کاربر ${s.to_name}`;
 
-    if (settlements.length === 0) {
-        settlementList.innerHTML = '<p style="text-align: center; color: #10b981; font-weight: 600;">✓ همه حساب‌ها تسویه است!</p>';
-        return;
+            return `
+                <div class="settlement-item">
+                    <p>
+                        <strong>${fromName}</strong> باید 
+                        <strong style="font-size: 1.2rem;">${englishToPersianNumber(s.amount).toLocaleString()} تومان</strong> 
+                        به <strong>${toName}</strong> بدهد
+                    </p>
+                </div>
+            `;
+        }).join('');
+
+    } catch (error) {
+        console.error('❌ خطا در محاسبه تسویه:', error);
+        settlementList.innerHTML = '<p style="text-align: center; color: #f87171;">خطا در محاسبه تسویه</p>';
     }
-
-    settlementList.innerHTML = settlements.map(s => `
-        <div class="settlement-item">
-            <p>
-                <strong>${s.from}</strong> باید 
-                <strong style="font-size: 1.2rem;">${s.amount.toLocaleString()} تومان</strong> 
-                به <strong>${s.to}</strong> بدهد
-            </p>
-        </div>
-    `).join('');
 }
 
 /* ================================================================
@@ -1917,16 +2218,15 @@ window.addEventListener('click', (e) => {
 function initExpenseModal() {
     const payerSelect = document.getElementById('expensePayer');
     payerSelect.innerHTML = tripData.participants.map(p =>
-        `<option value="${p.id}">${p.name}</option>`
+        `<option value="${p.id}">${p.username}</option>`
     ).join('');
 
-    // تغییر: به جای چک‌باکس، اینپوت مبلغ برای هر نفر
     const participantsDiv = document.getElementById('expenseParticipants');
     participantsDiv.innerHTML = tripData.participants.map(p => `
         <div class="expense-participant-item">
             <label>
                 <input type="checkbox" value="${p.id}" checked onchange="toggleParticipantShare(${p.id})">
-                <span>${p.name}</span>
+                <span>${p.username}</span>
             </label>
             <input type="number" id="share-${p.id}" class="participant-share-input" placeholder="مبلغ سهم (تومان)" value="0">
         </div>
@@ -1949,83 +2249,7 @@ function toggleParticipantShare(participantId) {
     }
 }
 
-document.getElementById('saveExpenseBtn').addEventListener('click', () => {
-    const category = document.getElementById('expenseCategory').value;
-    const description = document.getElementById('expenseDescription').value;
-    const amount = parseInt(document.getElementById('expenseAmount').value);
-    const payerId = parseInt(document.getElementById('expensePayer').value);
 
-    const participantCheckboxes = document.querySelectorAll('#expenseParticipants input[type="checkbox"]:checked');
-    const participantsData = [];
-    let totalShares = 0;
-
-    participantCheckboxes.forEach(cb => {
-        const pId = parseInt(cb.value);
-        const share = parseInt(document.getElementById(`share-${pId}`).value) || 0;
-        if (share > 0) {
-            participantsData.push({id: pId, share: share});
-            totalShares += share;
-        }
-    });
-
-    if (!description || !amount || amount <= 0) {
-        Swal.fire({
-            icon: 'warning',
-            text: 'لطفاً تمام فیلدها را به درستی پر کنید',
-            confirmButtonText: 'باشه',
-            confirmButtonColor: '#A6B28B',
-            background: '#f0f0f0',
-            customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
-        });
-        return;
-    }
-
-    if (participantsData.length === 0) {
-        Swal.fire({
-            icon: 'warning',
-            text: 'حداقل یک نفر با سهم مشخص باید انتخاب شود',
-            confirmButtonText: 'باشه',
-            confirmButtonColor: '#A6B28B',
-            background: '#f0f0f0',
-            customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
-        });
-        return;
-    }
-
-    if (totalShares !== amount) {
-        Swal.fire({
-            icon: 'warning',
-            text: `مجموع سهم‌ها (${totalShares.toLocaleString()}) با مبلغ کل (${amount.toLocaleString()}) برابر نیست!`,
-            confirmButtonText: 'باشه',
-            confirmButtonColor: '#A6B28B',
-            background: '#f0f0f0',
-            customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
-        });
-        return;
-    }
-
-    const newExpense = {
-        id: expenses.length + 1,
-        category: category,
-        description: description,
-        amount: amount,
-        payerId: payerId,
-        participants: participantsData // حالا شامل {id, share}
-    };
-
-    expenses.push(newExpense);
-    Swal.fire({
-        icon: 'success',
-        text: `هزینه "${description}" با موفقیت ثبت شد`,
-        confirmButtonText: 'عالی',
-        confirmButtonColor: '#A6B28B',
-        background: '#f0f0f0',
-        customClass: {popup: 'my-swal-popup', confirmButton: 'my-confirm-btn'}
-    });
-
-    addExpenseModal.classList.remove('active');
-    renderExpenses();
-});
 
 /* ================================================================
    14. PARTICIPANTS TAB
@@ -2254,36 +2478,6 @@ window.addEventListener('load', () => {
         }
     ];
 
-    // اضافه کردن چند هزینه نمونه
-    expenses = [
-        {
-            id: 1,
-            category: 'food',
-            description: 'ناهار در رستوران',
-            amount: 500000,
-            payerId: 1,
-            participants: [
-                {id: 1, share: 125000},
-                {id: 2, share: 125000},
-                {id: 3, share: 125000},
-                {id: 4, share: 125000}
-            ]
-        },
-        {
-            id: 2,
-            category: 'transport',
-            description: 'بنزین و پارکینگ',
-            amount: 200000,
-            payerId: 2,
-            participants: [
-                {id: 1, share: 50000},
-                {id: 2, share: 50000},
-                {id: 3, share: 50000},
-                {id: 4, share: 50000}
-            ]
-        }
-    ];
-
     // رندر کردن همه چیز
     initMap();
     renderLocations();
@@ -2311,11 +2505,11 @@ function renderParticipants() {
             </div>
             <h3>دعوت دوستان</h3>
             <p>دوستان خود را به این سفر دعوت کنید</p>
-            <button class="btn-invite-link" onclick="copyInviteLink()">
+            <!--<button class="btn-invite-link" onclick="copyInviteLink()">
                 <i class="fas fa-link"></i> کپی لینک دعوت
-            </button>
+            </button><-->
             <button class="btn-invite-manual" onclick="openInviteModal()">
-                <i class="fas fa-user-plus"></i> دعوت دستی
+                <i class="fas fa-user-plus"></i> دعوت 
             </button>
         </div>
 
@@ -2401,48 +2595,126 @@ function generateInviteCode() {
     return Math.random().toString(36).substring(2, 10).toUpperCase();
 }
 
-function openInviteModal() {
+let cachedAvailableFriends = []; // برای ذخیره لیست دوستان جهت جستجوی سریع‌تر
+
+async function openInviteModal() {
     Swal.fire({
-        title: 'دعوت دوستان',
+        title: 'دعوت دوستان به سفر',
         html: `
             <div style="direction: rtl; text-align: right;">
                 <div style="margin-bottom: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
-                        <i class="fas fa-search"></i> جستجوی کاربر
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #374151;">
+                        <i class="fas fa-search"></i> جستجو در لیست دوستان
                     </label>
-                    <input type="text" id="search-user-input" 
-                           placeholder="نام کاربری یا نام دوست خود را وارد کنید..."
-                           style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 0.8rem; font-family: 'Anjoman';">
+                    <input type="text" id="search-friend-input" 
+                           placeholder="نام یا نام کاربری دوست خود را وارد کنید..."
+                           style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 0.8rem; font-family: 'Anjoman'; outline: none;">
                 </div>
-                <div id="search-results" style="margin-top: 1rem; max-height: 300px; overflow-y: auto;">
-                    <p style="text-align: center; color: #9ca3af; padding: 2rem;">
-                        <i class="fas fa-user-friends" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
-                        برای جستجو شروع به تایپ کنید
-                    </p>
+                <div id="friends-results" style="margin-top: 1rem; max-height: 350px; overflow-y: auto; padding: 5px;">
+                    <div class="loading-friends text-center py-10">
+                        <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: #A6B28B;"></i>
+                        <p style="margin-top: 10px; color: #666;">در حال دریافت لیست دوستان...</p>
+                    </div>
                 </div>
             </div>
         `,
         showConfirmButton: false,
         showCloseButton: true,
-        background: '#f0f0f0',
-        width: '600px',
-        didOpen: () => {
-            const searchInput = document.getElementById('search-user-input');
-            searchInput.addEventListener('input', (e) => {
-                searchUsers(e.target.value);
-            });
+        background: '#f9fafb',
+        width: '550px',
+        didOpen: async () => {
+            const resultsDiv = document.getElementById('friends-results');
+            const searchInput = document.getElementById('search-friend-input');
+
+            try {
+                const response = await getAvailableFriends(TRIP_ID);
+                cachedAvailableFriends = response.data || response;
+                displayFriends(cachedAvailableFriends);
+
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase();
+                    const filtered = cachedAvailableFriends.filter(f =>
+                        f.username.toLowerCase().includes(query) ||
+                        (f.full_name && f.full_name.toLowerCase().includes(query))
+                    );
+                    displayFriends(filtered);
+                });
+
+            } catch (error) {
+                resultsDiv.innerHTML = `<p class="text-center text-red-500 py-10">خطا در دریافت اطلاعات</p>`;
+            }
         }
     });
 }
 
-// داده‌های فیک برای جستجوی کاربران
-const allUsers = [
-    {id: 101, name: 'محمد رضایی', username: '@mohammad_r', avatar: 'https://randomuser.me/api/portraits/men/10.jpg'},
-    {id: 102, name: 'فاطمه احمدی', username: '@fateme_a', avatar: 'https://randomuser.me/api/portraits/women/11.jpg'},
-    {id: 103, name: 'علی کریمی', username: '@ali_karimi', avatar: 'https://randomuser.me/api/portraits/men/12.jpg'},
-    {id: 104, name: 'زهرا محمدی', username: '@zahra_m', avatar: 'https://randomuser.me/api/portraits/women/13.jpg'},
-    {id: 105, name: 'حسین جعفری', username: '@hosein_j', avatar: 'https://randomuser.me/api/portraits/men/14.jpg'},
-];
+function displayFriends(friends) {
+    const resultsDiv = document.getElementById('friends-results');
+
+    if (!friends || friends.length === 0) {
+        resultsDiv.innerHTML = `
+            <div style="text-align: center; color: #9ca3af; padding: 2rem;">
+                <i class="fas fa-user-slash" style="font-size: 2.5rem; margin-bottom: 0.8rem; display: block;"></i>
+                کاربری برای دعوت یافت نشد.
+            </div>`;
+        return;
+    }
+
+    resultsDiv.innerHTML = friends.map(friend => `
+        <div class="friend-invite-item" style="display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid #eee; border-radius: 12px; margin-bottom: 10px; background: white; transition: 0.3s;">
+            <img src="${getURL() + friend.profile_url || '/src/assets/images/default-avatar.png'}" 
+                 style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #A6B28B;">
+            <div style="flex: 1;">
+                <div style="font-weight: 700; color: #1f2937;">${friend.full_name || friend.username}</div>
+                <div style="font-size: 0.8rem; color: #6b7280;">${friend.username}</div>
+            </div>
+            <button onclick="inviteUserAction(${friend.user_id}, '${friend.full_name || friend.username}')" 
+                    class="btn-invite-user" style="background: #A6B28B; color: white; border: none; padding: 6px 15px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 5px;">
+                <i class="fas fa-paper-plane"></i> دعوت
+            </button>
+        </div>
+    `).join('');
+}
+
+// تابع نهایی برای فراخوانی API دعوت
+window.inviteUserAction = async function(friendId, name) {
+    const result = await Swal.fire({
+        title: 'ارسال دعوت‌نامه',
+        text: `آیا می‌خواهید ${name} را به این سفر دعوت کنید؟`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'بله، ارسال کن',
+        cancelButtonText: 'انصراف',
+        confirmButtonColor: '#A6B28B',
+        cancelButtonColor: '#9ca3af',
+    });
+
+    if (result.isConfirmed) {
+        try {
+            Swal.showLoading();
+            const response = await inviteFriendToTrip(TRIP_ID, friendId);
+
+            if (response.data || response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'ارسال شد!',
+                    text: `دعوت‌نامه با موفقیت برای ${name} ارسال شد.`,
+                    confirmButtonColor: '#A6B28B',
+                });
+
+                // بستن مودال اصلی و رفرش لیست در صورت نیاز
+                // نکته: تا زمانی که دوست دعوت را نپذیرد، به لیست Participants اضافه نمی‌شود.
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطا',
+                text: error.response?.data?.detail || 'ارسال دعوت‌نامه با خطا مواجه شد.',
+                confirmButtonColor: '#f5c9b0',
+            });
+        }
+    }
+}
+
 
 function searchUsers(query) {
     const resultsDiv = document.getElementById('search-results');
@@ -2606,7 +2878,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM fully loaded'); // برای دیباگ
     initMobileMenu();
     fetchAndAssignTripData();
-    initScrollAnimations();
 
     setTimeout(() => {
         if (!document.getElementById('mobileMenu')) {
@@ -2676,9 +2947,28 @@ async function autoGenerateLocationsReal(topN) {
             icon: 'error',
             title: 'خطا در عملیات',
             text: error.message,
-            confirmButtonColor: '#f5c9b0'
+            confirmButtonColor: '#f5c9b0',
+            cancelButtonColor: '#a6b28b',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            }
         });
     }
+}
+
+function englishToPersianNumber(input) {
+    let str = String(input);
+
+    const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+    for (let i = 0; i < 10; i++) {
+        str = str.replace(new RegExp(englishNumbers[i], 'g'), persianNumbers[i]);
+    }
+    return str;
 }
 
 init();
@@ -2687,3 +2977,6 @@ window.showLocationOnMap = showLocationOnMap;
 window.voteLocation = voteLocation;
 window.removeLocation = removeLocation;
 window.toggleVisited = toggleVisited;
+window.editExpense = editExpense;
+window.deleteExpense = deleteExpense;
+window.openInviteModal = openInviteModal;
