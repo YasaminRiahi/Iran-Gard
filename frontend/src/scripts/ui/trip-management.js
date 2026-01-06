@@ -19,7 +19,15 @@ import {
     addLocationToTrip,
     getPlacesForTrip,
     getAvailableFriends,
-    inviteFriendToTrip
+    inviteFriendToTrip,
+    getPreviewPlaces,
+    createTripPlan,
+    votePlan as votePlanAPI,
+    autoGeneratePlans as autoGeneratePlansAPI,
+    deletePlan as deletePlanAPI,
+    removeLocationFromPlan as removeLocationFromPlanAPI,
+    updatePlanOrder,
+    addLocationToPlan as addLocationToPlanAPI
 } from '/src/scripts/services/trips-service.js';
 /* ================================================================
    1. SCROLL MANAGEMENT
@@ -165,6 +173,73 @@ async function fetchAndAssignTripData() {
             text: 'ساختار پاسخ سرور با کلاینت هماهنگ نیست یا سفر یافت نشد.',
             confirmButtonColor: '#A6B28B'
         });
+    }
+}
+
+function populateDaySelect(data) {
+    const daySelect = document.getElementById('planDaySelect');
+    if (!daySelect || !data.start_date || !data.end_date) return;
+
+    const start = new Date(data.start_date);
+    const end = new Date(data.end_date);
+
+    const diffTime = Math.abs(end - start);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+    daySelect.innerHTML = '<option value="">انتخاب روز سفر</option>';
+
+    for (let i = 0; i < diffDays; i++) {
+        const currentDate = new Date(start.getTime() + (i * 24 * 60 * 60 * 1000));
+        const dateString = currentDate.toISOString().split('T')[0];
+
+        // تبدیل تاریخ به شمسی فقط برای نمایش به کاربر
+        const persianDateLabel = convertToPersianDate(dateString);
+
+        const option = document.createElement('option');
+        option.value = dateString;
+        option.textContent = `روز ${englishToPersianNumber(i + 1)} (${persianDateLabel})`;
+        daySelect.appendChild(option);
+    }
+}
+
+// ============ LOAD PLANS FROM API ============
+
+let isEditing = false;
+async function fetchAndRenderPlans() {
+    try {
+        if (isEditing) return;
+        const response = await getTripPlans(TRIP_ID);
+        const plansData = response.data?.plans || response.plans;
+
+        // تبدیل داده‌های API به فرمت محلی
+        dailyPlans = plansData.map(plan => ({
+            id: plan.id,
+            day: plan.title,
+            city: plan.city,
+            locations: plan.locations.map(loc => ({
+                id: loc.id,
+                name: loc.name,
+                category: getCategoryName(loc.category),
+                city: loc.city,
+                image: loc.image || '',
+                description: loc.description,
+                lat: loc.lat,
+                lng: loc.lng,
+                votes: loc.votes || {likes: 0, dislikes: 0},
+                estimatedTime: loc.estimatedTime || 'زمان تخمینی: 2 ساعت',
+                order: loc.order
+            })),
+            votes: plan.votes || {likes: 0, dislikes: 0},
+            userVote: plan.userVote
+        }));
+
+        renderDailyPlans();
+        console.log('✅ Plans loaded successfully');
+
+    } catch (error) {
+        console.error('❌ Error loading plans:', error);
+        dailyPlans = [];
+        renderDailyPlans();
     }
 }
 
@@ -1075,18 +1150,16 @@ function showAddLocationToPlan(planId) {
     availableSection.classList.toggle('hidden');
 }
 
-function addLocationToPlan(planId, locationId) {
-    const plan = dailyPlans.find(p => p.id === planId);
-    const location = selectedLocations.find(loc => loc.id === locationId);
+async function addLocationToPlan(planId, locationId) {
+    try {
+        await addLocationToPlanAPI(TRIP_ID, planId, locationId);
 
-    if (!plan || !location) return;
+        const location = selectedLocations.find(loc => loc.id === locationId);
 
-    // چک کنیم که قبلاً اضافه نشده باشه
-    if (plan.locations.find(loc => loc.id === locationId)) {
         Swal.fire({
-            icon: 'info',
-            text: 'این مکان قبلاً به پلن اضافه شده است',
-            confirmButtonText: 'باشه',
+            icon: 'success',
+            text: `${location.name} به پلن اضافه شد`,
+            confirmButtonText: 'عالی',
             confirmButtonColor: '#A6B28B',
             background: '#f0f0f0',
             timer: 2000,
@@ -1095,28 +1168,23 @@ function addLocationToPlan(planId, locationId) {
                 confirmButton: 'my-confirm-btn'
             }
         });
-        return;
+
+        await fetchAndRenderPlans();
+
+    } catch (error) {
+        console.error('❌ Error adding location:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'خطا',
+            text: error.response?.data?.detail || 'مشکلی پیش آمد',
+            confirmButtonColor: '#A6B28B',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn'
+            }
+        });
     }
-
-    plan.locations.push({
-        ...location,
-        estimatedTime: 'زمان تخمینی: 2 ساعت'
-    });
-
-    Swal.fire({
-        icon: 'success',
-        text: `${location.name} به پلن اضافه شد`,
-        confirmButtonText: 'عالی',
-        confirmButtonColor: '#A6B28B',
-        background: '#f0f0f0',
-        timer: 2000,
-        customClass: {
-            popup: 'my-swal-popup',
-            confirmButton: 'my-confirm-btn'
-        }
-    });
-
-    renderDailyPlans();
 }
 
 let draggedElement = null;
@@ -1199,60 +1267,86 @@ function toggleEditPlan(planId) {
     }
 }
 
-function savePlanOrder(planId) {
-    const plan = dailyPlans.find(p => p.id === planId);
+async function savePlanOrder(planId) {
     const container = document.getElementById(`plan-locations-edit-${planId}`);
     const items = container.querySelectorAll('.plan-location-item');
 
-    const newOrder = [];
-    items.forEach((item, index) => {
-        const locationId = parseInt(item.dataset.locationId);
-        const location = plan.locations.find(loc => loc.id === locationId);
-        if (location) {
-            newOrder.push(location);
-        }
-    });
+    const locationIds = Array.from(items).map(item =>
+        parseInt(item.dataset.locationId)
+    );
 
-    plan.locations = newOrder;
+    try {
+        await updatePlanOrder(TRIP_ID, planId, locationIds);
 
-    Swal.fire({
-        icon: 'success',
-        text: 'ترتیب مکان‌ها با موفقیت به‌روزرسانی شد',
-        confirmButtonText: 'عالی',
-        confirmButtonColor: '#A6B28B',
-        background: '#f0f0f0',
-        timer: 2000,
-        customClass: {
-            popup: 'my-swal-popup',
-            confirmButton: 'my-confirm-btn'
-        }
-    });
+        Swal.fire({
+            icon: 'success',
+            text: 'ترتیب مکان‌ها با موفقیت به‌روزرسانی شد',
+            confirmButtonText: 'عالی',
+            confirmButtonColor: '#A6B28B',
+            background: '#f0f0f0',
+            timer: 2000,
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn'
+            }
+        });
 
-    toggleEditPlan(planId);
-    renderDailyPlans();
+        toggleEditPlan(planId);
+        await fetchAndRenderPlans();
+
+    } catch (error) {
+        console.error('❌ Error updating order:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'خطا در بروزرسانی',
+            text: error.response?.data?.detail || 'مشکلی پیش آمد',
+            confirmButtonColor: '#A6B28B',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn'
+            }
+        });
+    }
 }
 
-function removeLocationFromPlan(planId, locationId) {
-    const plan = dailyPlans.find(p => p.id === planId);
-    plan.locations = plan.locations.filter(loc => loc.id !== locationId);
 
-    // بلافاصله رندر مجدد
-    const container = document.getElementById(`plan-locations-edit-${planId}`);
-    const items = container.querySelectorAll('.plan-location-item');
-    items.forEach((item, index) => {
-        if (parseInt(item.dataset.locationId) === locationId) {
-            item.style.animation = 'slideOut 0.3s ease forwards';
-            setTimeout(() => {
-                renderDailyPlans();
-            }, 300);
-        }
-    });
+async function removeLocationFromPlan(planId, locationId) {
+    try {
+        await removeLocationFromPlanAPI(TRIP_ID, planId, locationId);
+
+        const container = document.getElementById(`plan-locations-edit-${planId}`);
+        const items = container.querySelectorAll('.plan-location-item');
+
+        items.forEach((item) => {
+            if (parseInt(item.dataset.locationId) === locationId) {
+                item.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(async () => {
+                    await fetchAndRenderPlans();
+                }, 300);
+            }
+        });
+
+    } catch (error) {
+        console.error('❌ Error removing location:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'خطا',
+            text: error.response?.data?.detail || 'مشکلی پیش آمد',
+            confirmButtonColor: '#A6B28B',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn'
+            }
+        });
+    }
 }
 
-function deletePlan(planId) {
+async function deletePlan(planId) {
     const plan = dailyPlans.find(p => p.id === planId);
 
-    Swal.fire({
+    const result = await Swal.fire({
         text: `آیا مطمئن هستید که می‌خواهید پلن "${plan.day}" را حذف کنید؟`,
         icon: 'warning',
         showCancelButton: true,
@@ -1266,13 +1360,15 @@ function deletePlan(planId) {
             confirmButton: 'my-confirm-btn',
             cancelButton: 'my-cancel-btn'
         }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const index = dailyPlans.findIndex(p => p.id === planId);
-            dailyPlans.splice(index, 1);
+    });
+
+    if (result.isConfirmed) {
+        try {
+            await deletePlanAPI(TRIP_ID, planId);
 
             Swal.fire({
                 icon: 'success',
+                text: 'پلن با موفقیت حذف شد',
                 confirmButtonText: 'باشه',
                 confirmButtonColor: '#A6B28B',
                 background: '#f0f0f0',
@@ -1283,27 +1379,47 @@ function deletePlan(planId) {
                 }
             });
 
-            renderDailyPlans();
+            await fetchAndRenderPlans();
+
+        } catch (error) {
+            console.error('❌ Error deleting plan:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'خطا در حذف پلن',
+                text: error.response?.data?.detail || 'مشکلی پیش آمد',
+                confirmButtonColor: '#A6B28B',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn'
+                }
+            });
         }
-    });
+    }
 }
 
-function votePlan(planId, voteType) {
-    const plan = dailyPlans.find(p => p.id === planId);
-    if (!plan) return;
+async function votePlan(planId, voteType) {
+    try {
+        const plan = dailyPlans.find(p => p.id === planId);
+        const finalVote = plan.userVote === voteType ? null : voteType;
 
-    if (plan.userVote === voteType) {
-        plan.votes[voteType === 'like' ? 'likes' : 'dislikes']--;
-        plan.userVote = null;
-    } else {
-        if (plan.userVote) {
-            plan.votes[plan.userVote === 'like' ? 'likes' : 'dislikes']--;
-        }
-        plan.votes[voteType === 'like' ? 'likes' : 'dislikes']++;
-        plan.userVote = voteType;
+        await votePlanAPI(TRIP_ID, planId, finalVote);
+        await fetchAndRenderPlans();
+
+    } catch (error) {
+        console.error('❌ Error voting:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'خطا',
+            text: error.response?.data?.detail || 'مشکلی پیش آمد',
+            confirmButtonColor: '#A6B28B',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn'
+            }
+        });
     }
-
-    renderDailyPlans();
 }
 
 let plansMap = null;
@@ -1440,7 +1556,7 @@ function initPlanModal() {
     });
 
     // ریست گرید
-    document.getElementById('availableLocationsGrid').innerHTML =
+    document.getElementById('availablePlanLocationsGrid').innerHTML =
         '<p style="text-align: center; color: #9ca3af; padding: 2rem;">ابتدا یک شهر انتخاب کنید</p>';
 
     selectedPlanLocations = [];
@@ -1451,95 +1567,92 @@ function initPlanModal() {
    10. PLAN LOCATION SELECTION
    ================================================================ */
 
-document.getElementById('planCitySelect').addEventListener('change', function () {
+document.getElementById('planCitySelect').addEventListener('change', async function () {
     const city = this.value;
-    const grid = document.getElementById('availableLocationsGrid');
-
-    console.log('════════════════════════════════════');
-    console.log('🔍 PLAN CITY SELECT CHANGED');
-    console.log('════════════════════════════════════');
-    console.log('📍 Selected city:', `"${city}"`);
-    console.log('📦 Total selectedLocations:', selectedLocations.length);
-    console.log('📋 All locations with cities:');
-    selectedLocations.forEach((loc, index) => {
-        console.log(`  ${index + 1}. ${loc.name} - city: "${loc.city}" (type: ${typeof loc.city})`);
-    });
-    console.log('🎯 Comparison:', selectedLocations.map(loc => `"${loc.city}" === "${city}" ? ${loc.city === city}`));
-    console.log('════════════════════════════════════');
+    const grid = document.getElementById('availablePlanLocationsGrid');
 
     if (!city) {
         grid.innerHTML = '<p style="text-align: center; color: #9ca3af; padding: 2rem;">ابتدا یک شهر انتخاب کنید</p>';
         return;
     }
 
-    // فیلتر مکان‌ها
-    const cityLocations = selectedLocations.filter(loc => {
-        const matches = loc.city === city;
-        console.log(`  ✓ ${loc.name}: "${loc.city}" === "${city}" = ${matches}`);
-        return matches;
-    });
-
-    console.log('✅ Filtered result:', cityLocations.length, 'locations found');
-
-    if (cityLocations.length === 0) {
-        grid.innerHTML = `
-            <div style="padding: 2rem; text-align: center;">
-                <i class="fas fa-map-marker-alt" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem; display: block;"></i>
-                <h3 style="color: #4b5563; margin-bottom: 0.5rem;">مکانی در ${city} یافت نشد</h3>
-                <p style="color: #9ca3af;">لطفاً ابتدا از تب "مکان‌ها" مکان‌هایی از ${city} اضافه کنید</p>
-            </div>
-        `;
-        return;
-    }
-
-    console.log('🎨 Starting to render HTML...');
-
-    // رندر HTML - ساده‌تر و واضح‌تر
-    let html = `
-        <div class="city-locations-section">
-            <h3 class="city-section-title">
-                <i class="fas fa-map-marked-alt"></i> مکان‌های ${city}
-                <span class="city-count">${cityLocations.length} مکان</span>
-            </h3>
-            <div class="city-locations-grid">
-    `;
-
-    cityLocations.forEach(location => {
-        const isSelected = selectedPlanLocations.includes(location.id);
-        console.log(`  Rendering: ${location.name}, selected: ${isSelected}`);
-
-        html += `
-            <div class="available-location-card ${isSelected ? 'selected' : ''}" 
-                 onclick="togglePlanLocation(${location.id})"
-                 style="cursor: pointer;">
-                <img src="${location.image}" alt="${location.name}">
-                <div class="available-location-info">
-                    <h4>${location.name}</h4>
-                    <p><i class="fas fa-tag"></i> ${location.category}</p>
-                    <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.85rem;">
-                        <span style="color: #a6b28b;">
-                            <i class="fas fa-thumbs-up"></i> ${location.votes.likes}
-                        </span>
-                        <span style="color: #f5c9b0;">
-                            <i class="fas fa-thumbs-down"></i> ${location.votes.dislikes}
-                        </span>
-                    </div>
-                </div>
-            </div>
-        `;
-    });
-
-    html += `
-            </div>
+    grid.innerHTML = `
+        <div style="text-align: center; padding: 3rem;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #A6B28B;"></i>
+            <p style="margin-top: 1rem; color: #666;">در حال بارگذاری مکان‌ها...</p>
         </div>
     `;
 
-    console.log('📝 HTML generated, length:', html.length);
-    grid.innerHTML = html;
-    console.log('✅ HTML injected into grid');
-    console.log('════════════════════════════════════\n');
-});
+    try {
+        // استفاده از preview-places برای نمایش مکان‌های شهر
+        const response = await getPreviewPlaces([city]);
+        const data = response.data || response;
 
+        const cityData = data.cities.find(c => c.city_name === city);
+
+        if (!cityData || cityData.places.length === 0) {
+            grid.innerHTML = `
+                <div style="padding: 2rem; text-align: center;">
+                    <i class="fas fa-map-marker-alt" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem; display: block;"></i>
+                    <h3 style="color: #4b5563; margin-bottom: 0.5rem;">مکانی در ${city} یافت نشد</h3>
+                </div>
+            `;
+            return;
+        }
+
+        // رندر مکان‌ها
+        let html = `
+            <div class="city-locations-section">
+                <h3 class="city-section-title">
+                    <i class="fas fa-map-marked-alt"></i> مکان‌های ${city}
+                    <span class="city-count">${cityData.places.length} مکان</span>
+                </h3>
+                <div class="city-locations-grid">
+        `;
+
+        cityData.places.forEach(place => {
+            const isSelected = selectedPlanLocations.includes(place.place_id);
+            html += `
+                <div class="available-location-card ${isSelected ? 'selected' : ''}" 
+                     onclick="togglePlanLocation(${place.place_id})"
+                     style="cursor: pointer;">
+                    <img src="${place.first_picture_url}" alt="${place.place_name}">
+                    <div class="available-location-info">
+                        <h4>${place.place_name}</h4>
+                        <p><i class="fas fa-tag"></i> ${getCategoryName(place.category_id.toString())}</p>
+                        ${place.avg_rating ? `
+                            <div class="rating-container">
+                                ${generateStarRating(place.avg_rating)}
+                                <span class="rating-number">${englishToPersianNumber(place.avg_rating.toFixed(1))}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `
+                </div>
+            </div>
+        `;
+
+        console.log(html);
+
+        grid.innerHTML = html;
+
+    } catch (error) {
+        console.error('❌ Error loading places:', error);
+        grid.innerHTML = `
+            <div style="text-align: center; padding: 3rem; color: #f87171;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                <h3>خطا در دریافت مکان‌ها</h3>
+                <p style="margin-top: 0.5rem; color: #666;">
+                    ${error.response?.data?.detail || error.message}
+                </p>
+            </div>
+        `;
+    }
+});
 function togglePlanLocation(locationId) {
     console.log('🔄 Toggle plan location:', locationId);
     console.log('  Current selectedPlanLocations:', selectedPlanLocations);
@@ -1622,7 +1735,7 @@ function removePlanLocation(locationId) {
     }
 }
 
-document.getElementById('savePlanBtn').addEventListener('click', () => {
+document.getElementById('savePlanBtn').addEventListener('click', async () => {
     const day = document.getElementById('planDaySelect').value;
     const city = document.getElementById('planCitySelect').value;
 
@@ -1656,64 +1769,131 @@ document.getElementById('savePlanBtn').addEventListener('click', () => {
         return;
     }
 
-    const newPlan = {
-        id: dailyPlans.length + 1,
-        day: day,
-        city: city,
-        locations: selectedPlanLocations.map(locId => {
-            const loc = selectedLocations.find(l => l.id === locId);
-            return {
-                ...loc,
-                estimatedTime: 'زمان تخمینی: 2 ساعت'
-            };
-        }),
-        votes: {likes: 0, dislikes: 0},
-        userVote: null
-    };
+    try {
+        Swal.fire({
+            title: 'در حال ذخیره...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
 
-    dailyPlans.push(newPlan);
+        const planPayload = {
+            title: day,
+            city: city,
+            locationIds: selectedPlanLocations
+        };
 
-    Swal.fire({
-        icon: 'success',
-        text: `پلن ${day} با موفقیت ذخیره شد`,
-        confirmButtonText: 'عالی',
-        confirmButtonColor: '#A6B28B',
-        background: '#f0f0f0',
-        customClass: {
-            popup: 'my-swal-popup',
-            confirmButton: 'my-confirm-btn'
-        }
-    });
+        const response = await createTripPlan(TRIP_ID, planPayload);
+        const createdPlan = response.data || response;
 
-    createPlanModal.classList.remove('active');
-    selectedPlanLocations = [];
-    renderDailyPlans();
+        Swal.fire({
+            icon: 'success',
+            text: `پلن ${day} با موفقیت ذخیره شد`,
+            confirmButtonText: 'عالی',
+            confirmButtonColor: '#A6B28B',
+            background: '#f0f0f0',
+            timer: 2000,
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn'
+            }
+        });
+
+        createPlanModal.classList.remove('active');
+        selectedPlanLocations = [];
+
+        // رفرش لیست پلن‌ها
+        await fetchAndRenderPlans();
+
+    } catch (error) {
+        console.error('❌ Error creating plan:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'خطا در ایجاد پلن',
+            text: error.response?.data?.detail || 'مشکلی پیش آمد',
+            confirmButtonColor: '#A6B28B',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn'
+            }
+        });
+    }
 });
 
 /* ================================================================
    11. AUTO GENERATE PLANS
    ================================================================ */
 
-document.getElementById('autoPlanBtn').addEventListener('click', () => {
-    Swal.fire({
-        text: 'آیا می‌خواهید پلن روزانه به صورت خودکار ایجاد شود؟',
-        icon: 'question',
+document.getElementById('autoPlanBtn').addEventListener('click', async () => {
+    const {value: locationsPerDay} = await Swal.fire({
+        text: 'در هر روز چند مکان قرار گیرد؟',
+        input: 'number',
+        inputAttributes: {
+            min: 1,
+            max: 10,
+            lang: 'fa',
+            dir: 'rtl',
+            style: 'border-color: #A6B28B; direction: rtl; font-family: "Vazir", "Tahoma", sans-serif;'
+        },
+        inputValue: 3,
         showCancelButton: true,
-        confirmButtonText: 'بله، ایجاد کن',
+        confirmButtonText: 'تولید برنامه',
         cancelButtonText: 'انصراف',
         confirmButtonColor: '#A6B28B',
         cancelButtonColor: '#f5c9b0',
         background: '#f0f0f0',
         customClass: {
+            input: 'custom-swal-input',
             popup: 'my-swal-popup',
             confirmButton: 'my-confirm-btn',
             cancelButton: 'my-cancel-btn'
         }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            autoGeneratePlans();
-        }
     });
+
+    if (locationsPerDay) {
+        try {
+            Swal.fire({
+                title: 'در حال تولید...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            await autoGeneratePlansAPI(TRIP_ID, parseInt(locationsPerDay));
+
+            Swal.fire({
+                icon: 'success',
+                text: 'پلن‌های روزانه به صورت خودکار ایجاد شد',
+                confirmButtonText: 'عالی',
+                confirmButtonColor: '#A6B28B',
+                background: '#f0f0f0',
+                timer: 2000,
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn'
+                }
+            });
+
+            await fetchAndRenderPlans();
+
+        } catch (error) {
+            console.error('❌ Error auto-generating:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'خطا',
+                text: error.response?.data?.detail || 'مشکلی پیش آمد',
+                confirmButtonColor: '#A6B28B',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn'
+                }
+            });
+        }
+    }
 });
 
 function autoGeneratePlans() {
@@ -2905,6 +3085,7 @@ async function init() {
 
     if (TRIP_ID) {
         await fetchAndAssignTripData();
+        await fetchAndRenderPlans();
     } else {
         console.error("No Trip ID found in URL. Use ?id=1");
     }
@@ -2971,7 +3152,18 @@ function englishToPersianNumber(input) {
     return str;
 }
 
-init();
+
+let initTimeout;
+document.addEventListener('DOMContentLoaded', () => {
+    clearTimeout(initTimeout);
+    initTimeout = setTimeout(() => {
+        if (!window.alreadyInitialized) {
+            init();
+            window.alreadyInitialized = true;
+        }
+    }, 100);
+});
+
 window.viewLocation = viewLocation;
 window.showLocationOnMap = showLocationOnMap;
 window.voteLocation = voteLocation;
@@ -2980,3 +3172,13 @@ window.toggleVisited = toggleVisited;
 window.editExpense = editExpense;
 window.deleteExpense = deleteExpense;
 window.openInviteModal = openInviteModal;
+window.deletePlan = deletePlan;
+window.savePlanOrder = savePlanOrder;
+window.addLocationToPlan = addLocationToPlan;
+window.removeLocationFromPlan = removeLocationFromPlan;
+window.votePlan = votePlan;
+window.toggleEditPlan = toggleEditPlan;
+window.showAddLocationToPlan = showAddLocationToPlan;
+window.togglePlanLocation = togglePlanLocation;
+window.removePlanLocation = removePlanLocation;
+window.viewPlanOnPlanMap =viewPlanOnPlanMap;
