@@ -1,0 +1,49 @@
+@media (max-width: 768px) {
+    .review-card {
+        padding: 30px 25px;
+    }
+
+    .card-title {
+        font-size: 1.8rem;
+    }
+
+    .header-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 30px;
+    }
+
+    .star {
+        font-size: 2.8rem;
+    }
+
+    .rating-container {
+        padding: 20px;
+    }
+
+    .rating-display {
+        font-size: 1.5rem;
+    }
+
+    .rating-labels {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .submit-btn {
+        padding: 18px 40px;
+        font-size: 1.1rem;
+        max-width: 100%;
+    }
+
+    .back-btn {
+        position: relative;
+        top: auto;
+        left: auto;
+        margin-top: 30px;
+        margin-right: auto;
+        margin-left: auto;
+        display: block;
+    }
+}
