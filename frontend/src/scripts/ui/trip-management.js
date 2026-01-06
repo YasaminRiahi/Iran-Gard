@@ -17,7 +17,9 @@ import {
     deleteExpense as deleteExpenseAPI,
     getSettlement,
     addLocationToTrip,
-    getPlacesForTrip
+    getPlacesForTrip,
+    getAvailableFriends,
+    inviteFriendToTrip
 } from '/src/scripts/services/trips-service.js';
 /* ================================================================
    1. SCROLL MANAGEMENT
@@ -2503,11 +2505,11 @@ function renderParticipants() {
             </div>
             <h3>دعوت دوستان</h3>
             <p>دوستان خود را به این سفر دعوت کنید</p>
-            <button class="btn-invite-link" onclick="copyInviteLink()">
+            <!--<button class="btn-invite-link" onclick="copyInviteLink()">
                 <i class="fas fa-link"></i> کپی لینک دعوت
-            </button>
+            </button><-->
             <button class="btn-invite-manual" onclick="openInviteModal()">
-                <i class="fas fa-user-plus"></i> دعوت دستی
+                <i class="fas fa-user-plus"></i> دعوت 
             </button>
         </div>
 
@@ -2593,48 +2595,126 @@ function generateInviteCode() {
     return Math.random().toString(36).substring(2, 10).toUpperCase();
 }
 
-function openInviteModal() {
+let cachedAvailableFriends = []; // برای ذخیره لیست دوستان جهت جستجوی سریع‌تر
+
+async function openInviteModal() {
     Swal.fire({
-        title: 'دعوت دوستان',
+        title: 'دعوت دوستان به سفر',
         html: `
             <div style="direction: rtl; text-align: right;">
                 <div style="margin-bottom: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
-                        <i class="fas fa-search"></i> جستجوی کاربر
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #374151;">
+                        <i class="fas fa-search"></i> جستجو در لیست دوستان
                     </label>
-                    <input type="text" id="search-user-input" 
-                           placeholder="نام کاربری یا نام دوست خود را وارد کنید..."
-                           style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 0.8rem; font-family: 'Anjoman';">
+                    <input type="text" id="search-friend-input" 
+                           placeholder="نام یا نام کاربری دوست خود را وارد کنید..."
+                           style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 0.8rem; font-family: 'Anjoman'; outline: none;">
                 </div>
-                <div id="search-results" style="margin-top: 1rem; max-height: 300px; overflow-y: auto;">
-                    <p style="text-align: center; color: #9ca3af; padding: 2rem;">
-                        <i class="fas fa-user-friends" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
-                        برای جستجو شروع به تایپ کنید
-                    </p>
+                <div id="friends-results" style="margin-top: 1rem; max-height: 350px; overflow-y: auto; padding: 5px;">
+                    <div class="loading-friends text-center py-10">
+                        <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: #A6B28B;"></i>
+                        <p style="margin-top: 10px; color: #666;">در حال دریافت لیست دوستان...</p>
+                    </div>
                 </div>
             </div>
         `,
         showConfirmButton: false,
         showCloseButton: true,
-        background: '#f0f0f0',
-        width: '600px',
-        didOpen: () => {
-            const searchInput = document.getElementById('search-user-input');
-            searchInput.addEventListener('input', (e) => {
-                searchUsers(e.target.value);
-            });
+        background: '#f9fafb',
+        width: '550px',
+        didOpen: async () => {
+            const resultsDiv = document.getElementById('friends-results');
+            const searchInput = document.getElementById('search-friend-input');
+
+            try {
+                const response = await getAvailableFriends(TRIP_ID);
+                cachedAvailableFriends = response.data || response;
+                displayFriends(cachedAvailableFriends);
+
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase();
+                    const filtered = cachedAvailableFriends.filter(f =>
+                        f.username.toLowerCase().includes(query) ||
+                        (f.full_name && f.full_name.toLowerCase().includes(query))
+                    );
+                    displayFriends(filtered);
+                });
+
+            } catch (error) {
+                resultsDiv.innerHTML = `<p class="text-center text-red-500 py-10">خطا در دریافت اطلاعات</p>`;
+            }
         }
     });
 }
 
-// داده‌های فیک برای جستجوی کاربران
-const allUsers = [
-    {id: 101, name: 'محمد رضایی', username: '@mohammad_r', avatar: 'https://randomuser.me/api/portraits/men/10.jpg'},
-    {id: 102, name: 'فاطمه احمدی', username: '@fateme_a', avatar: 'https://randomuser.me/api/portraits/women/11.jpg'},
-    {id: 103, name: 'علی کریمی', username: '@ali_karimi', avatar: 'https://randomuser.me/api/portraits/men/12.jpg'},
-    {id: 104, name: 'زهرا محمدی', username: '@zahra_m', avatar: 'https://randomuser.me/api/portraits/women/13.jpg'},
-    {id: 105, name: 'حسین جعفری', username: '@hosein_j', avatar: 'https://randomuser.me/api/portraits/men/14.jpg'},
-];
+function displayFriends(friends) {
+    const resultsDiv = document.getElementById('friends-results');
+
+    if (!friends || friends.length === 0) {
+        resultsDiv.innerHTML = `
+            <div style="text-align: center; color: #9ca3af; padding: 2rem;">
+                <i class="fas fa-user-slash" style="font-size: 2.5rem; margin-bottom: 0.8rem; display: block;"></i>
+                کاربری برای دعوت یافت نشد.
+            </div>`;
+        return;
+    }
+
+    resultsDiv.innerHTML = friends.map(friend => `
+        <div class="friend-invite-item" style="display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid #eee; border-radius: 12px; margin-bottom: 10px; background: white; transition: 0.3s;">
+            <img src="${getURL() + friend.profile_url || '/src/assets/images/default-avatar.png'}" 
+                 style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #A6B28B;">
+            <div style="flex: 1;">
+                <div style="font-weight: 700; color: #1f2937;">${friend.full_name || friend.username}</div>
+                <div style="font-size: 0.8rem; color: #6b7280;">${friend.username}</div>
+            </div>
+            <button onclick="inviteUserAction(${friend.user_id}, '${friend.full_name || friend.username}')" 
+                    class="btn-invite-user" style="background: #A6B28B; color: white; border: none; padding: 6px 15px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 5px;">
+                <i class="fas fa-paper-plane"></i> دعوت
+            </button>
+        </div>
+    `).join('');
+}
+
+// تابع نهایی برای فراخوانی API دعوت
+window.inviteUserAction = async function(friendId, name) {
+    const result = await Swal.fire({
+        title: 'ارسال دعوت‌نامه',
+        text: `آیا می‌خواهید ${name} را به این سفر دعوت کنید؟`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'بله، ارسال کن',
+        cancelButtonText: 'انصراف',
+        confirmButtonColor: '#A6B28B',
+        cancelButtonColor: '#9ca3af',
+    });
+
+    if (result.isConfirmed) {
+        try {
+            Swal.showLoading();
+            const response = await inviteFriendToTrip(TRIP_ID, friendId);
+
+            if (response.data || response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'ارسال شد!',
+                    text: `دعوت‌نامه با موفقیت برای ${name} ارسال شد.`,
+                    confirmButtonColor: '#A6B28B',
+                });
+
+                // بستن مودال اصلی و رفرش لیست در صورت نیاز
+                // نکته: تا زمانی که دوست دعوت را نپذیرد، به لیست Participants اضافه نمی‌شود.
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطا',
+                text: error.response?.data?.detail || 'ارسال دعوت‌نامه با خطا مواجه شد.',
+                confirmButtonColor: '#f5c9b0',
+            });
+        }
+    }
+}
+
 
 function searchUsers(query) {
     const resultsDiv = document.getElementById('search-results');
@@ -2899,3 +2979,4 @@ window.removeLocation = removeLocation;
 window.toggleVisited = toggleVisited;
 window.editExpense = editExpense;
 window.deleteExpense = deleteExpense;
+window.openInviteModal = openInviteModal;

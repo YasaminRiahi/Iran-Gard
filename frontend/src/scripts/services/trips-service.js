@@ -185,11 +185,7 @@ export function getURL () {
     return API_BASE;
 }
 
-export function getTripPlans(tripId) {
-    return apiClient.get(`${TRIP_ENDPOINT}/${tripId}/plans`);
-}
 
-// در انتهای فایل trips-service.js
 
 // ============ EXPENSES MANAGEMENT ============
 
@@ -230,4 +226,48 @@ export function getPlacesForTrip(tripId, cityNames = null) {
         : `${TRIP_ENDPOINT}/${tripId}/places`;
 
     return apiClient.post(endpoint, {});
+}
+
+
+export function inviteFriendToTrip(tripId, friendId) {
+    return apiClient.post(`${TRIP_ENDPOINT}/invite/${tripId}/${friendId}`);
+}
+
+
+
+// ============ DAILY PLANS MANAGEMENT ============
+export function getTripPlans(tripId) {
+    return apiClient.get(`${TRIP_ENDPOINT}/${tripId}/plans`);
+}
+
+export function createTripPlan(tripId, planData) {
+    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/plans`, planData);
+}
+
+export function updatePlan(tripId, planId, planData) {
+    return apiClient.put(`${TRIP_ENDPOINT}/${tripId}/plans/${planId}`, planData);
+}
+
+export function deletePlan(tripId, planId) {
+    return apiClient.delete(`${TRIP_ENDPOINT}/${tripId}/plans/${planId}`);
+}
+
+export function updatePlanOrder(tripId, planId, locationIds) {
+    return apiClient.put(`${TRIP_ENDPOINT}/${tripId}/plans/${planId}/order`, { locationIds });
+}
+
+export function addLocationToPlan(tripId, planId, locationId) {
+    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/plans/${planId}/locations`, { locationId });
+}
+
+export function removeLocationFromPlan(tripId, planId, locationId) {
+    return apiClient.delete(`${TRIP_ENDPOINT}/${tripId}/plans/${planId}/locations/${locationId}`);
+}
+
+export function votePlan(tripId, planId, voteType) {
+    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/plans/${planId}/vote`, { voteType });
+}
+
+export function autoGeneratePlans(tripId, locationsPerDay) {
+    return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/plans/auto-generate`, { locationsPerDay });
 }

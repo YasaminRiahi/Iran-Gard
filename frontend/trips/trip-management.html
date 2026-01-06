@@ -121,7 +121,7 @@
                 <i class="fas fa-map-pin"></i> مکان‌ها
             </button>
             <button class="tab-button" data-tab="daily-plans">
-                <i class="fas fa-route"></i> پلن روزانه
+                <i class="fas fa-route"></i> برنامه روزانه
             </button>
             <button class="tab-button" data-tab="expenses">
                 <i class="fas fa-wallet"></i> هزینه‌ها
@@ -146,7 +146,7 @@
                     <i class="fas fa-plus"></i> افزودن مکان
                 </button>
                 <button class="btn-auto-generate" id="autoGenerateBtn">
-                    <i class="fas fa-magic"></i> اتو جنریت
+                    <i class="fas fa-magic"></i>افزودن خودکار مکان
                 </button>
             </div>
         </div>
@@ -157,25 +157,22 @@
         </div>
     </section>
 
-    <!-- Tab 2: پلن روزانه -->
     <section id="daily-plans" class="tab-content hidden">
         <div class="section-header">
             <h2><i class="fas fa-calendar-day"></i> برنامه روزانه سفر</h2>
             <div class="header-actions">
                 <button class="btn-create-plan" id="createPlanBtn">
-                    <i class="fas fa-plus"></i> ایجاد پلن
+                    <i class="fas fa-plus"></i> ایجاد برنامه
                 </button>
                 <button class="btn-auto-plan" id="autoPlanBtn">
-                    <i class="fas fa-robot"></i> اتو جنریت پلن
+                    <i class="fas fa-robot"></i> افزودن خودکار برنامه روزانه
                 </button>
             </div>
         </div>
 
-        <!-- مپ جداگانه برای پلن‌ها -->
         <div class="plans-map" id="plansMap"></div>
 
         <div class="plans-grid" id="plansGrid">
-            <!-- پلن‌ها به صورت داینامیک اضافه می‌شوند -->
         </div>
     </section>
 
@@ -239,11 +236,10 @@
     </div>
 </div>
 
-<!-- Modal: ایجاد پلن روزانه -->
 <div id="createPlanModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2><i class="fas fa-calendar-plus"></i> ایجاد پلن روزانه</h2>
+            <h2><i class="fas fa-calendar-plus"></i> ایجاد برنامه روزانه</h2>
             <button class="modal-close" id="closePlanModal">
                 <i class="fas fa-times"></i>
             </button>
@@ -262,11 +258,11 @@
                 </select>
             </div>
             <div class="selected-plan-locations" id="selectedPlanLocations">
-                <h4>مکان‌های انتخابی برای این پلن:</h4>
+                <h4>مکان‌های انتخابی برای این برنامه:</h4>
                 <div id="planLocationsList"></div>
             </div>
             <button class="btn-save-plan" id="savePlanBtn">
-                <i class="fas fa-check"></i> ذخیره پلن
+                <i class="fas fa-check"></i> ذخیره برنامه
             </button>
         </div>
     </div>
