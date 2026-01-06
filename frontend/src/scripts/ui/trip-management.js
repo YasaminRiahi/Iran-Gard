@@ -1989,7 +1989,14 @@ document.getElementById('saveExpenseBtn').addEventListener('click', async () => 
                 title: 'هزینه ویرایش شد!',
                 confirmButtonText: 'عالی',
                 confirmButtonColor: '#A6B28B',
-                timer: 2000
+                timer: 2000,
+                cancelButtonColor: '#f5c9b0',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                    cancelButton: 'my-cancel-btn'
+                }
             });
         } else {
             // ایجاد جدید
@@ -2014,7 +2021,14 @@ document.getElementById('saveExpenseBtn').addEventListener('click', async () => 
                 text: `هزینه "${description}" با موفقیت ثبت شد`,
                 confirmButtonText: 'عالی',
                 confirmButtonColor: '#A6B28B',
-                timer: 2000
+                timer: 2000,
+                cancelButtonColor: '#f5c9b0',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                    cancelButton: 'my-cancel-btn'
+                }
             });
         }
 
@@ -2033,7 +2047,14 @@ document.getElementById('saveExpenseBtn').addEventListener('click', async () => 
             icon: 'error',
             title: 'خطا در ثبت هزینه',
             text: error.response?.data?.detail || 'مشکلی در ارتباط با سرور پیش آمد.',
-            confirmButtonColor: '#A6B28B'
+            confirmButtonColor: '#A6B28B',
+            cancelButtonColor: '#f5c9b0',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            }
         });
     }
 });
@@ -2095,7 +2116,14 @@ async function deleteExpense(expenseId) {
                 icon: 'error',
                 title: 'خطا در حذف هزینه',
                 text: error.response?.data?.detail || 'مشکلی پیش آمد.',
-                confirmButtonColor: '#A6B28B'
+                confirmButtonColor: '#A6B28B',
+                cancelButtonColor: '#f5c9b0',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                    cancelButton: 'my-cancel-btn'
+                }
             });
         }
     }
@@ -2188,7 +2216,7 @@ window.addEventListener('click', (e) => {
 function initExpenseModal() {
     const payerSelect = document.getElementById('expensePayer');
     payerSelect.innerHTML = tripData.participants.map(p =>
-        `<option value="${p.id}">${p.name}</option>`
+        `<option value="${p.id}">${p.username}</option>`
     ).join('');
 
     const participantsDiv = document.getElementById('expenseParticipants');
@@ -2196,7 +2224,7 @@ function initExpenseModal() {
         <div class="expense-participant-item">
             <label>
                 <input type="checkbox" value="${p.id}" checked onchange="toggleParticipantShare(${p.id})">
-                <span>${p.name}</span>
+                <span>${p.username}</span>
             </label>
             <input type="number" id="share-${p.id}" class="participant-share-input" placeholder="مبلغ سهم (تومان)" value="0">
         </div>
