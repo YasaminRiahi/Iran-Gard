@@ -15,7 +15,9 @@ import {
     createExpense,
     updateExpense as updateExpenseAPI,
     deleteExpense as deleteExpenseAPI,
-    getSettlement
+    getSettlement,
+    addLocationToTrip,
+    getPlacesForTrip
 } from '/src/scripts/services/trips-service.js';
 /* ================================================================
    1. SCROLL MANAGEMENT
@@ -104,7 +106,7 @@ async function fetchAndAssignTripData() {
                 name: place.name,
                 category: getCategoryName(place.category),
                 city: place.city,
-                image: place.image || '../src/assets/images/default-place.jpg',
+                image: place.image || '',
                 description: place.description,
                 lat: place.lat,
                 lng: place.lng,
@@ -199,6 +201,7 @@ function convertToPersianDate(dateString) {
 }
 
 
+let allLocationsData = [];
 let selectedLocations = [];
 let dailyPlans = [];
 let expenses = [];
@@ -547,91 +550,287 @@ window.addEventListener('click', (e) => {
     }
 });
 
-function renderAvailableLocations() {
+async function renderAvailableLocations() {
     const grid = document.getElementById('availableLocationsGrid');
 
-    const availableLocations = allLocationsData.filter(
-        loc => !selectedLocations.find(selected => selected.id === loc.id)
-    );
+    grid.innerHTML = `
+        <div style="text-align: center; padding: 3rem;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #A6B28B;"></i>
+            <p style="margin-top: 1rem; color: #666;">در حال بارگذاری مکان‌ها...</p>
+        </div>
+    `;
 
-    if (availableLocations.length === 0) {
-        grid.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-check-circle"></i>
-                <h3>همه مکان‌ها اضافه شده‌اند</h3>
+    try {
+        const response = await getPlacesForTrip(TRIP_ID);
+        const data = response.data || response;
+
+        if (!data.cities || data.cities.length === 0) {
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>همه مکان‌ها اضافه شده‌اند</h3>
+                    <p>در شهرهای ${tripData.cities.join('، ')} مکان دیگری برای افزودن وجود ندارد</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = `
+            <div class="modal-selected-header" style="${selectedLocationIds.length === 0 ? 'display: none;' : ''}">
+                <span id="selectedCount">
+                    <i class="fas fa-check-circle"></i>
+                    ${englishToPersianNumber(selectedLocationIds.length)} مکان انتخاب شده
+                </span>
             </div>
         `;
+
+        html += data.cities.map(cityData => {
+            const cityPlaces = cityData.places;
+
+            return `
+                <div class="city-locations-section">
+                    <h3 class="city-section-title">
+                        <i class="fas fa-city"></i>
+                        ${cityData.city_name}
+                        <span class="city-count">${englishToPersianNumber(cityPlaces.length)} مکان</span>
+                    </h3>
+                    <div class="city-locations-grid">
+                        ${cityPlaces.map(place => `
+                            <div class="available-location-card ${selectedLocationIds.includes(place.place_id) ? 'selected' : ''}" 
+                                 data-place-id="${place.place_id}" 
+                                 onclick="toggleLocationSelection(${place.place_id})">
+                                <img src="${place.first_picture_url}" 
+                                     alt="${place.place_name}"
+                                     onerror="this.src='../src/assets/images/default-place.jpg'">
+                                <div class="available-location-info">
+                                    <h5>${place.place_name}</h5>
+                                    <p><i class="fas fa-tag"></i> ${getCategoryName(place.category_id.toString()) || 'گردشگری'}</p>
+                                    <div class="rating-container">
+                                        ${place.avg_rating ? generateStarRating(place.avg_rating) : ""}
+                                    <span class="rating-number">${place.avg_rating ? englishToPersianNumber(place.avg_rating.toFixed(1)) : ""}</span>
+                                    </div>
+                                    ${place.description ? `<p style="font-size: 0.8rem; margin-top: 0.5rem;">${place.description}</p>` : ''}
+                                </div>
+                            </div>
+                            
+                                
+                            </div>
+                        </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // ✅ دکمه افزودن در پایین
+        html += `
+            <div class="modal-footer-actions" style="${selectedLocationIds.length === 0 ? 'display: none;' : ''}">
+                <button id="addSelectedLocationsBtn" class="btn-add-selected">
+                    <i class="fas fa-plus-circle"></i>
+                    افزودن ${englishToPersianNumber(selectedLocationIds.length)} مکان به سفر
+                </button>
+            </div>
+        `;
+
+        grid.innerHTML = html;
+
+        document.getElementById('addSelectedLocationsBtn')?.addEventListener('click', addSelectedLocationsToTrip);
+
+    } catch (error) {
+        console.error('❌ خطا در دریافت مکان‌ها:', error);
+        grid.innerHTML = `
+            <div style="text-align: center; padding: 3rem; color: #f87171;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                <h3>خطا در دریافت مکان‌ها</h3>
+                <p style="margin-top: 0.5rem; color: #666;">
+                    ${error.response?.data?.detail || error.message}
+                </p>
+                <button onclick="renderAvailableLocations()" 
+                        style="margin-top: 1rem; padding: 0.5rem 1.5rem; background: #A6B28B; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-family: Anjoman;">
+                    <i class="fas fa-redo"></i> تلاش مجدد
+                </button>
+            </div>
+        `;
+    }
+}
+
+function generateStarRating(rating) {
+    console.log("ااهه")
+    const fullStars = Math.floor(rating || 0);
+    const hasHalfStar = (rating % 1) >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    let stars = '';
+
+    for (let i = 0; i < fullStars; i++) {
+        stars += '<i class="fas fa-star star-filled"></i>';
+    }
+
+    if (hasHalfStar) {
+        stars += '<i class="fas fa-star-half-alt star-half"></i>';
+    }
+
+    for (let i = 0; i < emptyStars; i++) {
+        stars += '<i class="far fa-star star-empty"></i>';
+    }
+
+    return stars;
+}
+
+function toggleLocationSelection(placeId) {
+    const card = document.querySelector(`.available-location-card[data-place-id="${placeId}"]`);
+
+    if (selectedLocationIds.includes(placeId)) {
+        selectedLocationIds = selectedLocationIds.filter(id => id !== placeId);
+        card.classList.remove('selected');
+    } else {
+        selectedLocationIds.push(placeId);
+        card.classList.add('selected');
+    }
+
+    updateSelectionUI();
+}
+
+// ✅ آپدیت UI
+function updateSelectionUI() {
+    const selectedHeader = document.querySelector('.modal-selected-header');
+    const footer = document.querySelector('.modal-footer-actions');
+    const countText = document.getElementById('selectedCount');
+    const addBtn = document.getElementById('addSelectedLocationsBtn');
+
+    if (selectedLocationIds.length > 0) {
+        if (selectedHeader) selectedHeader.style.display = 'flex';
+        if (footer) footer.style.display = 'block';
+        if (countText) {
+            countText.innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                ${englishToPersianNumber(selectedLocationIds.length)} مکان انتخاب شده
+            `;
+        }
+        if (addBtn) {
+            addBtn.innerHTML = `
+                <i class="fas fa-plus-circle"></i>
+                افزودن ${englishToPersianNumber(selectedLocationIds.length)} مکان به سفر
+            `;
+        }
+    } else {
+        if (selectedHeader) selectedHeader.style.display = 'none';
+        if (footer) footer.style.display = 'none';
+    }
+}
+
+let selectedLocationIds = [];
+
+
+async function addSelectedLocationsToTrip() {
+    if (selectedLocationIds.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            text: 'لطفاً حداقل یک مکان انتخاب کنید',
+            confirmButtonColor: '#A6B28B',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn'
+            }
+        });
         return;
     }
 
-    // گروه‌بندی بر اساس شهر
-    const locationsByCity = {};
-    tripData.cities.forEach(city => {
-        locationsByCity[city] = availableLocations.filter(loc => loc.city === city);
-    });
+    try {
+        Swal.fire({
+            title: 'در حال افزودن...',
+            text: `${englishToPersianNumber(selectedLocationIds.length)} مکان در حال افزودن`,
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+            confirmButtonColor: '#A6B28B',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn'
+            }
+        });
 
-    const cityNames = {
-        'تهران': 'تهران',
-        'شیراز': 'شیراز',
-        'اصفهان': 'اصفهان'
-    };
+        let successCount = 0;
+        let failCount = 0;
+        const errors = [];
 
-    grid.innerHTML = Object.keys(locationsByCity).map(city => {
-        const cityLocs = locationsByCity[city];
-        if (cityLocs.length === 0) return '';
-
-        return `
-            <div class="city-locations-section">
-                <h3 class="city-section-title">
-                    <i class="fas fa-city"></i> ${cityNames[city] || city}
-                    <span class="city-count">${cityLocs.length} مکان</span>
-                </h3>
-                <div class="city-locations-grid">
-                    ${cityLocs.map(location => `
-                        <div class="available-location-card" onclick="addLocationToTrip(${location.id})">
-                            <img src="${location.image}" alt="${location.name}">
-                            <div class="available-location-info">
-                                <h4>${location.name}</h4>
-                                <p><i class="fas fa-tag"></i> ${location.category}</p>
-                                <p style="font-size: 0.85rem; margin-top: 0.5rem;">${location.description}</p>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function addLocationToTrip(locationId) {
-    const location = allLocationsData.find(loc => loc.id === locationId);
-    if (!location) return;
-
-    // مطمئن شوید city کپی می‌شود
-    selectedLocations.push({
-        ...location, // این تمام property ها از جمله city را کپی می‌کند
-        userVote: null
-    });
-
-    console.log('Location added:', location.name, 'City:', location.city);
-    console.log('Current selectedLocations:', selectedLocations);
-
-    Swal.fire({
-        icon: 'success',
-        text: `${location.name} به لیست سفر اضافه شد`,
-        confirmButtonText: 'عالی',
-        confirmButtonColor: '#A6B28B',
-        background: '#f0f0f0',
-        customClass: {
-            popup: 'my-swal-popup',
-            confirmButton: 'my-confirm-btn'
+        for (const locationId of selectedLocationIds) {
+            try {
+                const response = await addLocationToTrip(TRIP_ID, locationId);
+                const result = response.data || response;
+                if (result) {
+                    const newLocation = {
+                        id: result.id,
+                        name: result.name,
+                        category: result.category,
+                        city: result.city,
+                        image: result.image,
+                        description: result.description,
+                        lat: result.lat,
+                        lng: result.lng,
+                        votes: result.votes,
+                        userVote: result.userVote,
+                        visited: result.visited
+                    };
+                    selectedLocations.push(newLocation);
+                    successCount++;
+                }
+            } catch (err) {
+                failCount++;
+                errors.push(err.response?.data?.detail || 'خطای نامشخص');
+                console.error('خطا در افزودن مکان:', locationId, err);
+            }
         }
-    });
 
-    renderLocations();
-    updateMapMarkers();
-    addLocationModal.classList.remove('active');
+        if (successCount > 0) {
+            Swal.fire({
+                icon: successCount === selectedLocationIds.length ? 'success' : 'warning',
+                title: `  اضافه شد`,
+                html: failCount > 0
+                    ? `<p style="color: #f87171; margin-top: 0.5rem;">${englishToPersianNumber(failCount)} مکان اضافه نشد</p>`
+                    : '',
+                confirmButtonText: 'عالی',
+                timer: 2000,
+                confirmButtonColor: '#A6B28B',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn'
+                }
+            });
+
+            selectedLocationIds = [];
+            renderLocations();
+            updateMapMarkers();
+            addLocationModal.classList.remove('active');
+        } else {
+            throw new Error('هیچ مکانی اضافه نشد');
+        }
+
+    } catch (error) {
+        console.error('❌ خطا در افزودن مکان‌ها:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'خطا در افزودن مکان‌ها',
+            text: error.message,
+            confirmButtonText: 'عالی',
+            confirmButtonColor: '#A6B28B',
+            cancelButtonColor: '#f5c9b0',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            }
+        });
+    }
 }
+window.toggleLocationSelection = toggleLocationSelection;
+
+
 
 /* ================================================================
    7. AUTO GENERATE LOCATIONS
@@ -1619,7 +1818,7 @@ function renderExpenses() {
         const payer = tripData.participants.find(p => p.id === expense.payerId);
         const participantNames = expense.participants.map(p => {
             const participant = tripData.participants.find(part => part.id === p.id);
-            return participant ? `${participant.name} (${englishToPersianNumber(p.share.toLocaleString())}تومان)` : '';
+            return participant ? `${participant.username} (${englishToPersianNumber(p.share.toLocaleString())}تومان)` : '';
         }).filter(Boolean).join('، ');
 
         return `
@@ -2640,7 +2839,14 @@ async function autoGenerateLocationsReal(topN) {
             icon: 'error',
             title: 'خطا در عملیات',
             text: error.message,
-            confirmButtonColor: '#f5c9b0'
+            confirmButtonColor: '#f5c9b0',
+            cancelButtonColor: '#a6b28b',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            }
         });
     }
 }
