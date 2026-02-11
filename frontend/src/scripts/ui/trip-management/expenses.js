@@ -72,6 +72,7 @@ export function renderExpenses() {
                 <div class="expense-amount">
                     ${englishToPersianNumber(expense.amount.toLocaleString())} تومان
                 </div>
+                ${state.isOwner ? `
                 <div class="expense-actions">
                     <button class="btn-edit-expense" onclick="window.editExpense(${expense.id})" title="ویرایش">
                         <i class="fas fa-edit"></i>
@@ -80,7 +81,8 @@ export function renderExpenses() {
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
-            </div>
+                ` : ''}
+            </div>            
         `;
     }).join('');
 

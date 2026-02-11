@@ -69,7 +69,7 @@ document.getElementById('endTripBtn')?.addEventListener('click', () => {
                         <p><strong>تعداد مکان‌های بازدید شده:</strong> ${state.selectedLocations.length}</p>
                         <p><strong>تعداد پلن‌های روزانه:</strong> ${state.dailyPlans.length}</p>
                         <p><strong>کل هزینه‌ها:</strong> ${englishToPersianNumber(totalExpense.toLocaleString())} تومان</p>
-                        <p style="margin-top: 1rem; color: #10b981; font-weight: 600;">
+                        <p style="margin-top: 1rem; color: #A6B28B; font-weight: 600;">
                             <i class="fas fa-heart"></i> خاطرات خوبی داشته باشید!
                         </p>
                     </div>
@@ -483,28 +483,37 @@ export function printTripReport() {
             
             <!-- هزینه‌ها -->
             ${state.expenses && state.expenses.length > 0 ? `
-                <div class="section">
-                    <h2 class="section-title">💰 هزینه‌ها</h2>
-                    ${state.expenses.map(exp => `
-                        <div class="expense-item">
-                            <div class="expense-description">
-                                <strong>${exp.category}:</strong> ${exp.description}
-                                ${exp.payer ? `<span style="color: #9ca3af; margin-right: 0.5rem;">(پرداخت‌کننده: ${exp.payer})</span>` : ''}
-                            </div>
-                            <div class="expense-amount">
-                                ${englishToPersianNumber(exp.amount.toLocaleString())} تومان
-                            </div>
+            <div class="section">
+                <h2 class="section-title">💰 هزینه‌ها</h2>
+                ${state.expenses.map(exp => {
+                const payer = state.tripData.participants.find(p => p.id === exp.payerId);
+                const payerName = payer ? payer.name : 'نامشخص';
+
+                return `
+                    <div class="expense-item">
+                        <div class="expense-description">
+                            <strong>${exp.category}:</strong> ${exp.description}
+                            <br>
+                            <span style="color: #A6B28B; margin-top: 0.3rem; display: inline-block;">
+                            👤 پرداخت‌کننده: ${payerName}
+                            </span>
                         </div>
-                    `).join('')}
-                    
-                    <div class="total-box">
-                        <div class="total-label">مجموع کل هزینه‌ها</div>
-                        <div class="total-amount">
-                            ${englishToPersianNumber(totalExpense.toLocaleString())} تومان
+                        <div class="expense-amount">
+                            ${englishToPersianNumber(exp.amount.toLocaleString())} تومان
                         </div>
                     </div>
+                `;
+            }).join('')}
+        
+                <div class="total-box">
+                    <div class="total-label">مجموع کل هزینه‌ها</div>
+                    <div class="total-amount">
+                        ${englishToPersianNumber(totalExpense.toLocaleString())} تومان
+                    </div>
                 </div>
+            </div>
             ` : ''}
+            
             
             <!-- تصفیه حساب -->
             ${state.settlements && state.settlements.length > 0 ? `
