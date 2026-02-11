@@ -75,16 +75,17 @@ export function renderLocations() {
     locationsList.innerHTML = sortedLocations.map((location, index) => `
         <div class="location-item ${location.visited ? 'visited' : ''}">
             <div class="location-rank">#${englishToPersianNumber(index + 1)}</div>
-            
+            ${state.isOwner ? `
             <button class="btn-remove-location" onclick="window.removeLocation(${location.id})" title="حذف مکان">
                 <i class="fas fa-times"></i>
             </button>
-            
+                       
             <button class="btn-visited-check ${location.visited ? 'checked' : ''}" 
                     onclick="window.toggleVisited(${location.id})" 
                     title="${location.visited ? 'مشاهده شده' : 'علامت‌گذاری به عنوان مشاهده شده'}">
                 <i class="fas fa-check"></i>
             </button>
+            ` : ''}
             
             <div class="location-image-wrapper" onclick="window.viewLocation(${location.id})">
                 <img src="${location.image}" alt="${location.name}" class="location-image">

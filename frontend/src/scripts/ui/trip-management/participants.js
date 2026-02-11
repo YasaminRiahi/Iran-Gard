@@ -31,8 +31,13 @@ export function renderParticipants() {
                 <img src="${getURL() + participant.avatar}" alt="${participant.name}" class="participant-avatar">
                 <div class="participant-name">${participant.name}</div>
                 <div class="participant-username">${participant.username}</div>
-                ${participant.isCreator
-        ? '<div class="participant-badge"><i class="fas fa-crown"></i> سازنده سفر</div>'
+                ${participant.isCreator ?
+        '<div class="participant-badge"><i class="fas fa-crown"></i> سازنده سفر</div>'
+        : ''}
+                ${!participant.isCreator && state.isOwner ?
+        `<button class="btn-remove-participant" onclick="removeParticipant(${participant.id})">
+                        <i class="fas fa-user-times"></i> حذف از سفر
+                    </button>`
         : ''}
             </div>
         `).join('')}

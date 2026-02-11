@@ -86,6 +86,7 @@ export function renderDailyPlans() {
                                     <div class="plan-title">${plan.city}</div>
                                     <div class="plan-subtitle">${englishToPersianNumber(plan.locations.length)} مکان</div>
                                 </div>
+                                ${state.isOwner ? `
                                 <div class="plan-header-actions">
                                     <button class="btn-edit-plan-inline" onclick="window.toggleEditPlan(${plan.id})" title="ویرایش">
                                         <i class="fas fa-edit"></i>
@@ -94,6 +95,7 @@ export function renderDailyPlans() {
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
+                                ` : ''}
                             </div>
                             
                             <!-- حالت مشاهده -->

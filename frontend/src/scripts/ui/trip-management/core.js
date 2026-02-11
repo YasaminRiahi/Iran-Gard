@@ -1,4 +1,4 @@
-import { getTripDetails, getUserFullInfo, getTripPlans, getTripExpenses } from '/src/scripts/services/trips-service.js';
+import { getTripDetails, getUserFullInfo, getTripPlans, getTripExpenses,checkIsOwner } from '/src/scripts/services/trips-service.js';
 import { englishToPersianNumber, convertToPersianDate, getCategoryName } from './utils.js';
 import { updateHeroSection } from './hero.js';
 import { renderLocations, initMap } from './locations.js';
@@ -119,6 +119,8 @@ export async function fetchAndAssignTripData() {
             coverImage: data.cover_image,
             participants: participantsDetails
         };
+        const ownerCheck = await checkIsOwner(state.TRIP_ID);
+        state.isOwner = ownerCheck.isOwner
 
         // Load places
         if (data.places) {

@@ -1,5 +1,5 @@
 import { state } from './core.js';
-import { englishToPersianNumber } from './utils.js';
+import {englishToPersianNumber, persianOrdinalToNumber} from './utils.js';
 
 export function updateHeroSection() {
     const titleElement = document.querySelector('.trip-hero-title');
@@ -20,6 +20,11 @@ export function updateHeroSection() {
     const participantsElement = document.querySelector('.meta-item-hero:nth-child(3) .meta-value');
     if (participantsElement) {
         participantsElement.textContent = `${englishToPersianNumber(state.tripData.participants.length)} نفر`;
+    }
+
+    const endTripBtn = document.getElementById('endTripBtn');
+    if (endTripBtn && !state.isOwner) {
+        endTripBtn.style.display = 'none';
     }
 }
 
@@ -98,7 +103,11 @@ export function printTripReport() {
         plansByDay[dayKey].push(plan);
     });
 
-    const sortedDays = Object.keys(plansByDay).sort();
+    const sortedDays = Object.keys(plansByDay).sort((a, b) => {
+        const numA = persianOrdinalToNumber(a.substring(4));
+        const numB = persianOrdinalToNumber(b.substring(4));
+        return numA - numB;
+    });
 
     // ساخت HTML صفحه پرینت
     const printContent = `
