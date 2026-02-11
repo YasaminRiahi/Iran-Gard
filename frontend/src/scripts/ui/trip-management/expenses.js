@@ -109,8 +109,10 @@ async function calculateSettlement() {
 
         if (Array.isArray(data)) {
             settlements = data;
+            state.settlements = settlements;
         } else if (data.settlements && Array.isArray(data.settlements)) {
             settlements = data.settlements;
+            state.settlements = settlements;
         } else {
             settlementList.innerHTML = '<p style="text-align: center; color: #f5c9b0;">خطا در دریافت تسویه</p>';
             return;
