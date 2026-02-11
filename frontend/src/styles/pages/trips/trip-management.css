@@ -2094,6 +2094,12 @@ body {
     gap: 1.5rem;
 }
 
+.available-locations-grid {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
 
 .available-location-card {
     position: relative;
@@ -2565,7 +2571,7 @@ body {
 .my-confirm-btn,
 .my-cancel-btn,
 .my-swal-popup {
-    direction: ltr;
+    direction: ltr !important;
     font-family: 'Anjoman';
     font-weight: 400;
     border-radius: 30px;
@@ -2581,14 +2587,25 @@ body {
     text-align: center !important;
 }
 
+.swal2-icon.swal2-question {
+    color: #A6B28B !important;
+    border-color: #A6B28B !important;
+}
+
 /* ================================================================
    21. EMPTY STATES
    ================================================================ */
 
 .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     padding: 4rem 2rem;
+    width: 100%;
     color: var(--color-text-medium);
+    grid-column: 1 / -1;
 }
 
 .empty-state i {
@@ -2625,6 +2642,7 @@ body {
         font-size: 1rem;
     }
 
+
     .locations-list,
     .plans-grid,
     .participants-grid {
@@ -2654,7 +2672,7 @@ body {
     background: linear-gradient(135deg, rgba(166, 178, 139, 0.1), rgba(245, 201, 176, 0.1));
     border: 3px dashed var(--color-primary);
     border-radius: 1.5rem;
-    padding: 2rem;
+    padding: 1.5rem;
     text-align: center;
     transition: all 0.3s ease;
 }
@@ -2665,16 +2683,17 @@ body {
     border-color: var(--color-accent);
 }
 
+
 .invite-icon {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 1.5rem;
-    font-size: 2.5rem;
+    font-size: 2rem;
     color: white;
     animation: pulse 2s infinite;
 }
@@ -2687,7 +2706,7 @@ body {
 
 .invite-card p {
     color: var(--color-text-medium);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 .invite-card {
     order: 2 !important;
@@ -2700,17 +2719,17 @@ body {
 .btn-invite-link,
 .btn-invite-manual {
     width: 100%;
-    padding: 1rem;
+    padding: 0.5rem;
     border: none;
     border-radius: 1rem;
-    font-weight: 700;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.5rem;
 }
 
 .btn-invite-link {
