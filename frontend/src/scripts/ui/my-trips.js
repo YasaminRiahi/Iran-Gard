@@ -418,7 +418,7 @@ window.handleInvitation = handleInvitation;
 
 // ============ Navigation Functions ============
 function viewTrip(tripId) {
-    window.location.href = `/trips/each-trip.html?id=${tripId}`;
+    window.location.href = `/trips/completed-trip.html?id=${tripId}`;
 }
 
 function editTrip(tripId) {
