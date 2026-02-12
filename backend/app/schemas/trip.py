@@ -301,3 +301,11 @@ class AutoGeneratePlacesResponse(BaseModel):
     message: str = Field(..., description="Success message")
     added_count: int = Field(..., description="Number of places added")
     places: List[TripPlaceResponse] = Field(..., description="List of places that were added with their details")
+
+
+class SuccessResponse(BaseModel):
+    """Generic success response"""
+    message: str
+
+    class Config:
+        from_attributes = True
