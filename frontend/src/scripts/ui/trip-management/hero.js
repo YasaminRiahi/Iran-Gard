@@ -1,5 +1,6 @@
 import { state } from './core.js';
 import {englishToPersianNumber, persianOrdinalToNumber} from './utils.js';
+import { completeTrip } from '/src/scripts/services/trips-service.js';
 
 export function updateHeroSection() {
     const titleElement = document.querySelector('.trip-hero-title');
@@ -29,8 +30,8 @@ export function updateHeroSection() {
 }
 
 // End Trip
-document.getElementById('endTripBtn')?.addEventListener('click', () => {
-    Swal.fire({
+document.getElementById('endTripBtn')?.addEventListener('click', async () => {
+    const result = await Swal.fire({
         title: 'پایان سفر',
         html: `
             <p>آیا مطمئن هستید که می‌خواهید این سفر را به پایان برسانید؟</p>
@@ -51,11 +52,22 @@ document.getElementById('endTripBtn')?.addEventListener('click', () => {
             confirmButton: 'my-confirm-btn',
             cancelButton: 'my-cancel-btn'
         }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const totalExpense = state.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+    });
 
+    if (result.isConfirmed) {
+        try {
             Swal.fire({
+                title: 'در حال پایان دادن سفر...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading(),
+                background: '#f0f0f0'
+            });
+
+            await completeTrip(state.TRIP_ID);
+
+            const totalExpense = state.expenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
+
+            await Swal.fire({
                 icon: 'success',
                 title: 'سفر به پایان رسید!',
                 html: `
@@ -66,8 +78,8 @@ document.getElementById('endTripBtn')?.addEventListener('click', () => {
                         <p><strong>نام سفر:</strong> ${state.tripData.name}</p>
                         <p><strong>تاریخ:</strong> ${state.tripData.startDate} تا ${state.tripData.endDate}</p>
                         <p><strong>تعداد شرکت‌کنندگان:</strong> ${state.tripData.participants.length} نفر</p>
-                        <p><strong>تعداد مکان‌های بازدید شده:</strong> ${state.selectedLocations.length}</p>
-                        <p><strong>تعداد پلن‌های روزانه:</strong> ${state.dailyPlans.length}</p>
+                        <p><strong>تعداد مکان‌های بازدید شده:</strong> ${state.selectedLocations?.length || 0}</p>
+                        <p><strong>تعداد پلن‌های روزانه:</strong> ${state.dailyPlans?.length || 0}</p>
                         <p><strong>کل هزینه‌ها:</strong> ${englishToPersianNumber(totalExpense.toLocaleString())} تومان</p>
                         <p style="margin-top: 1rem; color: #A6B28B; font-weight: 600;">
                             <i class="fas fa-heart"></i> خاطرات خوبی داشته باشید!
@@ -81,11 +93,35 @@ document.getElementById('endTripBtn')?.addEventListener('click', () => {
                     popup: 'my-swal-popup',
                     confirmButton: 'my-confirm-btn'
                 }
-            }).then(() => {
-                window.location.href = 'my-trips.html';
+            });
+
+            window.location.href = 'my-trips.html';
+
+        } catch (error) {
+            console.error('خطا در پایان دادن سفر:', error);
+
+            let errorMessage = 'مشکلی در پایان دادن سفر پیش آمد';
+
+            if (error.response?.status === 403) {
+                errorMessage = 'شما مجاز به پایان دادن این سفر نیستید';
+            } else if (error.response?.status === 400) {
+                errorMessage = 'این سفر قبلاً به پایان رسیده است';
+            }
+
+            Swal.fire({
+                icon: 'error',
+                title: 'خطا',
+                text: errorMessage,
+                confirmButtonText: 'باشه',
+                confirmButtonColor: '#f5c9b0',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn'
+                }
             });
         }
-    });
+    }
 });
 
 

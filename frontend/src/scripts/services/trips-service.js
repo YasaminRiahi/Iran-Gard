@@ -275,3 +275,8 @@ export function votePlan(tripId, planId, voteType) {
 export function autoGeneratePlans(tripId, locationsPerDay) {
     return apiClient.post(`${TRIP_ENDPOINT}/${tripId}/plans/auto-generate`, { locationsPerDay });
 }
+
+export async function completeTrip(tripId) {
+    const response = await apiClient.patch(`${TRIP_ENDPOINT}/${tripId}/complete`,{});
+    return response.data;
+}
