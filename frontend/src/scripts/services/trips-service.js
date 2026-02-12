@@ -86,6 +86,10 @@ export function getPreviewPlaces(cityNames) {
 export const getTripDetails = async (tripId) => {
     return await apiClient.get(`${TRIP_ENDPOINT}/${tripId}/details`);
 };
+
+export const getAvailableFriendsToInvite = async (tripId) => {
+    return await apiClient.get(`${TRIP_ENDPOINT}/${tripId}/available-friends`);
+};
 export const getUserFullInfo = async (userId) => {
     return await apiClient.get(`${USER_ENDPOINT}/${userId}/full-info`);
 };

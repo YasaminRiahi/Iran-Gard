@@ -1,6 +1,6 @@
 import { state } from './core.js';
 import {
-    getAvailableFriends,
+    getAvailableFriendsToInvite as getAvailableFriends,
     inviteFriendToTrip,
     getURL
 } from '/src/scripts/services/trips-service.js';
@@ -18,9 +18,6 @@ export function renderParticipants() {
             <h3>دعوت دوستان</h3>
             <p>دوستان خود را به این سفر دعوت کنید</p>
             <div class="invite-button">
-                <button class="btn-invite-link" onclick="copyInviteLink()">
-                    <i class="fas fa-link"></i> کپی لینک دعوت
-                </button>
                 <button class="btn-invite-manual" onclick="openInviteModal()">
                     <i class="fas fa-user-plus"></i> دعوت 
                 </button>
@@ -33,11 +30,6 @@ export function renderParticipants() {
                 <div class="participant-username">${participant.username}</div>
                 ${participant.isCreator ?
         '<div class="participant-badge"><i class="fas fa-crown"></i> سازنده سفر</div>'
-        : ''}
-                ${!participant.isCreator && state.isOwner ?
-        `<button class="btn-remove-participant" onclick="removeParticipant(${participant.id})">
-                        <i class="fas fa-user-times"></i> حذف از سفر
-                    </button>`
         : ''}
             </div>
         `).join('')}
@@ -103,7 +95,7 @@ function displayFriends(friends) {
     if (!friends || friends.length === 0) {
         resultsDiv.innerHTML = `
             <div style="text-align: center; color: #9ca3af; padding: 2rem;">
-                <i class="fas fa-user-slash" style="font-size: 2.5rem; margin-bottom: 0.8rem; display: block;"></i>
+                <i class="fas fa-user-slash" style="font-size: 2.5rem;color:#8f9b6a;  margin-bottom: 0.8rem; display: block;"></i>
                 کاربری برای دعوت یافت نشد.
             </div>`;
         return;
