@@ -54,6 +54,15 @@ function switchTab(targetTab) {
     if (targetTab === 'locations' && state.map) {
         setTimeout(() => state.map.invalidateSize(), 100);
     }
+
+    const plansMapContainer = document.getElementById('plansMap');
+    if (plansMapContainer) {
+        if (targetTab === 'plans') {
+            plansMapContainer.style.display = 'block';
+        } else {
+            plansMapContainer.style.display = 'none';
+        }
+    }
 }
 
 tabButtons.forEach(btn => {

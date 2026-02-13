@@ -498,7 +498,7 @@ body {
 
 .tab-buttons-group {
     display: flex;
-    gap: 1rem;
+    gap: 1.1rem;
     position: relative;
     justify-content: center;
 }
@@ -2101,6 +2101,12 @@ body {
     gap: 1rem;
 }
 
+#availablePlanLocationsGrid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
 .available-location-card {
     position: relative;
     background: white;
@@ -2592,6 +2598,16 @@ body {
     border-color: #A6B28B !important;
 }
 
+.swal2-icon.swal2-error {
+    color: #F5C9B0 !important;
+    border-color: #F5C9B0 !important;
+}
+
+.swal2-icon.swal2-error [class^='swal2-x-mark-line'] {
+    background-color: #F5C9B0 !important;
+}
+
+
 /* ================================================================
    21. EMPTY STATES
    ================================================================ */
@@ -2693,7 +2709,7 @@ body {
     align-items: center;
     justify-content: center;
     margin: 0 auto 1.5rem;
-    font-size: 2rem;
+    font-size: 1.8rem;
     color: white;
     animation: pulse 2s infinite;
 }

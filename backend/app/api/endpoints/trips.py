@@ -437,6 +437,13 @@ def remove_location_from_trip(
     if not trip_crud.is_user_in_trip(db, trip_id, current_user.user_id):
         raise HTTPException(status_code=403, detail="شما باید شرکت‌کننده این سفر باشید")
     
+    # Check if place is used in any trip plan
+    if plan_crud.is_place_used_in_trip_plans(db, trip_id, location_id):
+        raise HTTPException(
+            status_code=400, 
+            detail="این مکان در یک برنامه استفاده می‌شود و نمی‌تواند حذف شود"
+        )
+    
     # Remove location
     success = trip_crud.remove_location_from_trip(db, trip_id, location_id)
     if not success:

@@ -559,9 +559,40 @@ document.getElementById('closePlanModal')?.addEventListener('click', () => {
 });
 
 // فیلتر مکان‌ها بر اساس شهر انتخاب شده
-document.getElementById('planCitySelect')?.addEventListener('change', (e) => {
-    const selectedCity = e.target.value;
-    renderPlanLocationsList(selectedCity);
+// تعریف یک متغیر برای نگه داشتن آخرین شهر انتخاب شده
+let lastSelectedCity = "";
+
+document.getElementById('planCitySelect')?.addEventListener('change', async (e) => {
+    const newCity = e.target.value;
+
+    if (selectedPlanLocations.length > 0) {
+        const result = await Swal.fire({
+            text: 'با تغییر شهر، مکان‌های انتخاب شده قبلی پاک خواهند شد. ادامه می‌دهید؟',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'بله، پاک کن',
+            cancelButtonText: 'انصراف',
+            confirmButtonColor: '#A6B28B',
+            cancelButtonColor: '#f5c9b0',
+            background: '#f0f0f0',
+            color: '#4b5563',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            },
+        });
+
+        if (!result.isConfirmed) {
+            e.target.value = lastSelectedCity;
+            return;
+        }
+    }
+
+    lastSelectedCity = newCity;
+    selectedPlanLocations = [];
+    updateSelectedPlanLocationsList();
+    renderPlanLocationsList(newCity);
 });
 
 function togglePlanLocation(locationId) {
@@ -829,29 +860,39 @@ document.getElementById('autoPlanBtn')?.addEventListener('click', async () => {
 // Map for Plans
 let plansMap = null;
 
-function initPlansMap() {
+export function initPlansMap() {
+    const mapContainer = document.getElementById('plansMap');
+
+    if (mapContainer) {
+        mapContainer.style.display = 'block';
+    }
+
     if (plansMap) plansMap.remove();
 
     plansMap = L.map('plansMap').setView([35.6892, 51.3890], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap'
     }).addTo(plansMap);
+
+    setTimeout(() => {
+        if (plansMap) {
+            plansMap.invalidateSize();
+        }
+    }, 100);
 }
 
 function viewPlanOnPlanMap(planId) {
     const plan = state.dailyPlans.find(p => p.id === planId);
     if (!plan) return;
 
-    if (!plansMap) initPlansMap();
+    initPlansMap();
 
-    // پاک کردن مارکرها و خطوط قبلی
     plansMap.eachLayer((layer) => {
         if (layer instanceof L.Marker || layer instanceof L.Polyline) {
             plansMap.removeLayer(layer);
         }
     });
 
-    // ایجاد آرایه مختصات با استفاده از state.selectedLocations
     const latlngs = [];
     const markers = [];
 

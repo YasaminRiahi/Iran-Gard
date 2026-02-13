@@ -536,14 +536,33 @@
     }
 
     .tab-button {
-        padding: 0.7rem 1.2rem;
-        font-size: 0.85rem;
-        white-space: nowrap;
-        flex-shrink: 0;
+        position: relative;
+        padding: 0.7rem;
+        min-width: auto;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
     }
 
     .tab-button i {
-        font-size: 0.9rem;
+        font-size: 1.3rem;
+        margin: 0;
+    }
+
+    .tab-button {
+        font-size: 0;
+        overflow: hidden;
+    }
+
+    .tab-buttons-group {
+        display: flex;
+        align-items: center;
+        justify-items: center;
+        justify-content: center;
+        gap: 6rem;
     }
 
     .tab-indicator {
@@ -1084,6 +1103,7 @@
 
     /* Available Locations Grid in Modal */
     .available-locations-grid {
+        grid-template-columns: repeat(auto-fill, minmax(70vw, 1fr));
         gap: 1rem;
     }
 
@@ -1301,6 +1321,8 @@
         border-radius: 1.5rem;
     }
 
+
+
 }
 @media (max-width: 480px) {
     .main-header {
@@ -1382,13 +1404,47 @@
         padding: 0 0.8rem;
     }
 
+    .tab-buttons-group {
+        gap: 0.6rem;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .tab-buttons-group::-webkit-scrollbar {
+        display: none;
+    }
+
     .tab-button {
-        padding: 0.6rem 1rem;
-        font-size: 0.8rem;
+        position: relative;
+        padding: 0.7rem;
+        min-width: auto;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
     }
 
     .tab-button i {
-        font-size: 0.85rem;
+        font-size: 1.3rem;
+        margin: 0;
+    }
+
+    .tab-button {
+        font-size: 0;
+        overflow: hidden;
+    }
+
+    .tab-buttons-group {
+        display: flex;
+        align-items: center;
+        justify-items: center;
+        justify-content: center;
+        gap: 3rem;
     }
 
     /* Main Content */

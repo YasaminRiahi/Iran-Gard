@@ -249,6 +249,18 @@ def is_location_in_plan(db: Session, plan_id: int, place_id: int) -> bool:
     ).first() is not None
 
 
+def is_place_used_in_trip_plans(db: Session, trip_id: int, place_id: int) -> bool:
+    """Check if a place is used in any plan of a trip."""
+    plan_ids = db.query(TripPlan.plan_id).filter(
+        TripPlan.trip_id == trip_id
+    ).subquery()
+    
+    return db.query(TripPlanLocation).filter(
+        TripPlanLocation.place_id == place_id,
+        TripPlanLocation.plan_id.in_(plan_ids)
+    ).first() is not None
+
+
 def _calculate_distance(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
     """
     Calculate approximate distance between two lat/lng points.
