@@ -143,7 +143,7 @@ async function inviteUserAction(friendId, name) {
             if (response.data || response) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'ارسال شد!',
+                    title: 'ارسال شد',
                     text: `دعوت‌نامه با موفقیت برای ${name} ارسال شد.`,
                     confirmButtonColor: '#A6B28B',
                     background: '#f0f0f0',

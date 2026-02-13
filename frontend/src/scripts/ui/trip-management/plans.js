@@ -559,9 +559,40 @@ document.getElementById('closePlanModal')?.addEventListener('click', () => {
 });
 
 // فیلتر مکان‌ها بر اساس شهر انتخاب شده
-document.getElementById('planCitySelect')?.addEventListener('change', (e) => {
-    const selectedCity = e.target.value;
-    renderPlanLocationsList(selectedCity);
+// تعریف یک متغیر برای نگه داشتن آخرین شهر انتخاب شده
+let lastSelectedCity = "";
+
+document.getElementById('planCitySelect')?.addEventListener('change', async (e) => {
+    const newCity = e.target.value;
+
+    if (selectedPlanLocations.length > 0) {
+        const result = await Swal.fire({
+            text: 'با تغییر شهر، مکان‌های انتخاب شده قبلی پاک خواهند شد. ادامه می‌دهید؟',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'بله، پاک کن',
+            cancelButtonText: 'انصراف',
+            confirmButtonColor: '#A6B28B',
+            cancelButtonColor: '#f5c9b0',
+            background: '#f0f0f0',
+            color: '#4b5563',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            },
+        });
+
+        if (!result.isConfirmed) {
+            e.target.value = lastSelectedCity;
+            return;
+        }
+    }
+
+    lastSelectedCity = newCity;
+    selectedPlanLocations = [];
+    updateSelectedPlanLocationsList();
+    renderPlanLocationsList(newCity);
 });
 
 function togglePlanLocation(locationId) {

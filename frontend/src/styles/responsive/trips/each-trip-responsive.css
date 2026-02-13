@@ -1103,6 +1103,7 @@
 
     /* Available Locations Grid in Modal */
     .available-locations-grid {
+        grid-template-columns: repeat(auto-fill, minmax(70vw, 1fr));
         gap: 1rem;
     }
 

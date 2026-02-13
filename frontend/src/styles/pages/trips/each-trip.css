@@ -2101,6 +2101,12 @@ body {
     gap: 1rem;
 }
 
+#availablePlanLocationsGrid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
 .available-location-card {
     position: relative;
     background: white;
