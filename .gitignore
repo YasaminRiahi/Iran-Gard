@@ -52,3 +52,5 @@ Thumbs.db
 nginx/ssl/certificate.crt
 nginx/ssl/private.key
 nginx/ssl/private.key.enc
+
+frontend/node_modules/
