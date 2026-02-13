@@ -829,29 +829,39 @@ document.getElementById('autoPlanBtn')?.addEventListener('click', async () => {
 // Map for Plans
 let plansMap = null;
 
-function initPlansMap() {
+export function initPlansMap() {
+    const mapContainer = document.getElementById('plansMap');
+
+    if (mapContainer) {
+        mapContainer.style.display = 'block';
+    }
+
     if (plansMap) plansMap.remove();
 
     plansMap = L.map('plansMap').setView([35.6892, 51.3890], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap'
     }).addTo(plansMap);
+
+    setTimeout(() => {
+        if (plansMap) {
+            plansMap.invalidateSize();
+        }
+    }, 100);
 }
 
 function viewPlanOnPlanMap(planId) {
     const plan = state.dailyPlans.find(p => p.id === planId);
     if (!plan) return;
 
-    if (!plansMap) initPlansMap();
+    initPlansMap();
 
-    // پاک کردن مارکرها و خطوط قبلی
     plansMap.eachLayer((layer) => {
         if (layer instanceof L.Marker || layer instanceof L.Polyline) {
             plansMap.removeLayer(layer);
         }
     });
 
-    // ایجاد آرایه مختصات با استفاده از state.selectedLocations
     const latlngs = [];
     const markers = [];
 

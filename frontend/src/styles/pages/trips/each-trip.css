@@ -498,7 +498,7 @@ body {
 
 .tab-buttons-group {
     display: flex;
-    gap: 1rem;
+    gap: 1.1rem;
     position: relative;
     justify-content: center;
 }
@@ -2693,7 +2693,7 @@ body {
     align-items: center;
     justify-content: center;
     margin: 0 auto 1.5rem;
-    font-size: 2rem;
+    font-size: 1.8rem;
     color: white;
     animation: pulse 2s infinite;
 }

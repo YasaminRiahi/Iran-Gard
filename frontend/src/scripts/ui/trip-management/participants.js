@@ -146,6 +146,12 @@ async function inviteUserAction(friendId, name) {
                     title: 'ارسال شد!',
                     text: `دعوت‌نامه با موفقیت برای ${name} ارسال شد.`,
                     confirmButtonColor: '#A6B28B',
+                    background: '#f0f0f0',
+                    customClass: {
+                        popup: 'my-swal-popup',
+                        confirmButton: 'my-confirm-btn',
+                        cancelButton: 'my-cancel-btn'
+                    }
                 });
             }
         } catch (error) {
@@ -154,6 +160,14 @@ async function inviteUserAction(friendId, name) {
                 title: 'خطا',
                 text: error.response?.data?.detail || 'ارسال دعوت‌نامه با خطا مواجه شد.',
                 confirmButtonColor: '#f5c9b0',
+                confirmButtonText: 'باشه',
+                cancelButtonColor: '#f5c9b0',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                    cancelButton: 'my-cancel-btn'
+                }
             });
         }
     }
