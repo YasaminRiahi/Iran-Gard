@@ -73,10 +73,8 @@ function changeSignupToLogout() {
                 if (result.isConfirmed) {
                     localStorage.removeItem("access_token");
                     setTimeout(() => {
-                        window.location.reload();
+                        window.location.href = "/index.html";
                     }, 100);
-
-                    window.location.href = "/index.html";
                 }
             });
         });
@@ -122,10 +120,8 @@ function setupLogoutButton() {
                 if (result.isConfirmed) {
                     localStorage.removeItem("access_token");
                     setTimeout(() => {
-                        window.location.reload();
+                        window.location.href = "/index.html";
                     }, 100);
-
-                    window.location.href = "/index.html";
                 }
             });
         });
