@@ -1,0 +1,56 @@
+@media (min-width: 768px) {
+    .reviews-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1200px) {
+    .reviews-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 2rem;
+    }
+
+    .overall-rating {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .rating-distribution {
+        min-width: auto;
+    }
+
+    .filters {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .filter-group {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    .filter-select {
+        width: 100%;
+    }
+
+    .review-card {
+        padding: 20px;
+    }
+
+    .back-btn {
+        position: relative;
+        top: auto;
+        left: auto;
+        margin-top: 10px;
+        margin-right: auto;
+        margin-left: auto;
+        display: block;
+    }
+}
