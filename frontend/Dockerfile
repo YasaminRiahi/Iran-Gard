@@ -1,4 +1,4 @@
-FROM node:18 AS builder
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ RUN echo '{"API_BASE_URL": "'${API_BASE_URL}'"}' > src/config.json
 # RUN npm install
 # RUN npm run build
 
-FROM nginx
+FROM nginx:alpine
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
