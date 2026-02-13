@@ -1,3 +1,4 @@
+/* ==================== add-rate-review ==================== */
 :root {
     --primary-green: #a6b28b;
     --primary-peach: #f5c9b0;
@@ -555,21 +556,23 @@ body {
 
 .back-btn {
     position: absolute;
-    top: 30px;
-    left: 30px;
-    background: white;
-    color: var(--primary-green);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
+    top: 10px;
+    right: 15px;
+    left: auto;
     padding: 12px 25px;
-    font-family: Anjoman-Bold;
+    background: white;
+    color: #a6b28b;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    font-family: Anjoman-Bold, Vazirmatn, sans-serif;
     font-size: 1rem;
-    cursor: pointer;
+    font-weight: bold;
     display: flex;
     align-items: center;
     gap: 10px;
-    transition: var(--transition);
-    box-shadow: 0 4px 12px var(--shadow-light);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(166, 178, 139, 0.15);
     z-index: 100;
 }
 
