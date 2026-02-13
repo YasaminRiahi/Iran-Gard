@@ -908,6 +908,7 @@ document.getElementById('finishTrip').addEventListener('click', async () => {
     if (selectedLocations.length === 0) {
         Swal.fire({
             icon: 'warning',
+            iconColor:'#F5C9B0',
             text: 'لطفاً حداقل یک مکان انتخاب کنید',
             confirmButtonText: 'باشه',
             confirmButtonColor: '#a6b28b',

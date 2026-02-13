@@ -2598,6 +2598,16 @@ body {
     border-color: #A6B28B !important;
 }
 
+.swal2-icon.swal2-error {
+    color: #F5C9B0 !important;
+    border-color: #F5C9B0 !important;
+}
+
+.swal2-icon.swal2-error [class^='swal2-x-mark-line'] {
+    background-color: #F5C9B0 !important;
+}
+
+
 /* ================================================================
    21. EMPTY STATES
    ================================================================ */
