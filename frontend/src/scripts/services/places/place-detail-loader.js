@@ -40,6 +40,8 @@ async function loadPlaceDetails() {
         const place = await apiClient.get(`/places/${placeId}`, {
             includeAuth: true,
         });
+        
+        document.title = `ایران‌گرد | ${place.title}`;
 
         const addReviewLink = document.querySelector('.add-rate-review');
         if (addReviewLink) {
