@@ -148,14 +148,12 @@ async function removeLocation(locationId) {
         if (result.isConfirmed) {
             const response = await removeLocationFromTrip(state.TRIP_ID, locationId);
 
-            if (response?.success) {
-                state.selectedLocations = state.selectedLocations.filter(loc => loc.id !== locationId);
-                renderLocations();
-                initMap();
-
+            // Handle API error response
+            if (!response?.success) {
                 Swal.fire({
-                    icon: 'success',
-                    text: 'مکان با موفقیت حذف شد',
+                    icon: 'error',
+                    title: 'خطا در حذف مکان',
+                    html: response?.error || 'مشکلی پیش آمد',
                     confirmButtonText : 'باشه',
                     confirmButtonColor: '#A6B28B',
                     cancelButtonColor: '#f5c9b0',
@@ -164,17 +162,36 @@ async function removeLocation(locationId) {
                         popup: 'my-swal-popup',
                         confirmButton: 'my-confirm-btn',
                         cancelButton: 'my-cancel-btn'
-                    },
-                    timer: 2000
+                    }
                 });
+                return;
             }
+
+            state.selectedLocations = state.selectedLocations.filter(loc => loc.id !== locationId);
+            renderLocations();
+            initMap();
+
+            Swal.fire({
+                icon: 'success',
+                text: 'مکان با موفقیت حذف شد',
+                confirmButtonText : 'باشه',
+                confirmButtonColor: '#A6B28B',
+                cancelButtonColor: '#f5c9b0',
+                background: '#f0f0f0',
+                customClass: {
+                    popup: 'my-swal-popup',
+                    confirmButton: 'my-confirm-btn',
+                    cancelButton: 'my-cancel-btn'
+                },
+                timer: 2000
+            });
         }
     } catch (error) {
         console.error('Delete Location Error:', error);
         Swal.fire({
             icon: 'error',
             title: 'خطا در حذف مکان',
-            text: error.response?.data?.detail || 'مشکلی پیش آمد',
+            html: error?.error || 'مشکلی پیش آمد',
             confirmButtonText : 'باشه',
             confirmButtonColor: '#A6B28B',
             cancelButtonColor: '#f5c9b0',
