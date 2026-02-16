@@ -549,7 +549,9 @@ document.getElementById('createPlanBtn')?.addEventListener('click', () => {
         // پاک کردن grid و list
         const availableGrid = document.getElementById('availablePlanLocationsGrid');
         const selectedList = document.getElementById('planLocationsList');
-        if (availableGrid) availableGrid.innerHTML = '<p style="text-align: center; color: #9ca3af; padding: 2rem;">لطفاً ابتدا شهر را انتخاب کنید</p>';
+        if (availableGrid) {
+            availableGrid.innerHTML = '<p style="text-align: center; color: #9ca3af; padding: 2rem; grid-column: 1 / -1; width: 100%;">لطفاً ابتدا شهر را انتخاب کنید</p>';
+        }
         if (selectedList) selectedList.innerHTML = '<p style="text-align: center; color: #9ca3af;">هیچ مکانی انتخاب نشده</p>';
     }
 });
