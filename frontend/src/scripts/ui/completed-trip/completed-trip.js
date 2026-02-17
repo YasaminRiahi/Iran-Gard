@@ -461,7 +461,7 @@ export function printTripReport() {
             <!-- تصفیه حساب -->
             ${state.settlements && state.settlements.length > 0 ? `
                 <div class="section">
-                    <h2 class="section-title">💸 تصفیه حساب</h2>
+                    <h2 class="section-title">💸 تسویه حساب</h2>
                     ${state.settlements.map(settlement => `
                         <div class="settlement-item">
                             <div class="settlement-from-to">

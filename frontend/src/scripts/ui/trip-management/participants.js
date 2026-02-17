@@ -146,6 +146,7 @@ async function inviteUserAction(friendId, name) {
                     title: 'ارسال شد',
                     text: `دعوت‌نامه با موفقیت برای ${name} ارسال شد.`,
                     confirmButtonColor: '#A6B28B',
+                    confirmButtonText : 'باشه',
                     background: '#f0f0f0',
                     customClass: {
                         popup: 'my-swal-popup',

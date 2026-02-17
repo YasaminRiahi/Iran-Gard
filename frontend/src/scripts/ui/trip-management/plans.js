@@ -549,7 +549,9 @@ document.getElementById('createPlanBtn')?.addEventListener('click', () => {
         // پاک کردن grid و list
         const availableGrid = document.getElementById('availablePlanLocationsGrid');
         const selectedList = document.getElementById('planLocationsList');
-        if (availableGrid) availableGrid.innerHTML = '<p style="text-align: center; color: #9ca3af; padding: 2rem;">لطفاً ابتدا شهر را انتخاب کنید</p>';
+        if (availableGrid) {
+            availableGrid.innerHTML = '<p style="text-align: center; color: #9ca3af; padding: 2rem; grid-column: 1 / -1; width: 100%;">لطفاً ابتدا شهر را انتخاب کنید</p>';
+        }
         if (selectedList) selectedList.innerHTML = '<p style="text-align: center; color: #9ca3af;">هیچ مکانی انتخاب نشده</p>';
     }
 });
@@ -944,12 +946,155 @@ function viewPlanOnPlanMap(planId) {
         return;
     }
 
-    // اسکرول به نقشه
+    if (plan.locations.length >= 1) {
+        addNavigationButton(plan);
+    }
+
     document.querySelector('.plans-map')?.scrollIntoView({
         behavior: 'smooth',
         block: 'center'
     });
 }
+
+function addNavigationButton(plan) {
+    const existingBtn = document.getElementById('navigationBtn');
+    if (existingBtn) existingBtn.remove();
+
+    const mapContainer = document.querySelector('.plans-map');
+    if (!mapContainer) return;
+
+    const navBtn = document.createElement('button');
+    navBtn.id = 'navigationBtn';
+    navBtn.innerHTML = '<i class="fas fa-directions"></i> مسیریابی';
+    navBtn.style.cssText = `
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        z-index: 1000;
+        background: #A6B28B;
+        color: white;
+        border: none;
+        padding: 1rem 1rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 1.2rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        transition: all 0.3s;
+    `;
+
+    navBtn.onmouseover = () => navBtn.style.background = '#8B9D7B';
+    navBtn.onmouseout = () => navBtn.style.background = '#A6B28B';
+
+    navBtn.onclick = () => openNavigationModal(plan);
+
+    mapContainer.style.position = 'relative';
+    mapContainer.appendChild(navBtn);
+}
+
+function openGoogleMaps(fromLocation, toLocation = null) {
+    let url;
+
+    if (toLocation) {
+        url = `https://www.google.com/maps/dir/?api=1&origin=${fromLocation.lat},${fromLocation.lng}&destination=${toLocation.lat},${toLocation.lng}&travelmode=driving`;
+    } else {
+        url = `https://www.google.com/maps/search/?api=1&query=${fromLocation.lat},${fromLocation.lng}`;
+    }
+
+    window.open(url, '_blank');
+}
+async function openNavigationModal(plan) {
+    const locationsWithCoords = plan.locations.filter(loc => {
+        const fullLoc = state.selectedLocations.find(l => l.id === loc.id);
+        return fullLoc && fullLoc.lat && fullLoc.lng;
+    });
+
+    if (locationsWithCoords.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            text: 'هیچ مکانی با مختصات جغرافیایی وجود ندارد',
+            confirmButtonColor: '#A6B28B',
+            confirmButtonText: 'باشه',
+            cancelButtonColor: '#f5c9b0',
+            background: '#f0f0f0',
+            customClass: {
+                popup: 'my-swal-popup',
+                confirmButton: 'my-confirm-btn',
+                cancelButton: 'my-cancel-btn'
+            }
+        });
+        return;
+    }
+
+    if (locationsWithCoords.length === 1) {
+        const singleLoc = state.selectedLocations.find(l => l.id === locationsWithCoords[0].id);
+        openGoogleMaps(singleLoc);
+        return;
+    }
+
+    const optionsHtml = locationsWithCoords.map((loc, idx) => {
+        const fullLoc = state.selectedLocations.find(l => l.id === loc.id);
+        return `<option value="${loc.id}">${englishToPersianNumber(idx + 1)}. ${fullLoc.name}</option>`;
+    }).join('');
+
+    const result = await Swal.fire({
+        title: 'مسیریابی',
+        html: `
+            <div style="text-align: right; direction: rtl;">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">از:</label>
+                    <select id="fromLocation" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px; font-family: inherit;">
+                        ${optionsHtml}
+                    </select>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">به:</label>
+                    <select id="toLocation" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px; font-family: inherit;">
+                        ${optionsHtml}
+                    </select>
+                </div>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-map-marked-alt"></i>  Google Maps باز کردن در  ',
+        cancelButtonText: 'انصراف',
+        confirmButtonColor: '#A6B28B',
+        cancelButtonColor: '#f5c9b0',
+        background: '#f0f0f0',
+        customClass: {
+            popup: 'my-swal-popup',
+            confirmButton: 'my-confirm-btn',
+            cancelButton: 'my-cancel-btn'
+        },
+        didOpen: () => {
+            document.getElementById('toLocation').selectedIndex = 1;
+        },
+        preConfirm: () => {
+            const fromId = parseInt(document.getElementById('fromLocation').value);
+            const toId = parseInt(document.getElementById('toLocation').value);
+
+            if (fromId === toId) {
+                Swal.showValidationMessage('مبدا و مقصد نمی‌توانند یکسان باشند');
+                return false;
+            }
+
+            return { fromId, toId };
+        }
+    });
+
+    if (result.isConfirmed) {
+        const { fromId, toId } = result.value;
+
+        const fromLoc = state.selectedLocations.find(l => l.id === fromId);
+        const toLoc = state.selectedLocations.find(l => l.id === toId);
+
+        if (fromLoc && toLoc) {
+            openGoogleMaps(fromLoc, toLoc);
+        }
+    }
+}
+
+
 
 // Export to window
 window.toggleEditPlan = toggleEditPlan;
@@ -962,3 +1107,4 @@ window.votePlan = votePlan;
 window.togglePlanLocation = togglePlanLocation;
 window.removePlanLocation = removePlanLocation;
 window.viewPlanOnPlanMap = viewPlanOnPlanMap;
+window.openNavigationModal = openNavigationModal;
