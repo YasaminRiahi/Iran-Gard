@@ -280,13 +280,16 @@ function initExpenseModal() {
 
     const participantsDiv = document.getElementById('expenseParticipants');
     participantsDiv.innerHTML = state.tripData.participants.map(p => `
-        <div class="expense-participant-item">
-            <label>
-                <input type="checkbox" value="${p.id}" checked onchange="window.toggleParticipantShare(${p.id})">
-                <span>${p.username}</span>
-            </label>
-            <input type="number" id="share-${p.id}" class="participant-share-input" placeholder="مبلغ سهم (تومان)" value="0">
+    <label>
+        <div>
+            <input type="checkbox" value="${p.id}" checked>
+            <span>${p.username}</span>
         </div>
+        <input type="number" 
+               class="participant-share-input"
+               placeholder="سهم (تومان)" 
+               style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 6px;">
+    </label>
     `).join('');
 
     document.getElementById('expenseCategory').value = 'food';

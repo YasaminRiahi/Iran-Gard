@@ -2980,3 +2980,86 @@ body {
         font-size: 0.8rem;
     }
 }
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* رفع مشکل خروج از border */
+input[type="number"] {
+    -moz-appearance: textfield;
+    padding: 0.8rem;
+    box-sizing: border-box;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* استایل checkbox سفارشی */
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d1d5db;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s;
+    background-color: white;
+}
+
+input[type="checkbox"]:hover {
+    border-color: #A6B28B;
+}
+
+input[type="checkbox"]:checked {
+    background-color: #A6B28B;
+    border-color: #A6B28B;
+}
+
+input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+input[type="checkbox"]:focus {
+    outline: 2px solid #A6B28B;
+    outline-offset: 2px;
+}
+
+
+.checkbox-group label {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.8rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.checkbox-group label > div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
