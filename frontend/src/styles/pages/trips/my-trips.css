@@ -1867,3 +1867,10 @@ FOOTER
     color: #A6B28B !important;
     background: transparent !important;
 }
+
+.btn-next {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}

@@ -285,12 +285,16 @@ function initExpenseModal() {
             <input type="checkbox" value="${p.id}" checked>
             <span>${p.username}</span>
         </div>
-        <input type="number" 
+        <input type="number"
+                id="share-${p.id}"
                class="participant-share-input"
-               placeholder="سهم (تومان)" 
+               placeholder="سهم (تومان)"
+               value="0"
                style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 6px;">
     </label>
     `).join('');
+
+
 
     document.getElementById('expenseCategory').value = 'food';
     document.getElementById('expenseDescription').value = '';
@@ -366,7 +370,7 @@ document.getElementById('saveExpenseBtn')?.addEventListener('click', async () =>
     if (totalShares !== amount) {
         Swal.fire({
             icon: 'warning',
-            text: `مجموع سهم‌ها (${totalShares.toLocaleString()}) با مبلغ کل (${amount.toLocaleString()}) برابر نیست!`,
+            text: `مجموع سهم‌ها (${englishToPersianNumber(totalShares.toLocaleString())}) با مبلغ کل (${englishToPersianNumber(amount.toLocaleString())}) برابر نیست!`,
             confirmButtonText : 'باشه',
             confirmButtonColor: '#A6B28B',
             cancelButtonColor: '#f5c9b0',
