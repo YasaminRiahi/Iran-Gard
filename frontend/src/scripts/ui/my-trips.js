@@ -460,6 +460,20 @@ function resetModal() {
         card.classList.remove('selected');
     });
 
+    document.querySelectorAll('.location-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+
+    document.querySelectorAll('.friend-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+
+    const continueToStep1 = document.getElementById('continueToStep1');
+    if (continueToStep1) continueToStep1.disabled = true;
+
+    const continueToLocations = document.getElementById('continueToLocations');
+    if (continueToLocations) continueToLocations.disabled = true;
+
     updateSelectedCitiesBar();
 }
 
