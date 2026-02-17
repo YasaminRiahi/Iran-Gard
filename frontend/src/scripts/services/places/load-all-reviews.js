@@ -1,4 +1,6 @@
 import { apiClient } from "/src/scripts/services/api-client.js";
+import { getUserFullInfo, getURL } from "/src/scripts/services/users-service.js";
+
 
 let reviewsData = [];
 let allRatingsData = [];
@@ -21,11 +23,18 @@ function formatDate(dateString) {
     const now = new Date();
     const diffTime = Math.abs(now - date);
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
     if (diffDays === 0) return 'امروز';
     if (diffDays === 1) return 'دیروز';
-    if (diffDays < 7) return `${diffDays} روز پیش`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} هفته پیش`;
-    return `${Math.floor(diffDays / 30)} ماه پیش`;
+    if (diffDays < 7) {
+        return `${toPersianDigits(diffDays)} روز پیش`;
+    }
+    if (diffDays < 30) {
+        const weeks = Math.floor(diffDays / 7);
+        return `${toPersianDigits(weeks)} هفته پیش`;
+    }
+    const months = Math.floor(diffDays / 30);
+    return `${toPersianDigits(months)} ماه پیش`;
 }
 
 function getRatingText(rating) {
@@ -140,10 +149,10 @@ function renderReviewCard(review) {
             <div class="review-header">
                 <div class="reviewer-info">
                     <div class="reviewer-avatar" id="avatar-${review.review_id}">
-                        <i class="fas fa-user"></i>
+                        <i class="fas fa-circle-notch fa-spin" style="font-size: 12px;"></i>
                     </div>
                     <div class="reviewer-details">
-                        <h3 class="reviewer-name" id="username-${review.review_id}">کاربر ${review.user_id}</h3>
+                        <h3 class="reviewer-name" id="username-${review.review_id}">...</h3>
                         <div class="review-date">${formatDate(review.created_at)}</div>
                     </div>
                 </div>
@@ -173,18 +182,39 @@ function renderReviewCard(review) {
 
 async function loadUserInfos(reviews) {
     const userCache = {};
+    const baseUrl = getURL();
+
     for (const review of reviews) {
         const userId = review.user_id;
+
         if (!userCache[userId]) {
             try {
-                userCache[userId] = await apiClient.get(`/users/${userId}/full-info`);
-            } catch (e) { userCache[userId] = { username: `کاربر ${userId}` }; }
+                userCache[userId] = await getUserFullInfo(userId);
+            } catch (e) {
+                console.error(`Error fetching user ${userId}:`, e);
+                userCache[userId] = { username: `کاربر ${userId}`, profile_url: null };
+            }
         }
+
+        const user = userCache[userId];
         const nameElem = document.getElementById(`username-${review.review_id}`);
         const avatarElem = document.getElementById(`avatar-${review.review_id}`);
-        if (userCache[userId] && nameElem) {
-            nameElem.textContent = userCache[userId].username;
-            avatarElem.innerHTML = `<span style="font-family:Vazirmatn; font-size:14px">${getInitials(userCache[userId].username)}</span>`;
+
+        if (nameElem) nameElem.textContent = user.full_name || user.username;
+
+        if (avatarElem) {
+            if (user.profile_url) {
+                const imageUrl = user.profile_url.startsWith('http')
+                    ? user.profile_url
+                    : baseUrl + user.profile_url;
+
+                avatarElem.innerHTML = `<img src="${imageUrl}" 
+                                             alt="${user.username}" 
+                                             style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                avatarElem.style.background = "transparent";
+            } else {
+                avatarElem.innerHTML = `<span style="font-family:Vazirmatn; font-size:14px">${getInitials(user.username)}</span>`;
+            }
         }
     }
 }
