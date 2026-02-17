@@ -198,9 +198,53 @@ async function loadPlaceDetails() {
             }
         });
 
+
     } catch (error) {
         console.error("Error during loading:", error);
     }
+}
+
+function updateCarouselButtons() {
+    const items = document.querySelectorAll('.u-gallery-inner .u-carousel-item');
+    const activeIndex = Array.from(items).findIndex(item => item.classList.contains('u-active'));
+
+    const prevBtn = document.querySelector('.u-carousel-control-prev');
+    const nextBtn = document.querySelector('.u-carousel-control-next');
+
+    if (prevBtn) {
+        if (activeIndex === 0) {
+            prevBtn.style.opacity = '0.3';
+            prevBtn.style.pointerEvents = 'none';
+        } else {
+            prevBtn.style.opacity = '1';
+            prevBtn.style.pointerEvents = 'auto';
+        }
+    }
+
+    if (nextBtn) {
+        if (activeIndex === items.length - 1) {
+            nextBtn.style.opacity = '0.3';
+            nextBtn.style.pointerEvents = 'none';
+        } else {
+            nextBtn.style.opacity = '1';
+            nextBtn.style.pointerEvents = 'auto';
+        }
+    }
+}
+
+updateCarouselButtons();
+
+const observer = new MutationObserver(() => {
+    updateCarouselButtons();
+});
+
+const galleryInner = document.querySelector('.u-gallery-inner');
+if (galleryInner) {
+    observer.observe(galleryInner, {
+        attributes: true,
+        subtree: true,
+        attributeFilter: ['class']
+    });
 }
 
 document.addEventListener("DOMContentLoaded", loadPlaceDetails);
