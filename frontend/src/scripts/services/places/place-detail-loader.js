@@ -178,15 +178,25 @@ async function loadPlaceDetails() {
             mapIframe.src = `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
         }
 
-        if (place.picture_urls && place.picture_urls.length > 0) {
-            const galleryImages = document.querySelectorAll('.u-gallery-inner img');
-            const thumbnails = document.querySelectorAll('.u-carousel-thumbnails img');
+        const DEFAULT_IMAGE = '/src/assets/images/default-place.jpg';
+        const galleryItems = document.querySelectorAll('.u-gallery-inner .u-carousel-item');
+        const thumbnailItems = document.querySelectorAll('.u-carousel-thumbnails .u-carousel-thumbnail');
 
-            place.picture_urls.forEach((url, index) => {
-                if (galleryImages[index]) galleryImages[index].src = url;
-                if (thumbnails[index]) thumbnails[index].src = url;
-            });
-        }
+        galleryItems.forEach((item, index) => {
+            const img = item.querySelector('.u-back-image');
+            const thumb = thumbnailItems[index];
+
+            if (index === 0) {
+                if (img) img.src = place.picture_urls?.[0] || DEFAULT_IMAGE;
+                if (thumb) thumb.querySelector('img').src = place.picture_urls?.[0] || DEFAULT_IMAGE;
+            } else if (place.picture_urls?.[index]) {
+                if (img) img.src = place.picture_urls[index];
+                if (thumb) thumb.querySelector('img').src = place.picture_urls[index];
+            } else {
+                item.remove();
+                if (thumb) thumb.remove();
+            }
+        });
 
     } catch (error) {
         console.error("Error during loading:", error);
