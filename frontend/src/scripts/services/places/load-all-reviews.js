@@ -3,6 +3,11 @@ import { apiClient } from "/src/scripts/services/api-client.js";
 let reviewsData = [];
 let allRatingsData = [];
 
+function toPersianDigits(n) {
+    const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    return n.toString().replace(/\d/g, x => farsiDigits[x]);
+}
+
 function getInitials(username) {
     if (!username) return 'U';
     const words = username.trim().split(' ');
@@ -42,22 +47,34 @@ function createStarsHTML(rating) {
 }
 
 async function handleLike(reviewId, buttonElement) {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+        window.location.href = "/login-signup.html";
+        return;
+    }
+
     if (buttonElement.disabled) return;
     buttonElement.disabled = true;
 
     const span = buttonElement.querySelector('span');
     const isLiked = buttonElement.classList.contains('liked');
-    const currentCount = parseInt(span.textContent.match(/\d+/)[0]);
+    let currentCount = parseInt(buttonElement.getAttribute('data-like-count')) || 0;
+    const newCount = isLiked ? currentCount - 1 : currentCount + 1;
 
     buttonElement.classList.toggle('liked');
-    span.textContent = `مفید بود (${isLiked ? currentCount - 1 : currentCount + 1})`;
+    buttonElement.setAttribute('data-like-count', newCount);
+    span.textContent = `مفید بود (${toPersianDigits(newCount)})`;
 
     try {
         await apiClient.post(`/places/reviews/${reviewId}/like`, {}, { includeAuth: true });
     } catch (error) {
         buttonElement.classList.toggle('liked');
-        span.textContent = `مفید بود (${currentCount})`;
-        if (error.status === 401) alert("برای لایک کردن باید وارد شوید.");
+        buttonElement.setAttribute('data-like-count', currentCount);
+        span.textContent = `مفید بود (${toPersianDigits(currentCount)})`;
+
+        if (error.status === 401) {
+            window.location.href = "/login-signup.html";
+        }
     } finally {
         buttonElement.disabled = false;
     }
@@ -74,7 +91,7 @@ function renderStats(allReviews) {
     const sum = allReviews.reduce((acc, r) => acc + r.rating, 0);
     const avg = (sum / allReviews.length).toFixed(1);
 
-    document.querySelector('.rating-value').textContent = avg;
+    document.querySelector('.rating-value').textContent = toPersianDigits(avg);
     document.querySelector('.rating-count').textContent = `${allReviews.length.toLocaleString('fa-IR')} امتیاز و نظر`;
 
     const starPercentage = (avg / 5) * 100;
@@ -93,7 +110,7 @@ function renderStats(allReviews) {
         if (bars[index]) bars[index].style.width = `${percent}%`;
         if (labels[index]) {
             const starText = star === 5 ? 'عالی' : star === 4 ? 'خوب' : star === 3 ? 'متوسط' : star === 2 ? 'ضعیف' : 'خیلی بد';
-            labels[index].textContent = `${starText} (${percent}%)`;
+            labels[index].textContent = `${starText} (${toPersianDigits(percent)}%)`;
         }
     });
 }
@@ -117,6 +134,7 @@ function renderReviews(reviews) {
 
 function renderReviewCard(review) {
     const likedClass = review.is_liked_by_user ? 'liked' : '';
+    const likeCountFarsi = toPersianDigits(review.like_count || 0);
     return `
         <div class="review-card">
             <div class="review-header">
@@ -143,9 +161,11 @@ function renderReviewCard(review) {
                 ` : ''}
             </div>
             <div class="review-footer">
-                <button class="helpful-btn ${likedClass}" data-review-id="${review.review_id}">
+                <button class="helpful-btn ${likedClass}" 
+                        data-review-id="${review.review_id}" 
+                        data-like-count="${review.like_count || 0}">
                     <i class="fas fa-thumbs-up"></i>
-                    <span>مفید بود (${review.like_count || 0})</span>
+                    <span>مفید بود (${likeCountFarsi})</span>
                 </button>
             </div>
         </div>`;

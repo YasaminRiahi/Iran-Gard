@@ -20,6 +20,7 @@ async function checkLoginStatus() {
             setupViewProfileButtonRedirect();
             setupViewTripsButtonRedirect();
             setupViewBookmarksButtonRedirect();
+            setupHelpfulButtonRedirect();
         }
     } catch (error) {
         console.error("Error checking login:", error);
@@ -29,6 +30,7 @@ async function checkLoginStatus() {
         setupViewProfileButtonRedirect();
         setupViewTripsButtonRedirect();
         setupViewBookmarksButtonRedirect();
+        setupHelpfulButtonRedirect();
     }
 }
 
@@ -232,6 +234,21 @@ function setupViewBookmarksButtonRedirect() {
 
         viewBookmarksBtn.title = "برای مشاهده بوک‌مارک‌ها، ابتدا وارد شوید";
         viewBookmarksBtn.style.cursor = "default";
+    });
+}
+
+function setupHelpfulButtonRedirect() {
+    const helpfulBtns = document.querySelectorAll(".helpful-btn");
+
+    helpfulBtns.forEach(btn => {
+        btn.addEventListener("click", function (event) {
+            const token = localStorage.getItem("access_token");
+            if (!token) {
+                event.preventDefault();
+                event.stopPropagation();
+                window.location.href = "/login-signup.html";
+            }
+        }, true);
     });
 }
 

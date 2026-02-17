@@ -6,6 +6,11 @@ function getPlaceIdFromUrl() {
     return urlParams.get('id');
 }
 
+function toPersianDigits(n) {
+    const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    return n.toString().replace(/\d/g, x => farsiDigits[x]);
+}
+
 function animateCounter(element, target) {
     const targetNum = parseFloat(target);
     const duration = 3000;
@@ -21,7 +26,8 @@ function animateCounter(element, target) {
         const progress = easeOutQuad(frame / totalFrames);
         const currentCount = Math.round(countTo * progress * 10) / 10;
 
-        element.textContent = currentCount.toFixed(1);
+        const formattedNumber = currentCount.toFixed(1);
+        element.textContent = toPersianDigits(formattedNumber);
 
         if (frame === totalFrames) {
             clearInterval(counter);
