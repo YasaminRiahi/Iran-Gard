@@ -80,9 +80,14 @@ document.addEventListener('DOMContentLoaded', async function () {
         window.history.back();
     });
 
+    function toPersianDigits(n) {
+        const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        return n.toString().replace(/\d/g, x => farsiDigits[x]);
+    }
+
     function setRating(rating) {
         currentRating = rating;
-        ratingValueDisplay.textContent = rating;
+        ratingValueDisplay.textContent = toPersianDigits(rating);
         highlightStars(rating);
         highlightRatingLabel(rating);
         validateForm();
@@ -121,10 +126,10 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     function updateCharCounter() {
         const length = commentInput.value.length;
-        charCount.textContent = length;
+        charCount.textContent = toPersianDigits(length);
         if (length > 300) {
             commentInput.value = commentInput.value.substring(0, 300);
-            charCount.textContent = 300;
+            charCount.textContent = toPersianDigits(300);
         }
     }
 

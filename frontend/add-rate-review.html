@@ -4,11 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ثبت نظر و امتیاز</title>
+    <title>ایران گرد | ثبت نظر</title>
     <link rel="stylesheet" href="src/styles/pages/add-rate-review.css" media="screen">
     <link rel="stylesheet" href="src/styles/responsive/add-rate-review-responsive.css" media="screen">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" type="image/png" href="/src/assets/images/website-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -23,7 +24,12 @@
     <div class="container">
         <div class="review-card">
             <div class="card-header">
+                <button class="back-btn" id="backBtn">
+                    <i class="fas fa-arrow-right back-icon"></i>
+                    بازگشت
+                </button>
                 <div>
+                    <br>
                     <br>
                     <br>
                 </div>
@@ -48,9 +54,9 @@
                                 <i class="star fas fa-star" data-rating="5"></i>
                             </div>
                             <div class="rating-display" dir="ltr">
-                                <span class="rating-value" id="ratingValueDisplay">0</span>
+                                <span class="rating-value" id="ratingValueDisplay">۰</span>
                                 <span class="rating-separator">/</span>
-                                <span class="rating-max">5</span>
+                                <span class="rating-max">۵</span>
                             </div>
                         </div>
                     </div>
@@ -69,7 +75,7 @@
                         <div class="textarea-footer">
                             <div class="char-counter">
                                 <i class="fas fa-text-height counter-icon"></i>
-                                <span id="charCount">0</span> / 300
+                                <span id="charCount">۰</span> / ۳۰۰
                             </div>
                         </div>
                     </div>
@@ -91,11 +97,6 @@
                 </div>
             </form>
         </div>
-
-        <button class="back-btn" id="backBtn" dir="ltr">
-            <i class="fas fa-arrow-left back-icon"></i>
-            بازگشت
-        </button>
     </div>
 </body>
 

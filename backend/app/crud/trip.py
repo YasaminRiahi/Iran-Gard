@@ -5,6 +5,7 @@ from app.models.trip import (
     TripStatus, InvitationStatus, VoteType
 )
 from app.schemas.trip import TripCreate
+from app.core.config import settings
 
 import random
 
@@ -282,6 +283,8 @@ def get_all_trip_locations_with_details(db: Session, trip_id: int, user_id: int)
         
         # Get first photo
         first_photo = place.photos[0].url if place.photos else None
+        if first_photo and first_photo.startswith("/static"):
+            first_photo = f"{settings.SERVER_URL}:{settings.BACKEND_PORT}{settings.API_STR}{first_photo}"
         
         # Get votes
         votes = votes_by_place.get(place.place_id, {"likes": 0, "dislikes": 0})

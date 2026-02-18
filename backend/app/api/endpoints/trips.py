@@ -13,12 +13,13 @@ from app.crud import trip_places as trip_places_crud
 from app.db.session import get_db
 from sqlalchemy.orm import Session
 from app.models.user import User
+from app.models.trip import TripStatus
 from app.schemas.trip import (
     TripResponse, TripCreate, InvitationResponse, TripDetailsResponse,
     AddLocationRequest, VoteLocationRequest, UpdateVisitedRequest, SuccessResponse, AddLocationSuccessResponse, RemoveLocationSuccessResponse,
     VoteSuccessResponse, UpdateVisitedSuccessResponse, IsOwnerResponse,
     GetTripPlacesResponse, TripPlaceResponse, CityPlacesGroup,
-    AutoGeneratePlacesRequest, AutoGeneratePlacesResponse
+    AutoGeneratePlacesRequest, AutoGeneratePlacesResponse, SuccessResponse
 )
 from app.schemas.trip_plan import (
     CreatePlanRequest, CreatePlanSuccessResponse, UpdatePlanRequest, UpdatePlanOrderRequest,
@@ -271,6 +272,8 @@ def get_available_friends_for_trip(
     pending_ids = {i[0] for i in pending_invites}
 
     available_ids = friend_ids - participant_ids - pending_ids
+    print (participant_ids)
+    print("AAAA")
 
     available_friends = []
     for cur_id in available_ids:
@@ -433,6 +436,13 @@ def remove_location_from_trip(
     # Check if user is a participant
     if not trip_crud.is_user_in_trip(db, trip_id, current_user.user_id):
         raise HTTPException(status_code=403, detail="شما باید شرکت‌کننده این سفر باشید")
+    
+    # Check if place is used in any trip plan
+    if plan_crud.is_place_used_in_trip_plans(db, trip_id, location_id):
+        raise HTTPException(
+            status_code=400, 
+            detail="این مکان در یک برنامه استفاده می‌شود و نمی‌تواند حذف شود"
+        )
     
     # Remove location
     success = trip_crud.remove_location_from_trip(db, trip_id, location_id)
@@ -1483,3 +1493,49 @@ def preview_places_for_cities(
         total_count=len(place_responses)
     )
 
+
+@router.patch("/{trip_id}/complete", response_model=SuccessResponse)
+def complete_trip(
+        trip_id: int,
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user)
+):
+    """
+    Mark a trip as completed.
+
+    **Flow:**
+    1. Validates that the trip exists
+    2. Checks that you are the owner of the trip
+    3. Updates trip status from ONGOING to COMPLETED
+
+    **Authentication:** Required (Bearer token)
+
+    **Path Parameters:**
+    - trip_id: ID of the trip to complete
+
+    **Errors:**
+    - 403: Not the owner of the trip
+    - 404: Trip not found
+    - 400: Trip is already completed
+
+    **Response:** Success message
+    """
+    # Get the trip
+    trip = trip_crud.get_trip_by_id(db, trip_id)
+    if not trip:
+        raise HTTPException(status_code=404, detail="Trip not found.")
+
+    # Check if current user is the owner
+    if trip.owner_id != current_user.user_id:
+        raise HTTPException(status_code=403, detail="Only the trip owner can complete the trip.")
+
+    # Check if already completed
+    if trip.status == TripStatus.COMPLETED:
+        raise HTTPException(status_code=400, detail="Trip is already completed.")
+
+    # Update status to completed
+    trip.status = TripStatus.COMPLETED
+    db.commit()
+    db.refresh(trip)
+
+    return SuccessResponse(message="Trip marked as completed successfully.")

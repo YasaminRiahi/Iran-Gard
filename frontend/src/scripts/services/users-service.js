@@ -1,14 +1,17 @@
-import { apiClient , API_BASE } from "/src/scripts/services/api-client.js";
+import { apiClient, API_BASE } from "/src/scripts/services/api-client.js";
 
 const USER_ENDPOINT = "/users";
 
 
-export function getUserInformation(){
+export function getUserInformation() {
     return apiClient.get(
         `${USER_ENDPOINT}/me`
     );
 }
 
+export function getUserFullInfo(userId) {
+    return apiClient.get(`${USER_ENDPOINT}/${userId}/full-info`);
+}
 
 export function updateUserInformation(userData) {
     return apiClient.put(
@@ -21,6 +24,6 @@ export function searchUsers(query) {
     return apiClient.get(`${USER_ENDPOINT}/search?q=${encodeURIComponent(query)}`);
 }
 
-export function getURL () {
+export function getURL() {
     return API_BASE;
 }

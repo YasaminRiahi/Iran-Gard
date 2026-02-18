@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     API_STR: str
 
     # Server Configuration
+    SERVER_URL: str
     BACKEND_PORT: int
 
     # Database Configuration

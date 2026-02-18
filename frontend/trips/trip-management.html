@@ -7,9 +7,10 @@
     <title>ایران‌گرد | جزئیات سفر</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/src/styles/pages/trips/trip-management.css">
-    <link rel="stylesheet" href="/src/styles/responsive/trips/trip-management-responsive.css">
+    <link rel="stylesheet" href="/src/styles/pages/trips/each-trip.css">
+    <link rel="stylesheet" href="/src/styles/responsive/trips/each-trip-responsive.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" type="image/png" href="/src/assets/images/website-icon.png">
 
     <!-- Leaflet Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -17,6 +18,7 @@
     <script src="https://unpkg.com/leaflet-polylinedecorator@1.6.0/dist/leaflet.polylineDecorator.js"></script>
 
     <script type="module" src="../src/scripts/services/check-login.js"></script>
+    <script type="module" src="../src/scripts/ui/trip-management/core.js"></script>
 </head>
 
 <body>
@@ -47,8 +49,6 @@
     </div>
 </header>
 
-<!-- Hero Section با اطلاعات سفر -->
-<!-- Hero Section با تصویر پس‌زمینه و انیمیشن -->
 <section class="trip-hero-section">
     <div class="hero-background-wrapper">
         <div class="hero-image-overlay"></div>
@@ -105,7 +105,7 @@
                 <i class="fas fa-flag-checkered"></i>
                 <span>پایان سفر</span>
             </button>
-            <button class="btn-hero-secondary" onclick="window.print()">
+            <button class="btn-hero-secondary" id="printTripBtn">
                 <i class="fas fa-print"></i>
                 <span>چاپ خلاصه</span>
             </button>
@@ -372,7 +372,7 @@
     </div>
 </footer>
 
-<script type="module" src="../src/scripts/ui/trip-management.js"></script>
+<script type="module" src="../src/scripts/ui/trip-management/index.js"></script>
 </body>
 
 </html>

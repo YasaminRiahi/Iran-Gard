@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ایران‌گرد | همه نظرات</title>
+
+    <link rel="stylesheet" href="src/styles/pages/view-all-reviews.css">
+    <link rel="stylesheet" href="src/styles/responsive/view-all-reviews-responsive.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script type="module" src="src/scripts/services/places/load-all-reviews.js"></script>
+    <script type="text/javascript" src="src/scripts/ui/view-all-reviews.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/png" href="/src/assets/images/website-icon.png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-animation"></div>
+
+    <div class="container">
+        <header class="page-header">
+            <div class="header-top">
+                <button class="back-btn" id="backBtn">
+                    <i class="fas fa-arrow-right back-icon"></i>
+                    بازگشت
+                </button>
+                <h1 class="page-title">همه نظرات</h1>
+            </div>
+
+            <div class="header-stats">
+                <div class="overall-rating">
+                    <div class="rating-main">
+                        <span class="rating-value"></span>
+                        <div class="rating-details">
+                            <div class="stars">
+                                <div class="stars-outer">
+                                    <div class="stars-inner" id="mainStarsInner"></div>
+                                </div>
+                            </div>
+                            <span class="rating-count"></span>
+                        </div>
+                    </div>
+                    <div class="rating-distribution">
+                        <div class="distribution-bar">
+                            <div class="bar-bg">
+                                <div class="bar-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="distribution-label">عالی</span>
+                        </div>
+                        <div class="distribution-bar">
+                            <div class="bar-bg">
+                                <div class="bar-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="distribution-label">خوب</span>
+                        </div>
+                        <div class="distribution-bar">
+                            <div class="bar-bg">
+                                <div class="bar-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="distribution-label">متوسط</span>
+                        </div>
+                        <div class="distribution-bar">
+                            <div class="bar-bg">
+                                <div class="bar-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="distribution-label">ضعیف</span>
+                        </div>
+                        <div class="distribution-bar">
+                            <div class="bar-bg">
+                                <div class="bar-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="distribution-label">خیلی بد</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <div class="filter-group">
+                        <span class="filter-label">مرتب‌سازی بر اساس:</span>
+                        <select class="filter-select" id="sortSelect">
+                            <option value="newest">جدیدترین</option>
+                            <option value="highest">بیشترین امتیاز</option>
+                            <option value="lowest">کمترین امتیاز</option>
+                            <option value="most-helpful">مفیدترین</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label">فیلتر بر اساس:</span>
+                        <div class="filter-tags">
+                            <button class="filter-tag active">همه</button>
+                            <button class="filter-tag">۵ ستاره</button>
+                            <button class="filter-tag">۴ ستاره</button>
+                            <button class="filter-tag">۳ ستاره</button>
+                            <button class="filter-tag">کمتر از ۳ ستاره</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="reviews-container">
+            <div class="reviews-grid" id="reviewsGrid">
+        </main>
+    </div>
+
+</body>
+
+</html>

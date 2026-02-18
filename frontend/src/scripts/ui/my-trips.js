@@ -23,7 +23,7 @@ let locationsNameMap = {};
 let selectedFriends = []; // Array of friend IDs
 let createdTripId = null;
 let citiesData = {}; // Cache for cities and their places
-
+let allCitiesList = [];
 
 // ============ Page Load & Scroll Management ============
 window.addEventListener('beforeunload', () => window.scrollTo(0, 0));
@@ -418,7 +418,7 @@ window.handleInvitation = handleInvitation;
 
 // ============ Navigation Functions ============
 function viewTrip(tripId) {
-    window.location.href = `/trips/each-trip.html?id=${tripId}`;
+    window.location.href = `/trips/completed-trip.html?id=${tripId}`;
 }
 
 function editTrip(tripId) {
@@ -459,6 +459,20 @@ function resetModal() {
     document.querySelectorAll('.city-card').forEach(card => {
         card.classList.remove('selected');
     });
+
+    document.querySelectorAll('.location-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+
+    document.querySelectorAll('.friend-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+
+    const continueToStep1 = document.getElementById('continueToStep1');
+    if (continueToStep1) continueToStep1.disabled = true;
+
+    const continueToLocations = document.getElementById('continueToLocations');
+    if (continueToLocations) continueToLocations.disabled = true;
 
     updateSelectedCitiesBar();
 }
@@ -582,51 +596,20 @@ document.getElementById('backToStep0').addEventListener('click', () => showStep(
 async function loadCitiesForSelection() {
     try {
         const response = await getCitiesWithCounts();
-        const cities = response.data || response;
+        allCitiesList = response.data || response;
 
-        const citiesGrid = document.querySelector('.cities-grid');
-        citiesGrid.innerHTML = '';
+        renderCities(allCitiesList);
 
-        if (!cities || cities.length === 0) {
-            citiesGrid.innerHTML = '<p>شهری یافت نشد</p>';
-            return;
-        }
-
-        cities.forEach(city => {
-            citiesData[city.city_name] = city;
-
-            const cityCard = document.createElement('div');
-            cityCard.className = 'city-card';
-            cityCard.dataset.city = city.city_name;
-
-            const imageUrl = getURL() + city.city_pic_url ;
-
-            cityCard.innerHTML = `
-                <img src="${imageUrl}" alt="${city.city_name}"
-                     onerror="this.src='../src/assets/images/default-city.jpg'">
-                <h4>${city.city_name}</h4>
-                <p>${englishToPersianNumber(city.places_count)} مکان گردشگری</p>
-            `;
-
-            cityCard.addEventListener('click', function() {
-                const cityName = this.dataset.city;
-
-                if (selectedCities.includes(cityName)) {
-                    selectedCities = selectedCities.filter(c => c !== cityName);
-                    this.classList.remove('selected');
-                } else {
-                    selectedCities.push(cityName);
-                    this.classList.add('selected');
-                }
-
-                updateSelectedCitiesBar();
-                updateContinueButton();
-            });
-
-            citiesGrid.appendChild(cityCard);
+        const searchInput = document.getElementById('citySearchInput');
+        searchInput.value = '';
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = allCitiesList.filter(city =>
+                city.city_name.toLowerCase().includes(searchTerm)
+            );
+            renderCities(filtered);
         });
 
-        console.log(`✅ ${cities.length} cities loaded`);
     } catch (error) {
         console.error('Error loading cities:', error);
         Swal.fire({
@@ -644,6 +627,55 @@ async function loadCitiesForSelection() {
     }
 }
 
+function renderCities(cities) {
+    const citiesGrid = document.querySelector('.cities-grid');
+    citiesGrid.innerHTML = '';
+
+    if (!cities || cities.length === 0) {
+        citiesGrid.innerHTML = `
+        <div style="text-align:center; grid-column:1/-1; padding:3rem 2rem; color: #A6B28B;">
+            <i class="fas fa-search-minus" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.6;"></i>
+            <p style="font-size: 1.1rem; font-weight: 500;">شهری با این نام پیدا نشد.</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.8;">لطفاً املای کلمه را بررسی کنید یا نام دیگری را جستجو کنید.</p>
+        </div>
+    `;
+        return;
+    }
+
+    cities.forEach(city => {
+        citiesData[city.city_name] = city;
+
+        const cityCard = document.createElement('div');
+        cityCard.className = 'city-card';
+        if (selectedCities.includes(city.city_name)) {
+            cityCard.classList.add('selected');
+        }
+        cityCard.dataset.city = city.city_name;
+
+        const imageUrl = getURL() + city.city_pic_url;
+
+        cityCard.innerHTML = `
+            <img src="${imageUrl}" alt="${city.city_name}" onerror="this.src='../src/assets/images/default-city.jpg'">
+            <h4>${city.city_name}</h4>
+            <p>${englishToPersianNumber(city.places_count)} مکان گردشگری</p>
+        `;
+
+        cityCard.addEventListener('click', function() {
+            const cityName = this.dataset.city;
+            if (selectedCities.includes(cityName)) {
+                selectedCities = selectedCities.filter(c => c !== cityName);
+                this.classList.remove('selected');
+            } else {
+                selectedCities.push(cityName);
+                this.classList.add('selected');
+            }
+            updateSelectedCitiesBar();
+            updateContinueButton();
+        });
+
+        citiesGrid.appendChild(cityCard);
+    });
+}
 function updateSelectedCitiesBar() {
     const bar = document.getElementById('selectedCitiesBar');
     const list = document.getElementById('selectedCitiesList');
@@ -890,6 +922,7 @@ document.getElementById('finishTrip').addEventListener('click', async () => {
     if (selectedLocations.length === 0) {
         Swal.fire({
             icon: 'warning',
+            iconColor:'#F5C9B0',
             text: 'لطفاً حداقل یک مکان انتخاب کنید',
             confirmButtonText: 'باشه',
             confirmButtonColor: '#a6b28b',
@@ -946,7 +979,7 @@ document.getElementById('finishTrip').addEventListener('click', async () => {
 
         Swal.fire({
             icon: 'success',
-            title: 'سفر با موفقیت ایجاد شد!',
+            title: 'سفر با موفقیت ایجاد شد',
             html: `
                 <p>تاریخ: <strong>${$('#startDate').val()} تا ${$('#endDate').val()}</strong></p>
                 <p>شهرها: <strong>${selectedCities.join('، ')}</strong></p>

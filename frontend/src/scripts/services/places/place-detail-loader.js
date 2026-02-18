@@ -6,6 +6,11 @@ function getPlaceIdFromUrl() {
     return urlParams.get('id');
 }
 
+function toPersianDigits(n) {
+    const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    return n.toString().replace(/\d/g, x => farsiDigits[x]);
+}
+
 function animateCounter(element, target) {
     const targetNum = parseFloat(target);
     const duration = 3000;
@@ -21,7 +26,8 @@ function animateCounter(element, target) {
         const progress = easeOutQuad(frame / totalFrames);
         const currentCount = Math.round(countTo * progress * 10) / 10;
 
-        element.textContent = currentCount.toFixed(1);
+        const formattedNumber = currentCount.toFixed(1);
+        element.textContent = toPersianDigits(formattedNumber);
 
         if (frame === totalFrames) {
             clearInterval(counter);
@@ -40,10 +46,17 @@ async function loadPlaceDetails() {
         const place = await apiClient.get(`/places/${placeId}`, {
             includeAuth: true,
         });
+        
+        document.title = `ایران‌گرد | ${place.title}`;
 
         const addReviewLink = document.querySelector('.add-rate-review');
         if (addReviewLink) {
             addReviewLink.href = `/add-rate-review.html?id=${placeId}`;
+        }
+
+        const viewAllReviewsBtn = document.querySelector('a[href="/view-all-reviews.html"]');
+        if (viewAllReviewsBtn) {
+            viewAllReviewsBtn.href = `/view-all-reviews.html?id=${placeId}`;
         }
 
         const titles = document.querySelectorAll('.u-section-1 .u-text-1, .u-section-2 .u-text-1');
@@ -171,19 +184,73 @@ async function loadPlaceDetails() {
             mapIframe.src = `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
         }
 
-        if (place.picture_urls && place.picture_urls.length > 0) {
-            const galleryImages = document.querySelectorAll('.u-gallery-inner img');
-            const thumbnails = document.querySelectorAll('.u-carousel-thumbnails img');
+        const DEFAULT_IMAGE = '/src/assets/images/default-place.jpg';
+        const galleryItems = document.querySelectorAll('.u-gallery-inner .u-carousel-item');
+        const thumbnailItems = document.querySelectorAll('.u-carousel-thumbnails .u-carousel-thumbnail');
 
-            place.picture_urls.forEach((url, index) => {
-                if (galleryImages[index]) galleryImages[index].src = url;
-                if (thumbnails[index]) thumbnails[index].src = url;
-            });
-        }
+        galleryItems.forEach((item, index) => {
+            const img = item.querySelector('.u-back-image');
+            const thumb = thumbnailItems[index];
+
+            if (index === 0) {
+                if (img) img.src = place.picture_urls?.[0] || DEFAULT_IMAGE;
+                if (thumb) thumb.querySelector('img').src = place.picture_urls?.[0] || DEFAULT_IMAGE;
+            } else if (place.picture_urls?.[index]) {
+                if (img) img.src = place.picture_urls[index];
+                if (thumb) thumb.querySelector('img').src = place.picture_urls[index];
+            } else {
+                item.remove();
+                if (thumb) thumb.remove();
+            }
+        });
+
 
     } catch (error) {
         console.error("Error during loading:", error);
     }
+}
+
+function updateCarouselButtons() {
+    const items = document.querySelectorAll('.u-gallery-inner .u-carousel-item');
+    const activeIndex = Array.from(items).findIndex(item => item.classList.contains('u-active'));
+
+    const prevBtn = document.querySelector('.u-carousel-control-prev');
+    const nextBtn = document.querySelector('.u-carousel-control-next');
+
+    if (prevBtn) {
+        if (activeIndex === 0) {
+            prevBtn.style.opacity = '0.3';
+            prevBtn.style.pointerEvents = 'none';
+        } else {
+            prevBtn.style.opacity = '1';
+            prevBtn.style.pointerEvents = 'auto';
+        }
+    }
+
+    if (nextBtn) {
+        if (activeIndex === items.length - 1) {
+            nextBtn.style.opacity = '0.3';
+            nextBtn.style.pointerEvents = 'none';
+        } else {
+            nextBtn.style.opacity = '1';
+            nextBtn.style.pointerEvents = 'auto';
+        }
+    }
+}
+
+updateCarouselButtons();
+
+const observer = new MutationObserver(() => {
+    updateCarouselButtons();
+});
+
+const galleryInner = document.querySelector('.u-gallery-inner');
+if (galleryInner) {
+    observer.observe(galleryInner, {
+        attributes: true,
+        subtree: true,
+        attributeFilter: ['class']
+    });
 }
 
 document.addEventListener("DOMContentLoaded", loadPlaceDetails);
