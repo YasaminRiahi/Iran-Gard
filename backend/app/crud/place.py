@@ -5,8 +5,8 @@ from app.schemas.place import (
     PlaceCreate,
     PlaceDetailResponse,
     PlaceLocation,
-    PlaceResponse,
 )
+from app.core.config import settings
 from typing import List, Optional
 
 
@@ -63,10 +63,15 @@ def get_place_detail(
         .limit(MAX_PHOTOS_PER_PLACE)
         .all()
     )
-    picture_urls = [photo.url for photo in photos]
-    
-    # Get first photo URL
-    first_picture_url = picture_urls[0] if picture_urls else None
+    picture_urls = []
+    for photo in photos:
+        url = photo.url
+        if url and url.startswith("/static"):
+            # Construct the full backend URL
+            url = (
+                f"{settings.SERVER_URL}:{settings.BACKEND_PORT}{settings.API_STR}{url}"
+            )
+        picture_urls.append(url)
 
     # Parse location
     location = None
@@ -90,6 +95,7 @@ def get_place_detail(
         is_bookmarked=is_bookmarked,
         picture_urls=picture_urls,
     )
+
 
 def get_places_filtered(
     db: Session,
@@ -197,7 +203,11 @@ def get_places_filtered(
             "place_location": location,
             "description": row.description,
             "category_id": row.category_id,
-            "first_picture_url": row.first_picture_url,
+            "first_picture_url": (
+                f"{settings.SERVER_URL}:{settings.BACKEND_PORT}{settings.API_STR}{row.first_picture_url}"
+                if row.first_picture_url and row.first_picture_url.startswith("/static")
+                else row.first_picture_url
+            ),
             "avg_rating": avg_rating,
         }
         responses.append(response)
