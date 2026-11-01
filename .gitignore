@@ -39,6 +39,7 @@ env/
 # Database
 *.db
 *.sqlite3
+ai/chroma_db/
 
 # Logs
 *.log

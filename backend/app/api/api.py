@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.endpoints import auth, friendships, users, places, trips,city,expenses
+from app.api.endpoints import auth, friendships, users, places, trips,city,expenses,ai
 
 api_router = APIRouter()
 
@@ -23,3 +23,6 @@ api_router.include_router(city.router, prefix="/city", tags=["city"])
 
 # Include expense endpoints
 api_router.include_router(expenses.router)
+
+# include ai endpoints
+api_router.include_router(ai.router)
