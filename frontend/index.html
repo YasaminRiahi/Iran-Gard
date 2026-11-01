@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="src/styles/pages/index.css" media="screen">
   <link rel="stylesheet" href="src/styles/responsive/index-responsive.css" media="screen">
   <link rel="icon" type="image/png" href="/src/assets/images/website-icon.png">
+  <link rel="stylesheet" href="src/styles/pages/ai-chat.css">
   <script class="u-script" type="text/javascript" src="src/scripts/vendor/jquery.js" defer=""></script>
   <script class="u-script" type="text/javascript" src="src/scripts/app.js" defer=""></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
@@ -16,6 +17,29 @@
   <script type="module" src="/src/scripts/services/check-login.js"></script>
   <script type="module" src="src/scripts/services/places/popular-places.js" defer></script>
 </head>
+
+
+<!-- AI Chat Button -->
+<button id="ai-chat-btn" title="سوال از ایران‌گرد">
+    <span>!سوالت رو از ما بپرس</span>
+</button>
+
+<!-- AI Chat Popup -->
+<div id="ai-overlay"></div>
+<div id="ai-popup" dir="rtl">
+    <div id="ai-popup-header">
+        <span>دستیار هوشمند ایران‌گرد </span>
+        <button id="ai-close-btn">✕</button>
+    </div>
+    <div id="ai-messages"></div>
+    <div id="ai-input-area">
+        <textarea id="ai-input" rows="1" placeholder="سوالت رو بپرس..."></textarea>
+        <button id="ai-send-btn">ارسال</button>
+    </div>
+</div>
+
+<!-- AI Script -->
+<script type="module" src="src/scripts/ui/ai-chat.js"></script>
 
 <body data-home-page="Home-Page.html" data-home-page-title="Home Page" data-path-to-root="./"
   data-include-products="false" class="u-body u-clearfix u-overlap u-overlap-contrast u-overlap-transparent u-xl-mode"
